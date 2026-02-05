@@ -32,7 +32,8 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
     setDropRef(node);
   };
 
-  const handleDelete = () => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onDelete(meal.id, day);
   };
 
@@ -46,15 +47,13 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
     <Card
       ref={setNodeRef}
       style={style}
-      className={`p-4 mb-3 ${isDragging ? 'opacity-50' : ''} ${isOver ? 'ring-2 ring-primary-500 bg-primary-50' : ''}`}
+      className={`p-3 mb-2 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50' : ''} ${isOver ? 'ring-2 ring-primary-500 bg-primary-50' : ''}`}
+      {...listeners}
+      {...attributes}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2">
         {/* Drag Handle */}
-        <div
-          {...listeners}
-          {...attributes}
-          className="flex-shrink-0 mt-1 cursor-grab active:cursor-grabbing touch-none"
-        >
+        <div className="flex-shrink-0 mt-1 touch-none">
           <svg
             className="w-5 h-5 text-gray-400"
             fill="none"
@@ -72,12 +71,13 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
 
         {/* Meal Content */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900 text-base mb-1">{meal.name}</h4>
+          <h4 className="font-semibold text-gray-900 text-base">{meal.name}</h4>
         </div>
 
         {/* Delete Button */}
         <button
           onClick={handleDelete}
+          onPointerDown={(e) => e.stopPropagation()}
           className="flex-shrink-0 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Delete meal"
         >

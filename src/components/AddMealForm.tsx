@@ -40,9 +40,9 @@ export function AddMealForm({ currentDay, days, onAddMeal }: AddMealFormProps) {
   const targetDayDisplay = targetDay ? formatDayDisplay(targetDay) : null;
 
   return (
-    <Card className="p-4">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Meal</h3>
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <Card className="p-3">
+      <h3 className="text-base font-semibold text-gray-900 mb-3">Add Meal</h3>
+      <form onSubmit={handleSubmit} className="space-y-2">
         <Input
           label="Meal Name"
           placeholder="e.g., Chicken Salad"

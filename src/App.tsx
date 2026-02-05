@@ -123,7 +123,7 @@ function App() {
           >
             <div className="max-w-3xl mx-auto p-4">
               {/* Add Meal Form */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <AddMealForm
                   currentDay={state.currentDay}
                   days={state.days}
