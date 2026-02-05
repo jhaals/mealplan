@@ -45,9 +45,6 @@ export function MealList({ days, onDeleteMeal }: MealListProps) {
               <h3 className="text-lg font-semibold text-gray-900">
                 {dayName}, {dateStr}
               </h3>
-              <p className="text-sm text-gray-600">
-                {day.meals.length} {day.meals.length === 1 ? 'meal' : 'meals'}
-              </p>
             </div>
 
             {/* Meals */}

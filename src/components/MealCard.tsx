@@ -33,9 +33,7 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
   };
 
   const handleDelete = () => {
-    if (confirm('Delete this meal?')) {
-      onDelete(meal.id, day);
-    }
+    onDelete(meal.id, day);
   };
 
   const style = transform

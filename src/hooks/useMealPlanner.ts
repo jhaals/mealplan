@@ -41,14 +41,14 @@ function mealPlanReducer(state: MealPlanState, action: MealAction): MealPlanStat
 
       let newDays;
       if (dayIndex >= 0) {
-        // Day exists, add meal to it
+        // Day exists, replace the meal (only one meal per day)
         newDays = state.days.map((d, i) =>
-          i === dayIndex ? { ...d, meals: [...d.meals, newMeal] } : d
+          i === dayIndex ? { ...d, meals: [newMeal] } : d
         );
       } else {
         // Day doesn't exist, create it with the meal
         const newDay = getOrCreateDay(state.days, targetDay);
-        newDay.meals.push(newMeal);
+        newDay.meals = [newMeal];
         newDays = [...state.days, newDay].sort((a, b) => a.date.localeCompare(b.date));
       }
 
@@ -128,16 +128,16 @@ function mealPlanReducer(state: MealPlanState, action: MealAction): MealPlanStat
         return d;
       });
 
-      // Add meal to target day
+      // Add meal to target day (replace any existing meal, only one per day)
       const targetDayIndex = newDays.findIndex((d) => d.date === targetDay);
       if (targetDayIndex >= 0) {
         newDays = newDays.map((d, i) =>
-          i === targetDayIndex ? { ...d, meals: [...d.meals, mealToMove] } : d
+          i === targetDayIndex ? { ...d, meals: [mealToMove] } : d
         );
       } else {
         // Create target day if it doesn't exist
         const newDay = getOrCreateDay(state.days, targetDay);
-        newDay.meals.push(mealToMove);
+        newDay.meals = [mealToMove];
         newDays = [...newDays, newDay].sort((a, b) => a.date.localeCompare(b.date));
       }
 
