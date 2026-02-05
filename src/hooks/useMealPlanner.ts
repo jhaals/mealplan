@@ -1,6 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import type { MealPlanState, MealAction, Meal } from '../types';
-import { saveMealPlan, loadMealPlan } from '../utils/storage';
+import { saveMealPlan, loadMealPlan, clearMealPlan } from '../utils/storage';
 import { getOrCreateDay, getNextDay } from '../utils/dateHelpers';
 import { format, addDays } from 'date-fns';
 
@@ -178,6 +178,10 @@ function mealPlanReducer(state: MealPlanState, action: MealAction): MealPlanStat
       return { ...state, days: newDays };
     }
 
+    case 'RESET': {
+      return initialState;
+    }
+
     case 'LOAD_STATE': {
       return action.payload;
     }
@@ -216,5 +220,9 @@ export function useMealPlanner() {
       dispatch({ type: 'MOVE_MEAL', payload: { mealId, sourceDay, targetDay } }),
     swapMeals: (meal1Id: string, meal1Day: string, meal2Id: string, meal2Day: string) =>
       dispatch({ type: 'SWAP_MEALS', payload: { meal1Id, meal1Day, meal2Id, meal2Day } }),
+    reset: () => {
+      clearMealPlan();
+      dispatch({ type: 'RESET' });
+    },
   };
 }

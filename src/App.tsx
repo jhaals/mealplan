@@ -18,7 +18,7 @@ import { MealCard } from './components/MealCard';
 import type { Meal } from './types';
 
 function App() {
-  const { state, setStartDate, addMeal, deleteMeal, moveMeal, swapMeals } = useMealPlanner();
+  const { state, setStartDate, addMeal, deleteMeal, moveMeal, swapMeals, reset } = useMealPlanner();
   const [activeMeal, setActiveMeal] = useState<{ meal: Meal; day: string } | null>(null);
 
   // Configure sensors for drag and drop
@@ -85,8 +85,16 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-primary-700">MealPrepp</h1>
+          {state.startDate && (
+            <button
+              onClick={reset}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Start New Week
+            </button>
+          )}
         </div>
       </header>
 

@@ -21,4 +21,5 @@ export type MealAction =
   | { type: 'DELETE_MEAL'; payload: { mealId: string; day: string } }
   | { type: 'MOVE_MEAL'; payload: { mealId: string; sourceDay: string; targetDay: string } }
   | { type: 'SWAP_MEALS'; payload: { meal1Id: string; meal1Day: string; meal2Id: string; meal2Day: string } }
+  | { type: 'RESET' }
   | { type: 'LOAD_STATE'; payload: MealPlanState };
