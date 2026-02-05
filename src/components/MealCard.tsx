@@ -1,5 +1,6 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { Card } from './ui/Card';
+import { formatDayDisplay } from '../utils/dateHelpers';
 import type { Meal } from '../types';
 
 interface MealCardProps {
@@ -37,6 +38,8 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
     onDelete(meal.id, day);
   };
 
+  const { dayName, dateStr } = formatDayDisplay(day);
+
   const style = transform
     ? {
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -51,9 +54,9 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
       {...listeners}
       {...attributes}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-center justify-between gap-3">
         {/* Drag Handle */}
-        <div className="flex-shrink-0 mt-1 touch-none">
+        <div className="flex-shrink-0 touch-none">
           <svg
             className="w-5 h-5 text-gray-400"
             fill="none"
@@ -67,6 +70,12 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
               d="M4 8h16M4 16h16"
             />
           </svg>
+        </div>
+
+        {/* Day Info */}
+        <div className="flex-shrink-0 text-sm w-24">
+          <div className="font-semibold text-gray-900">{dayName}</div>
+          <div className="text-gray-600">{dateStr}</div>
         </div>
 
         {/* Meal Content */}

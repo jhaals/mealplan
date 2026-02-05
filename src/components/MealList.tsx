@@ -1,5 +1,4 @@
 import { MealCard } from './MealCard';
-import { formatDayDisplay } from '../utils/dateHelpers';
 import type { DayPlan } from '../types';
 
 interface MealListProps {
@@ -34,37 +33,19 @@ export function MealList({ days, onDeleteMeal }: MealListProps) {
   }
 
   return (
-    <div className="space-y-3">
-      {days.map((day) => {
-        const { dayName, dateStr } = formatDayDisplay(day.date);
-
-        return (
-          <div key={day.date}>
-            {/* Day Header */}
-            <div className="mb-1">
-              <h3 className="text-base font-semibold text-gray-900">
-                {dayName}, {dateStr}
-              </h3>
-            </div>
-
-            {/* Meals */}
-            {day.meals.length === 0 ? (
-              <p className="text-sm text-gray-500 italic py-2">No meals for this day</p>
-            ) : (
-              <div>
-                {day.meals.map((meal) => (
-                  <MealCard
-                    key={meal.id}
-                    meal={meal}
-                    day={day.date}
-                    onDelete={onDeleteMeal}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })}
+    <div className="space-y-2">
+      {days.map((day) => (
+        <div key={day.date}>
+          {day.meals.map((meal) => (
+            <MealCard
+              key={meal.id}
+              meal={meal}
+              day={day.date}
+              onDelete={onDeleteMeal}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
