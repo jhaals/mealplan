@@ -4,10 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "bun run build && cd server && bun run --watch src/index.ts",
+    "dev:watch": "concurrently \"bun run build --watch\" \"bun run dev:backend\"",
+    "dev:frontend": "vite",
+    "dev:backend": "cd server && bun run --watch src/index.ts",
     "build": "tsc -b && vite build",
+    "start": "cd server && bun run src/index.ts",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:migrate": "cd server && bunx prisma migrate dev",
+    "db:studio": "cd server && bunx prisma studio",
+    "db:seed": "cd server && bun run src/utils/seed.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -23,6 +30,7 @@
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.24",
+    "concurrently": "^9.2.1",
     "eslint": "^9.25.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",

@@ -18,7 +18,19 @@ import { MealCard } from './components/MealCard';
 import type { Meal } from './types';
 
 function App() {
-  const { state, setStartDate, addMeal, deleteMeal, moveMeal, swapMeals, reset } = useMealPlanner();
+  const {
+    state,
+    isLoading,
+    isSaving,
+    error,
+    setStartDate,
+    addMeal,
+    deleteMeal,
+    moveMeal,
+    swapMeals,
+    reset,
+    retry
+  } = useMealPlanner();
   const [activeMeal, setActiveMeal] = useState<{ meal: Meal; day: string } | null>(null);
 
   // Configure sensors for drag and drop
@@ -81,22 +93,81 @@ function App() {
     }
   };
 
+  // Show loading screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-600 border-t-transparent mb-4"></div>
+          <p className="text-gray-600">Loading meal plan...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error screen with retry
+  if (error && !state.startDate) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md px-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
+            <h2 className="text-xl font-semibold text-red-900 mb-2">Error Loading Meal Plan</h2>
+            <p className="text-red-700">{error}</p>
+          </div>
+          <button
+            onClick={retry}
+            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-primary-700">MealPrepp</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-primary-700">MealPrepp</h1>
+            {isSaving && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent"></div>
+                <span>Saving...</span>
+              </div>
+            )}
+          </div>
           {state.startDate && (
             <button
               onClick={reset}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              disabled={isSaving}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Start New Week
             </button>
           )}
         </div>
       </header>
+
+      {/* Error banner for non-critical errors */}
+      {error && state.startDate && (
+        <div className="max-w-7xl mx-auto px-4 pt-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start justify-between">
+            <div className="flex-1">
+              <p className="text-red-900 font-medium">Error</p>
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+            <button
+              onClick={retry}
+              className="ml-4 text-sm text-red-700 hover:text-red-900 font-medium"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto">

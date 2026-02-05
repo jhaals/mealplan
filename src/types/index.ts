@@ -23,3 +23,8 @@ export type MealAction =
   | { type: 'SWAP_MEALS'; payload: { meal1Id: string; meal1Day: string; meal2Id: string; meal2Day: string } }
   | { type: 'RESET' }
   | { type: 'LOAD_STATE'; payload: MealPlanState };
+
+export interface ApiError {
+  message: string;
+  statusCode: number;
+}

@@ -1,0 +1,23 @@
+{
+  "name": "mealprepp-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "db:migrate": "bunx prisma migrate dev",
+    "db:studio": "bunx prisma studio",
+    "db:seed": "bun run src/utils/seed.ts",
+    "db:generate": "bunx prisma generate"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "@prisma/client": "^5.8.0",
+    "date-fns": "^4.1.0",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.8.0",
+    "@types/bun": "latest"
+  }
+}
