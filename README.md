@@ -1,4 +1,4 @@
-# MealPrepp - Simple Meal Planning App
+# MealPlan - Simple Meal Planning App
 
 A mobile-first meal planning application with a React frontend and Hono backend, backed by SQLite database. Plan your meals by day with an intuitive drag-and-drop interface.
 

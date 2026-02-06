@@ -1,4 +1,4 @@
-// Prisma schema for MealPrepp
+// Prisma schema for MealPlan
 
 generator client {
   provider = "prisma-client-js"

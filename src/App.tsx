@@ -131,7 +131,7 @@ function App() {
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-primary-700">MealPrepp</h1>
+            <h1 className="text-2xl font-bold text-primary-700">MealPlan</h1>
             {isSaving && (
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent"></div>
@@ -176,7 +176,7 @@ function App() {
           <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome to MealPrepp
+                Welcome to MealPlan
               </h2>
               <p className="text-gray-600">
                 Start planning your meals by selecting a start date
