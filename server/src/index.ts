@@ -22,11 +22,14 @@ app.get('*', serveStatic({ path: '../dist/index.html' }));
 // Error handling
 app.onError(errorHandler);
 
-const port = process.env.PORT || 3001;
+const port = Number(process.env.PORT) || 3001;
 
 console.log(`Server starting on http://localhost:${port}`);
 
-export default {
+// Start server
+Bun.serve({
   port,
   fetch: app.fetch,
-};
+});
+
+console.log(`Server running on http://localhost:${port}`);

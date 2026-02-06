@@ -17,6 +17,9 @@ server/prisma/*.db
 server/prisma/*.db-journal
 server/prisma/*.db-wal
 
+# Docker testing
+test-data
+
 # Environment
 .env.local
 .env.production

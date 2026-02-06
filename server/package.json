@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts",
+    "build": "tsc",
     "db:migrate": "bunx prisma migrate dev",
     "db:studio": "bunx prisma studio",
     "db:seed": "bun run src/utils/seed.ts",

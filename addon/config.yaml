@@ -1,0 +1,21 @@
+name: MealPlan
+version: "1.0.0"
+slug: mealplan
+description: Mobile-first meal planning application with drag-and-drop organization
+url: "https://github.com/jhaals/mealplan"
+arch:
+  - aarch64
+  - amd64
+  - armv7
+init: false
+startup: services
+boot: auto
+ports:
+  3001/tcp: 3001
+ports_description:
+  3001/tcp: Web interface
+options:
+  port: 3001
+schema:
+  port: "port?"
+image: "ghcr.io/{arch}-addon-mealplan"
