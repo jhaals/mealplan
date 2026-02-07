@@ -1,1 +1,12 @@
 context: ".."
+build_from:
+  aarch64: oven/bun:1-alpine
+  amd64: oven/bun:1-alpine
+  armv7: oven/bun:1-alpine
+args:
+  BUILD_ARCH: "{arch}"
+labels:
+  io.hass.name: MealPlan
+  io.hass.description: Mobile-first meal planning application
+  io.hass.type: addon
+  io.hass.url: https://github.com/jhaals/mealplan
