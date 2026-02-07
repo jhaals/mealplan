@@ -27,8 +27,11 @@ jobs:
       - name: Get version
         id: version
         run: |
-          VERSION=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          BASE=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          VERSION="${BASE}-${SHORT_SHA}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          sed -i "s/^version: .*/version: \"$VERSION\"/" addon/config.yaml
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -70,7 +73,9 @@ jobs:
       - name: Get version
         id: version
         run: |
-          VERSION=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          BASE=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          VERSION="${BASE}-${SHORT_SHA}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
