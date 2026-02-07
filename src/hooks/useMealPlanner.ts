@@ -94,11 +94,11 @@ export function useMealPlanner() {
     }
   }, [refreshState]);
 
-  const addMeal = useCallback(async (meal: Omit<Meal, 'id' | 'createdAt'>, day?: string) => {
+  const addMeal = useCallback(async (meal: Omit<Meal, 'id' | 'createdAt'>) => {
     try {
       setIsSaving(true);
       setError(null);
-      await api.addMeal(meal.name, day);
+      await api.addMeal(meal.name);
       await refreshState();
     } catch (err) {
       console.error('Failed to add meal:', err);

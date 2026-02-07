@@ -34,3 +34,6 @@ test-data
 *.njsproj
 *.sln
 *.sw?
+
+# Package lock (project uses bun)
+package-lock.json

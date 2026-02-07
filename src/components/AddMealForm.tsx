@@ -3,20 +3,15 @@ import { formatDayDisplay } from '../utils/dateHelpers';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Card } from './ui/Card';
-import type { DayPlan, Meal } from '../types';
+import type { Meal } from '../types';
 
 interface AddMealFormProps {
   currentDay: string | null;
-  days: DayPlan[];
-  onAddMeal: (meal: Omit<Meal, 'id' | 'createdAt'>, day?: string) => void;
+  onAddMeal: (meal: Omit<Meal, 'id' | 'createdAt'>) => void;
 }
 
-export function AddMealForm({ currentDay, days, onAddMeal }: AddMealFormProps) {
+export function AddMealForm({ currentDay, onAddMeal }: AddMealFormProps) {
   const [mealName, setMealName] = useState('');
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
-
-  // Use selected day if set, otherwise use currentDay
-  const targetDay = selectedDay || currentDay;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,19 +20,15 @@ export function AddMealForm({ currentDay, days, onAddMeal }: AddMealFormProps) {
       return;
     }
 
-    onAddMeal(
-      {
-        name: mealName.trim(),
-      },
-      selectedDay || undefined
-    );
+    onAddMeal({
+      name: mealName.trim(),
+    });
 
     // Reset form
     setMealName('');
-    setSelectedDay(null);
   };
 
-  const targetDayDisplay = targetDay ? formatDayDisplay(targetDay) : null;
+  const targetDayDisplay = currentDay ? formatDayDisplay(currentDay) : null;
 
   return (
     <Card className="p-3">
@@ -52,37 +43,9 @@ export function AddMealForm({ currentDay, days, onAddMeal }: AddMealFormProps) {
           autoFocus
         />
 
-        {/* Day Override */}
-        {days.length > 0 && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Add to Day
-            </label>
-            <select
-              value={selectedDay || ''}
-              onChange={(e) => setSelectedDay(e.target.value || null)}
-              className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[44px]"
-            >
-              <option value="">
-                {targetDayDisplay
-                  ? `${targetDayDisplay.dayName}, ${targetDayDisplay.dateStr} (Auto)`
-                  : 'Select a day'}
-              </option>
-              {days.map((day) => {
-                const display = formatDayDisplay(day.date);
-                return (
-                  <option key={day.date} value={day.date}>
-                    {display.dayName}, {display.dateStr}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-        )}
-
-        {targetDayDisplay && !selectedDay && (
+        {targetDayDisplay && (
           <p className="text-sm text-gray-600">
-            Will be added to <span className="font-medium">{targetDayDisplay.dayName}</span>
+            Will be added to <span className="font-medium">{targetDayDisplay.dayName}, {targetDayDisplay.dateStr}</span>
           </p>
         )}
 

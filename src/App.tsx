@@ -15,6 +15,7 @@ import { DatePicker } from './components/DatePicker';
 import { AddMealForm } from './components/AddMealForm';
 import { MealList } from './components/MealList';
 import { MealCard } from './components/MealCard';
+import { MealPlanHistory } from './components/MealPlanHistory';
 import type { Meal } from './types';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
     retry
   } = useMealPlanner();
   const [activeMeal, setActiveMeal] = useState<{ meal: Meal; day: string } | null>(null);
+  const [activeTab, setActiveTab] = useState<'plan' | 'history'>('plan');
 
   // Configure sensors for drag and drop
   const mouseSensor = useSensor(MouseSensor, {
@@ -183,46 +185,95 @@ function App() {
               </p>
             </div>
             <DatePicker value={state.startDate} onChange={setStartDate} />
-          </div>
-        ) : (
-          /* Main App Layout with Drag and Drop */
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <div className="max-w-3xl mx-auto p-4">
-              {/* Add Meal Form */}
-              <div className="mb-4">
-                <AddMealForm
-                  currentDay={state.currentDay}
-                  days={state.days}
-                  onAddMeal={addMeal}
-                />
-              </div>
 
-              {/* Meal List */}
-              <MealList
-                days={state.days}
-                onDeleteMeal={deleteMeal}
-                onMoveMeal={moveMeal}
-              />
+            {/* History link on welcome screen */}
+            <div className="mt-8">
+              <button
+                onClick={() => setActiveTab(activeTab === 'history' ? 'plan' : 'history')}
+                className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              >
+                {activeTab === 'history' ? '← Back' : 'View Previous Plans'}
+              </button>
             </div>
 
-            {/* Drag Overlay */}
-            <DragOverlay>
-              {activeMeal ? (
-                <div className="opacity-90 scale-105 rotate-2">
-                  <MealCard
-                    meal={activeMeal.meal}
-                    day={activeMeal.day}
-                    onDelete={() => {}}
+            {activeTab === 'history' && (
+              <div className="w-full max-w-3xl mt-4">
+                <MealPlanHistory />
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Tabs */}
+            <div className="max-w-3xl mx-auto px-4 pt-4">
+              <div className="flex border-b border-gray-200">
+                <button
+                  onClick={() => setActiveTab('plan')}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === 'plan'
+                      ? 'border-primary-600 text-primary-700'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Current Plan
+                </button>
+                <button
+                  onClick={() => setActiveTab('history')}
+                  className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                    activeTab === 'history'
+                      ? 'border-primary-600 text-primary-700'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  History
+                </button>
+              </div>
+            </div>
+
+            {activeTab === 'plan' ? (
+              /* Main App Layout with Drag and Drop */
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="max-w-3xl mx-auto p-4">
+                  {/* Add Meal Form */}
+                  <div className="mb-4">
+                    <AddMealForm
+                      currentDay={state.currentDay}
+                      onAddMeal={addMeal}
+                    />
+                  </div>
+
+                  {/* Meal List */}
+                  <MealList
+                    days={state.days}
+                    onDeleteMeal={deleteMeal}
+                    onMoveMeal={moveMeal}
                   />
                 </div>
-              ) : null}
-            </DragOverlay>
-          </DndContext>
+
+                {/* Drag Overlay */}
+                <DragOverlay>
+                  {activeMeal ? (
+                    <div className="opacity-90 scale-105 rotate-2">
+                      <MealCard
+                        meal={activeMeal.meal}
+                        day={activeMeal.day}
+                        onDelete={() => {}}
+                      />
+                    </div>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+            ) : (
+              <div className="max-w-3xl mx-auto p-4">
+                <MealPlanHistory />
+              </div>
+            )}
+          </>
         )}
       </main>
     </div>

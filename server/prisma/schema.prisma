@@ -43,3 +43,12 @@ model Meal {
 
   @@index([dayPlanId])
 }
+
+// Archived meal plans for history
+model ArchivedMealPlan {
+  id        String   @id @default(cuid())
+  startDate String   // ISO date (YYYY-MM-DD)
+  endDate   String   // ISO date (YYYY-MM-DD)
+  data      String   // JSON snapshot of days and meals
+  createdAt DateTime @default(now())
+}
