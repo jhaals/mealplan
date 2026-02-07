@@ -31,11 +31,20 @@ mealPlan.put('/start-date', async (c) => {
 
 /**
  * DELETE /api/meal-plan
- * Reset entire plan
+ * Reset entire plan (archives current plan first)
  */
 mealPlan.delete('/', async (c) => {
   await mealPlanService.resetMealPlan();
   return c.body(null, 204);
+});
+
+/**
+ * GET /api/meal-plan/history
+ * Get archived meal plan history
+ */
+mealPlan.get('/history', async (c) => {
+  const history = await mealPlanService.getMealPlanHistory();
+  return c.json(history);
 });
 
 /**

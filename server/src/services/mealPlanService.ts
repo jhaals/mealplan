@@ -319,9 +319,44 @@ export async function swapMeals(
 }
 
 /**
- * Reset the entire meal plan
+ * Reset the entire meal plan, archiving the current one first
  */
 export async function resetMealPlan(): Promise<void> {
+  // Archive the current meal plan before resetting
+  const plan = await prisma.mealPlan.findUnique({
+    where: { id: 'singleton' },
+    include: {
+      days: {
+        include: {
+          meals: {
+            orderBy: { createdAt: 'asc' },
+          },
+        },
+        orderBy: { date: 'asc' },
+      },
+    },
+  });
+
+  if (plan && plan.startDate && plan.days.length > 0) {
+    const lastDay = plan.days[plan.days.length - 1].date;
+    const snapshot = plan.days.map((day) => ({
+      date: day.date,
+      meals: day.meals.map((meal) => ({
+        id: meal.id,
+        name: meal.name,
+        createdAt: meal.createdAt,
+      })),
+    }));
+
+    await prisma.archivedMealPlan.create({
+      data: {
+        startDate: plan.startDate,
+        endDate: lastDay,
+        data: JSON.stringify(snapshot),
+      },
+    });
+  }
+
   await prisma.mealPlan.update({
     where: { id: 'singleton' },
     data: {
@@ -332,4 +367,37 @@ export async function resetMealPlan(): Promise<void> {
       },
     },
   });
+}
+
+/**
+ * Get archived meal plan history
+ */
+export async function getMealPlanHistory(): Promise<ArchivedMealPlan[]> {
+  const archived = await prisma.archivedMealPlan.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return archived.map((plan) => {
+    let days: DayPlan[] = [];
+    try {
+      days = JSON.parse(plan.data);
+    } catch {
+      days = [];
+    }
+    return {
+      id: plan.id,
+      startDate: plan.startDate,
+      endDate: plan.endDate,
+      days,
+      createdAt: plan.createdAt,
+    };
+  });
+}
+
+export interface ArchivedMealPlan {
+  id: string;
+  startDate: string;
+  endDate: string;
+  days: DayPlan[];
+  createdAt: Date;
 }

@@ -113,3 +113,18 @@ export async function resetMealPlan(): Promise<void> {
     method: 'DELETE',
   });
 }
+
+/**
+ * Get archived meal plan history
+ */
+export async function getMealPlanHistory(): Promise<ArchivedMealPlan[]> {
+  return fetchJSON<ArchivedMealPlan[]>('/api/meal-plan/history');
+}
+
+export interface ArchivedMealPlan {
+  id: string;
+  startDate: string;
+  endDate: string;
+  days: { date: string; meals: { id: string; name: string; createdAt: string }[] }[];
+  createdAt: string;
+}
