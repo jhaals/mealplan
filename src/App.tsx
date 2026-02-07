@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -18,6 +18,7 @@ import { MealCard } from './components/MealCard';
 import { MealPlanHistory } from './components/MealPlanHistory';
 import { ShoppingList } from './components/ShoppingList';
 import type { Meal } from './types';
+import * as api from './utils/api';
 
 function App() {
   const {
@@ -36,6 +37,34 @@ function App() {
   const [activeMeal, setActiveMeal] = useState<{ meal: Meal; day: string } | null>(null);
   const [activePage, setActivePage] = useState<'meals' | 'shopping'>('meals');
   const [activeTab, setActiveTab] = useState<'plan' | 'history'>('plan');
+
+  // TRMNL state
+  const [trmnlEnabled, setTRMNLEnabled] = useState(false);
+  const [trmnlPushing, setTRMNLPushing] = useState(false);
+
+  // Check TRMNL config on mount
+  useEffect(() => {
+    api.getTRMNLConfig().then((config) => {
+      setTRMNLEnabled(config.enabled);
+    }).catch(console.error);
+  }, []);
+
+  // Handle manual TRMNL push
+  const handleTRMNLPush = async () => {
+    setTRMNLPushing(true);
+    try {
+      const result = await api.pushToTRMNL();
+      if (result.success) {
+        console.log('TRMNL push successful');
+      } else {
+        console.error('TRMNL push failed:', result.error);
+      }
+    } catch (error) {
+      console.error('TRMNL push error:', error);
+    } finally {
+      setTRMNLPushing(false);
+    }
+  };
 
   // Configure sensors for drag and drop
   const mouseSensor = useSensor(MouseSensor, {
@@ -107,6 +136,9 @@ function App() {
           isSaving={isSaving}
           showReset={false}
           onReset={reset}
+          onTRMNLPush={handleTRMNLPush}
+          trmnlEnabled={trmnlEnabled}
+          trmnlPushing={trmnlPushing}
         />
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
@@ -128,6 +160,9 @@ function App() {
           isSaving={isSaving}
           showReset={false}
           onReset={reset}
+          onTRMNLPush={handleTRMNLPush}
+          trmnlEnabled={trmnlEnabled}
+          trmnlPushing={trmnlPushing}
         />
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center max-w-md px-4">
@@ -155,6 +190,9 @@ function App() {
         isSaving={isSaving && activePage === 'meals'}
         showReset={activePage === 'meals' && !!state.startDate}
         onReset={reset}
+        onTRMNLPush={handleTRMNLPush}
+        trmnlEnabled={trmnlEnabled}
+        trmnlPushing={trmnlPushing}
       />
 
       {activePage === 'shopping' ? (
@@ -298,12 +336,18 @@ function AppHeader({
   isSaving,
   showReset,
   onReset,
+  onTRMNLPush,
+  trmnlEnabled,
+  trmnlPushing,
 }: {
   activePage: 'meals' | 'shopping';
   setActivePage: (page: 'meals' | 'shopping') => void;
   isSaving: boolean;
   showReset: boolean;
   onReset: () => void;
+  onTRMNLPush: () => void;
+  trmnlEnabled: boolean;
+  trmnlPushing: boolean;
 }) {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
@@ -317,15 +361,27 @@ function AppHeader({
             </div>
           )}
         </div>
-        {showReset && (
-          <button
-            onClick={onReset}
-            disabled={isSaving}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Start New Week
-          </button>
-        )}
+        <div className="flex gap-2">
+          {trmnlEnabled && (
+            <button
+              onClick={onTRMNLPush}
+              disabled={trmnlPushing || isSaving}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Push meal plan to TRMNL device"
+            >
+              {trmnlPushing ? 'Pushing...' : 'Push to TRMNL'}
+            </button>
+          )}
+          {showReset && (
+            <button
+              onClick={onReset}
+              disabled={isSaving}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Start New Week
+            </button>
+          )}
+        </div>
       </div>
       {/* Page navigation */}
       <div className="max-w-7xl mx-auto px-4">

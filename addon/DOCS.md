@@ -22,7 +22,8 @@ MealPlan is a mobile-first meal planning application with an intuitive drag-and-
 ## Configuration
 
 ```yaml
-port: 3001  # Web interface port (optional)
+port: 3001                    # Web interface port (optional)
+trmnl_webhook_url: ""         # TRMNL webhook URL (optional)
 ```
 
 ### Option: `port`
@@ -30,6 +31,18 @@ port: 3001  # Web interface port (optional)
 The port number for the web interface. Default: 3001
 
 Change this if port 3001 is already in use by another service.
+
+### Option: `trmnl_webhook_url`
+
+TRMNL webhook URL for pushing meal plans to your TRMNL device (optional).
+
+To enable TRMNL integration:
+1. Get your webhook URL from your TRMNL plugin settings
+2. The URL format is: `https://usetrmnl.com/api/custom_plugins/YOUR_PLUGIN_UUID`
+3. Add it to this configuration option
+4. Restart the add-on
+
+When configured, your meal plan will be automatically pushed to your TRMNL device whenever it changes. You can also manually trigger a push from the web interface.
 
 ## Usage
 

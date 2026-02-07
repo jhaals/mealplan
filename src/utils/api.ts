@@ -193,3 +193,33 @@ export async function archiveShoppingList(): Promise<ShoppingListState> {
 export async function getShoppingListHistory(): Promise<ArchivedShoppingList[]> {
   return fetchJSON<ArchivedShoppingList[]>('/api/shopping-list/history');
 }
+
+// ========== TRMNL API ==========
+
+export interface TRMNLPushResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+  pushedAt?: string;
+}
+
+export interface TRMNLConfig {
+  enabled: boolean;
+  hasWebhookUrl: boolean;
+}
+
+/**
+ * Push meal plan to TRMNL device (manual force push)
+ */
+export async function pushToTRMNL(): Promise<TRMNLPushResponse> {
+  return fetchJSON<TRMNLPushResponse>('/api/trmnl/push', {
+    method: 'POST',
+  });
+}
+
+/**
+ * Get TRMNL configuration status
+ */
+export async function getTRMNLConfig(): Promise<TRMNLConfig> {
+  return fetchJSON<TRMNLConfig>('/api/trmnl/config');
+}

@@ -183,8 +183,8 @@ export function ShoppingList() {
           {/* Google Keep-style card */}
           <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
             {/* Card header */}
-            <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-              <h2 className="font-semibold text-gray-900 text-lg">Shopping List</h2>
+            <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100">
+              <h2 className="font-semibold text-gray-900 text-sm">Shopping List</h2>
               <div className="flex items-center gap-2">
                 {isSaving && (
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent"></div>
@@ -202,15 +202,15 @@ export function ShoppingList() {
             </div>
 
             {/* Add item form */}
-            <form onSubmit={handleAddItem} className="px-4 py-3 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <span className="text-primary-600 text-lg font-bold">+</span>
+            <form onSubmit={handleAddItem} className="px-2 py-1 border-b border-gray-100">
+              <div className="flex items-center gap-1.5">
+                <span className="text-primary-600 text-base font-bold">+</span>
                 <input
                   type="text"
                   value={newItemName}
                   onChange={(e) => setNewItemName(e.target.value)}
                   placeholder="Add item..."
-                  className="flex-1 bg-transparent border-none outline-none text-sm text-gray-900 placeholder-gray-400"
+                  className="flex-1 bg-transparent border-none outline-none text-xs text-gray-900 placeholder-gray-400"
                 />
               </div>
             </form>
@@ -236,8 +236,8 @@ export function ShoppingList() {
             {/* Checked items section */}
             {checkedItems.length > 0 && (
               <div>
-                <div className="px-4 py-2 bg-gray-50 border-t border-gray-100">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div className="px-2 py-0.5 bg-gray-50 border-t border-gray-100">
+                  <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
                     {checkedItems.length} checked {checkedItems.length === 1 ? 'item' : 'items'}
                   </span>
                 </div>
@@ -256,8 +256,8 @@ export function ShoppingList() {
 
             {/* Empty state */}
             {state.items.length === 0 && (
-              <div className="px-4 py-8 text-center">
-                <p className="text-gray-400 text-sm">Your shopping list is empty</p>
+              <div className="px-2 py-3 text-center">
+                <p className="text-gray-400 text-xs">Your shopping list is empty</p>
               </div>
             )}
           </div>
