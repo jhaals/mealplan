@@ -1,5 +1,5 @@
 # Stage 1: Build Frontend
-FROM node:20-alpine AS frontend-builder
+FROM oven/bun:1-alpine AS frontend-builder
 
 WORKDIR /build
 
@@ -12,8 +12,8 @@ COPY public/ ./public/
 COPY src/ ./src/
 
 # Install and build
-RUN npm install
-RUN npm run build
+RUN bun install
+RUN bun run build
 
 # Stage 2: Build Backend
 FROM oven/bun:1-alpine AS backend-builder
