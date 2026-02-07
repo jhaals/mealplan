@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'addon/config.yaml'
 
 jobs:
   build:
@@ -82,3 +84,15 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
+
+      - name: Update addon version in repository
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          sed -i "s/^version: .*/version: \"$VERSION\"/" addon/config.yaml
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add addon/config.yaml
+          if ! git diff --cached --quiet; then
+            git commit -m "Update addon version to $VERSION [skip ci]"
+            git push
+          fi
