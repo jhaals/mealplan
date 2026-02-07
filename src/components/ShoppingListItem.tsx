@@ -45,6 +45,7 @@ export function ShoppingListItem({ item, onToggle, onDelete }: ShoppingListItemP
       {/* Checkbox */}
       <button
         onClick={() => onToggle(item.id)}
+        onPointerDown={(e) => e.stopPropagation()}
         className="flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors min-w-[20px] min-h-[20px]"
         style={{
           borderColor: item.checked ? '#22c55e' : '#d1d5db',
@@ -71,6 +72,7 @@ export function ShoppingListItem({ item, onToggle, onDelete }: ShoppingListItemP
       {/* Delete button */}
       <button
         onClick={() => onDelete(item.id)}
+        onPointerDown={(e) => e.stopPropagation()}
         className="flex-shrink-0 p-1 text-gray-400 hover:text-red-600 rounded transition-colors opacity-0 group-hover:opacity-100 min-w-[28px] min-h-[28px] flex items-center justify-center"
         aria-label="Delete item"
       >
