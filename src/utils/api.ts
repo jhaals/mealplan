@@ -128,3 +128,68 @@ export interface ArchivedMealPlan {
   days: { date: string; meals: { id: string; name: string; createdAt: string }[] }[];
   createdAt: string;
 }
+
+// ========== Shopping List API ==========
+
+import type { ShoppingListState, ShoppingListItem, ArchivedShoppingList } from '../types';
+
+/**
+ * Get the current shopping list
+ */
+export async function getShoppingList(): Promise<ShoppingListState> {
+  return fetchJSON<ShoppingListState>('/api/shopping-list');
+}
+
+/**
+ * Add an item to the shopping list
+ */
+export async function addShoppingItem(name: string): Promise<ShoppingListItem> {
+  return fetchJSON<ShoppingListItem>('/api/shopping-list/items', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  });
+}
+
+/**
+ * Toggle an item's checked state
+ */
+export async function toggleShoppingItem(itemId: string): Promise<ShoppingListItem> {
+  return fetchJSON<ShoppingListItem>(`/api/shopping-list/items/${itemId}/toggle`, {
+    method: 'PUT',
+  });
+}
+
+/**
+ * Delete an item from the shopping list
+ */
+export async function deleteShoppingItem(itemId: string): Promise<void> {
+  return fetchJSON<void>(`/api/shopping-list/items/${itemId}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
+ * Reorder items in the shopping list
+ */
+export async function reorderShoppingItems(itemIds: string[]): Promise<void> {
+  return fetchJSON<void>('/api/shopping-list/reorder', {
+    method: 'PUT',
+    body: JSON.stringify({ itemIds }),
+  });
+}
+
+/**
+ * Archive current list and start a new one
+ */
+export async function archiveShoppingList(): Promise<ShoppingListState> {
+  return fetchJSON<ShoppingListState>('/api/shopping-list/archive', {
+    method: 'POST',
+  });
+}
+
+/**
+ * Get archived shopping list history
+ */
+export async function getShoppingListHistory(): Promise<ArchivedShoppingList[]> {
+  return fetchJSON<ArchivedShoppingList[]>('/api/shopping-list/history');
+}

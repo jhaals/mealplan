@@ -28,3 +28,23 @@ export interface ApiError {
   message: string;
   statusCode: number;
 }
+
+// Shopping list types
+export interface ShoppingListItem {
+  id: string;
+  name: string;
+  checked: boolean;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface ShoppingListState {
+  items: ShoppingListItem[];
+  createdAt: string;
+}
+
+export interface ArchivedShoppingList {
+  id: string;
+  items: ShoppingListItem[];
+  createdAt: string;
+}

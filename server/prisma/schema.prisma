@@ -52,3 +52,31 @@ model ArchivedMealPlan {
   data      String   // JSON snapshot of days and meals
   createdAt DateTime @default(now())
 }
+
+// Shopping list (singleton pattern like MealPlan)
+model ShoppingList {
+  id        String             @id @default("singleton")
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  items     ShoppingListItem[]
+}
+
+model ShoppingListItem {
+  id             String       @id @default(cuid())
+  shoppingListId String
+  shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  name           String
+  checked        Boolean      @default(false)
+  sortOrder      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([shoppingListId])
+}
+
+// Archived shopping lists for history
+model ArchivedShoppingList {
+  id        String   @id @default(cuid())
+  data      String   // JSON snapshot of items
+  createdAt DateTime @default(now()) // Timestamp of when original list was created
+}
