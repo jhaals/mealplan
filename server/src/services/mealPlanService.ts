@@ -377,13 +377,21 @@ export async function getMealPlanHistory(): Promise<ArchivedMealPlan[]> {
     orderBy: { createdAt: 'desc' },
   });
 
-  return archived.map((plan) => ({
-    id: plan.id,
-    startDate: plan.startDate,
-    endDate: plan.endDate,
-    days: JSON.parse(plan.data),
-    createdAt: plan.createdAt,
-  }));
+  return archived.map((plan) => {
+    let days: DayPlan[] = [];
+    try {
+      days = JSON.parse(plan.data);
+    } catch {
+      days = [];
+    }
+    return {
+      id: plan.id,
+      startDate: plan.startDate,
+      endDate: plan.endDate,
+      days,
+      createdAt: plan.createdAt,
+    };
+  });
 }
 
 export interface ArchivedMealPlan {
