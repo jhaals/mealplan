@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -34,6 +34,16 @@ export function ShoppingList() {
   const [newItemName, setNewItemName] = useState('');
   const [activeTab, setActiveTab] = useState<'list' | 'history'>('list');
   const [lastUnchecked, setLastUnchecked] = useState<{ id: string; name: string } | null>(null);
+  const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup undo timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (undoTimeoutRef.current) {
+        clearTimeout(undoTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: { distance: 10 },
@@ -63,8 +73,14 @@ export function ShoppingList() {
     if (item && !item.checked) {
       // About to check - store for undo
       setLastUnchecked({ id: item.id, name: item.name });
-      // Clear undo after 5 seconds
-      setTimeout(() => setLastUnchecked(prev => prev?.id === item.id ? null : prev), 5000);
+      // Clear previous timeout and set new one
+      if (undoTimeoutRef.current) {
+        clearTimeout(undoTimeoutRef.current);
+      }
+      undoTimeoutRef.current = setTimeout(() => {
+        setLastUnchecked(prev => prev?.id === item.id ? null : prev);
+        undoTimeoutRef.current = null;
+      }, 5000);
     } else {
       setLastUnchecked(null);
     }
