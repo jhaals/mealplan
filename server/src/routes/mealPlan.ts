@@ -56,8 +56,11 @@ mealPlan.delete('/history/:id', async (c) => {
   try {
     await mealPlanService.deleteArchivedMealPlan(id);
     return c.body(null, 204);
-  } catch {
-    throw new AppError(404, 'Archived meal plan not found');
+  } catch (e: unknown) {
+    if (e && typeof e === 'object' && 'code' in e && e.code === 'P2025') {
+      throw new AppError(404, 'Archived meal plan not found');
+    }
+    throw e;
   }
 });
 

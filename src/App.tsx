@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, Navigate, NavLink, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import {
   DndContext,
   DragOverlay,
@@ -266,17 +266,6 @@ function MealPlanPage() {
 }
 
 function AppHeader() {
-  const location = useLocation();
-
-  const navLinkClass = (path: string) => {
-    const isActive = location.pathname === path || location.pathname.startsWith(path + '/');
-    return `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-      isActive
-        ? 'bg-gray-50 text-primary-700 border-b-2 border-primary-600'
-        : 'text-gray-500 hover:text-gray-700'
-    }`;
-  };
-
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -286,13 +275,40 @@ function AppHeader() {
       </div>
       <div className="max-w-7xl mx-auto px-4">
         <nav className="flex gap-1">
-          <NavLink to="/meals" className={navLinkClass('/meals')}>
+          <NavLink
+            to="/meals"
+            className={({ isActive }) =>
+              `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                isActive
+                  ? 'bg-gray-50 text-primary-700 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`
+            }
+          >
             Meal Plan
           </NavLink>
-          <NavLink to="/shopping" className={navLinkClass('/shopping')}>
+          <NavLink
+            to="/shopping"
+            className={({ isActive }) =>
+              `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                isActive
+                  ? 'bg-gray-50 text-primary-700 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`
+            }
+          >
             Shopping List
           </NavLink>
-          <NavLink to="/trmnl" className={navLinkClass('/trmnl')}>
+          <NavLink
+            to="/trmnl"
+            className={({ isActive }) =>
+              `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                isActive
+                  ? 'bg-gray-50 text-primary-700 border-b-2 border-primary-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`
+            }
+          >
             TRMNL
           </NavLink>
         </nav>

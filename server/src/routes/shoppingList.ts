@@ -102,8 +102,11 @@ shoppingList.delete('/history/:id', async (c) => {
   try {
     await shoppingListService.deleteArchivedShoppingList(id);
     return c.body(null, 204);
-  } catch {
-    throw new AppError(404, 'Archived shopping list not found');
+  } catch (e: unknown) {
+    if (e && typeof e === 'object' && 'code' in e && e.code === 'P2025') {
+      throw new AppError(404, 'Archived shopping list not found');
+    }
+    throw e;
   }
 });
 
