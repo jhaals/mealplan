@@ -32,7 +32,7 @@ export function AddMealForm({ currentDay, onAddMeal }: AddMealFormProps) {
 
   return (
     <Card className="p-3">
-      <h3 className="text-base font-semibold text-gray-900 mb-3">Add Meal</h3>
+      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Add Meal</h3>
       <form onSubmit={handleSubmit} className="space-y-2">
         <Input
           label="Meal Name"
@@ -44,7 +44,7 @@ export function AddMealForm({ currentDay, onAddMeal }: AddMealFormProps) {
         />
 
         {targetDayDisplay && (
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Will be added to <span className="font-medium">{targetDayDisplay.dayName}, {targetDayDisplay.dateStr}</span>
           </p>
         )}

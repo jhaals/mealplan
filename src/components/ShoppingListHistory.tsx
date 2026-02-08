@@ -46,15 +46,15 @@ export function ShoppingListHistory() {
     return (
       <div className="text-center py-8">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-600 border-t-transparent mb-2"></div>
-        <p className="text-gray-600 text-sm">Loading history...</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Loading history...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <p className="text-red-700 text-sm">{error}</p>
+      <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
       </div>
     );
   }
@@ -62,7 +62,7 @@ export function ShoppingListHistory() {
   if (history.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">No previous shopping lists yet.</p>
+        <p className="text-gray-500 dark:text-gray-400">No previous shopping lists yet.</p>
       </div>
     );
   }
@@ -84,12 +84,12 @@ export function ShoppingListHistory() {
               >
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-medium text-gray-900">{dateStr}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{dateStr}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {totalItems} {totalItems === 1 ? 'item' : 'items'} · {checkedItems} checked
                     </p>
                   </div>
-                  <span className="text-gray-400 text-lg">
+                  <span className="text-gray-400 dark:text-gray-500 text-lg">
                     {isExpanded ? '▲' : '▼'}
                   </span>
                 </div>
@@ -97,7 +97,7 @@ export function ShoppingListHistory() {
               <button
                 onClick={() => handleDelete(list.id)}
                 disabled={deletingId === list.id}
-                className="p-1.5 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50 flex-shrink-0"
+                className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors disabled:opacity-50 flex-shrink-0"
                 title="Delete archived list"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,7 +107,7 @@ export function ShoppingListHistory() {
             </div>
 
             {isExpanded && (
-              <div className="mt-3 pt-3 border-t border-gray-100 space-y-1">
+              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 space-y-1">
                 {list.items.map((item) => (
                   <div key={item.id} className="flex items-center gap-2 py-0.5">
                     <div
@@ -125,7 +125,7 @@ export function ShoppingListHistory() {
                     </div>
                     <span
                       className={`text-sm ${
-                        item.checked ? 'line-through text-gray-400' : 'text-gray-700'
+                        item.checked ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'
                       }`}
                     >
                       {item.name}

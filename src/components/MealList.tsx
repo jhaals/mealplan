@@ -11,7 +11,7 @@ export function MealList({ days, onDeleteMeal }: MealListProps) {
   if (days.length === 0) {
     return (
       <div className="text-center py-12">
-        <div className="text-gray-400 mb-4">
+        <div className="text-gray-400 dark:text-gray-500 mb-4">
           <svg
             className="w-16 h-16 mx-auto"
             fill="none"
@@ -26,8 +26,8 @@ export function MealList({ days, onDeleteMeal }: MealListProps) {
             />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-1">No meals yet</h3>
-        <p className="text-gray-600">Add your first meal to get started</p>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No meals yet</h3>
+        <p className="text-gray-600 dark:text-gray-400">Add your first meal to get started</p>
       </div>
     );
   }

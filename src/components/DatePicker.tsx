@@ -21,14 +21,14 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
 
   return (
     <Card className="p-6 max-w-md w-full">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
         Choose Your Start Date
       </h3>
       <div className="space-y-4">
         <div>
           <label
             htmlFor="start-date"
-            className="block text-sm font-medium text-gray-700 mb-2"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
           >
             Start Date
           </label>
@@ -37,7 +37,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full px-4 py-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[44px]"
+            className="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 min-h-[44px]"
           />
         </div>
         <Button onClick={handleSubmit} size="lg" className="w-full">

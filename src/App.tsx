@@ -19,6 +19,7 @@ import { MealCard } from './components/MealCard';
 import { MealPlanHistory } from './components/MealPlanHistory';
 import { ShoppingList } from './components/ShoppingList';
 import { TRMNLPage } from './components/TRMNLPage';
+import { ThemeToggle } from './components/ThemeToggle';
 import type { Meal } from './types';
 
 function MealPlanPage() {
@@ -99,7 +100,7 @@ function MealPlanPage() {
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-600 border-t-transparent mb-4"></div>
-          <p className="text-gray-600">Loading meal plan...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading meal plan...</p>
         </div>
       </div>
     );
@@ -109,9 +110,9 @@ function MealPlanPage() {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
         <div className="text-center max-w-md px-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-4">
-            <h2 className="text-xl font-semibold text-red-900 mb-2">Error Loading Meal Plan</h2>
-            <p className="text-red-700">{error}</p>
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-4">
+            <h2 className="text-xl font-semibold text-red-900 dark:text-red-200 mb-2">Error Loading Meal Plan</h2>
+            <p className="text-red-700 dark:text-red-300">{error}</p>
           </div>
           <button
             onClick={retry}
@@ -129,7 +130,7 @@ function MealPlanPage() {
       {/* Saving indicator */}
       {isSaving && (
         <div className="max-w-7xl mx-auto px-4 pt-2">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent"></div>
             <span>Saving...</span>
           </div>
@@ -139,14 +140,14 @@ function MealPlanPage() {
       {/* Error banner for non-critical errors */}
       {error && state.startDate && (
         <div className="max-w-7xl mx-auto px-4 pt-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start justify-between">
+          <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-red-900 font-medium">Error</p>
-              <p className="text-red-700 text-sm">{error}</p>
+              <p className="text-red-900 dark:text-red-200 font-medium">Error</p>
+              <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
             </div>
             <button
               onClick={retry}
-              className="ml-4 text-sm text-red-700 hover:text-red-900 font-medium"
+              className="ml-4 text-sm text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100 font-medium"
             >
               Retry
             </button>
@@ -158,10 +159,10 @@ function MealPlanPage() {
         {!state.startDate ? (
           <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                 Welcome to MealPlan
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Start planning your meals by selecting a start date
               </p>
             </div>
@@ -186,14 +187,14 @@ function MealPlanPage() {
           <>
             {/* Tabs + Reset */}
             <div className="max-w-3xl mx-auto px-4 pt-4">
-              <div className="flex items-center justify-between border-b border-gray-200">
+              <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
                 <div className="flex">
                   <button
                     onClick={() => setActiveTab('plan')}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                       activeTab === 'plan'
-                        ? 'border-primary-600 text-primary-700'
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                        ? 'border-primary-600 text-primary-700 dark:text-primary-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                     }`}
                   >
                     Current Plan
@@ -202,8 +203,8 @@ function MealPlanPage() {
                     onClick={() => setActiveTab('history')}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
                       activeTab === 'history'
-                        ? 'border-primary-600 text-primary-700'
-                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                        ? 'border-primary-600 text-primary-700 dark:text-primary-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                     }`}
                   >
                     History
@@ -212,7 +213,7 @@ function MealPlanPage() {
                 <button
                   onClick={reset}
                   disabled={isSaving}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-1"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-1"
                 >
                   Start New Week
                 </button>
@@ -267,51 +268,49 @@ function MealPlanPage() {
 
 function AppHeader() {
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-primary-700">MealPlan</h1>
-        </div>
-      </div>
+    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-4">
-        <nav className="flex gap-1">
-          <NavLink
-            to="/meals"
-            className={({ isActive }) =>
-              `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-                isActive
-                  ? 'bg-gray-50 text-primary-700 border-b-2 border-primary-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`
-            }
-          >
-            Meal Plan
-          </NavLink>
-          <NavLink
-            to="/shopping"
-            className={({ isActive }) =>
-              `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-                isActive
-                  ? 'bg-gray-50 text-primary-700 border-b-2 border-primary-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`
-            }
-          >
-            Shopping List
-          </NavLink>
-          <NavLink
-            to="/trmnl"
-            className={({ isActive }) =>
-              `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
-                isActive
-                  ? 'bg-gray-50 text-primary-700 border-b-2 border-primary-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`
-            }
-          >
-            TRMNL
-          </NavLink>
-        </nav>
+        <div className="flex items-center justify-between">
+          <nav className="flex gap-1">
+            <NavLink
+              to="/meals"
+              className={({ isActive }) =>
+                `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                  isActive
+                    ? 'bg-gray-50 dark:bg-gray-700 text-primary-700 dark:text-primary-400 border-b-2 border-primary-600'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`
+              }
+            >
+              Meal Plan
+            </NavLink>
+            <NavLink
+              to="/shopping"
+              className={({ isActive }) =>
+                `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                  isActive
+                    ? 'bg-gray-50 dark:bg-gray-700 text-primary-700 dark:text-primary-400 border-b-2 border-primary-600'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`
+              }
+            >
+              Shopping List
+            </NavLink>
+            <NavLink
+              to="/trmnl"
+              className={({ isActive }) =>
+                `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                  isActive
+                    ? 'bg-gray-50 dark:bg-gray-700 text-primary-700 dark:text-primary-400 border-b-2 border-primary-600'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`
+              }
+            >
+              TRMNL
+            </NavLink>
+          </nav>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
@@ -319,7 +318,7 @@ function AppHeader() {
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <AppHeader />
       <Routes>
         <Route path="/meals" element={<MealPlanPage />} />
