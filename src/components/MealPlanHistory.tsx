@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Card } from './ui/Card';
 import { formatDayDisplay } from '../utils/dateHelpers';
-import { getMealPlanHistory, type ArchivedMealPlan } from '../utils/api';
+import { getMealPlanHistory, deleteArchivedMealPlan, type ArchivedMealPlan } from '../utils/api';
 
 export function MealPlanHistory() {
   const [history, setHistory] = useState<ArchivedMealPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -25,6 +26,20 @@ export function MealPlanHistory() {
 
     loadHistory();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Delete this archived meal plan?')) return;
+    try {
+      setDeletingId(id);
+      await deleteArchivedMealPlan(id);
+      setHistory((prev) => prev.filter((p) => p.id !== id));
+      if (expandedId === id) setExpandedId(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -61,24 +76,36 @@ export function MealPlanHistory() {
 
         return (
           <Card key={plan.id} className="p-3">
-            <button
-              onClick={() => setExpandedId(isExpanded ? null : plan.id)}
-              className="w-full text-left"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-medium text-gray-900">
-                    {startDisplay.dateStr} – {endDisplay.dateStr}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {plan.days.length} days · {totalMeals} meals
-                  </p>
+            <div className="flex items-start gap-2">
+              <button
+                onClick={() => setExpandedId(isExpanded ? null : plan.id)}
+                className="flex-1 text-left"
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      {startDisplay.dateStr} – {endDisplay.dateStr}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {plan.days.length} days · {totalMeals} meals
+                    </p>
+                  </div>
+                  <span className="text-gray-400 text-lg">
+                    {isExpanded ? '▲' : '▼'}
+                  </span>
                 </div>
-                <span className="text-gray-400 text-lg">
-                  {isExpanded ? '▲' : '▼'}
-                </span>
-              </div>
-            </button>
+              </button>
+              <button
+                onClick={() => handleDelete(plan.id)}
+                disabled={deletingId === plan.id}
+                className="p-1.5 text-gray-400 hover:text-red-600 transition-colors disabled:opacity-50 flex-shrink-0"
+                title="Delete archived plan"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
 
             {isExpanded && (
               <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">

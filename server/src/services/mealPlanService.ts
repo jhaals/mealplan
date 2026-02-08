@@ -401,3 +401,12 @@ export interface ArchivedMealPlan {
   days: DayPlan[];
   createdAt: Date;
 }
+
+/**
+ * Delete an archived meal plan by ID
+ */
+export async function deleteArchivedMealPlan(id: string): Promise<void> {
+  await prisma.archivedMealPlan.delete({
+    where: { id },
+  });
+}

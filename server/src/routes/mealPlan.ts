@@ -48,6 +48,20 @@ mealPlan.get('/history', async (c) => {
 });
 
 /**
+ * DELETE /api/meal-plan/history/:id
+ * Delete an archived meal plan
+ */
+mealPlan.delete('/history/:id', async (c) => {
+  const id = c.req.param('id');
+  try {
+    await mealPlanService.deleteArchivedMealPlan(id);
+    return c.body(null, 204);
+  } catch {
+    throw new AppError(404, 'Archived meal plan not found');
+  }
+});
+
+/**
  * POST /api/meals
  * Add new meal
  */

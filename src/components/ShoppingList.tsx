@@ -141,6 +141,7 @@ export function ShoppingList() {
   }
 
   return (
+    <main className="max-w-7xl mx-auto">
     <div className="max-w-3xl mx-auto">
       {/* Tabs */}
       <div className="px-4 pt-4">
@@ -281,5 +282,6 @@ export function ShoppingList() {
         </div>
       )}
     </div>
+    </main>
   );
 }

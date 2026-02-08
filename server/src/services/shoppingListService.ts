@@ -191,3 +191,12 @@ export async function getShoppingListHistory(): Promise<ArchivedShoppingList[]> 
     };
   });
 }
+
+/**
+ * Delete an archived shopping list by ID
+ */
+export async function deleteArchivedShoppingList(id: string): Promise<void> {
+  await prisma.archivedShoppingList.delete({
+    where: { id },
+  });
+}
