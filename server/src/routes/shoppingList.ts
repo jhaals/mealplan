@@ -93,4 +93,21 @@ shoppingList.get('/history', async (c) => {
   return c.json(history);
 });
 
+/**
+ * DELETE /api/shopping-list/history/:id
+ * Delete an archived shopping list
+ */
+shoppingList.delete('/history/:id', async (c) => {
+  const id = c.req.param('id');
+  try {
+    await shoppingListService.deleteArchivedShoppingList(id);
+    return c.body(null, 204);
+  } catch (e: unknown) {
+    if (e && typeof e === 'object' && 'code' in e && e.code === 'P2025') {
+      throw new AppError(404, 'Archived shopping list not found');
+    }
+    throw e;
+  }
+});
+
 export default shoppingList;

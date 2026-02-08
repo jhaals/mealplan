@@ -121,6 +121,15 @@ export async function getMealPlanHistory(): Promise<ArchivedMealPlan[]> {
   return fetchJSON<ArchivedMealPlan[]>('/api/meal-plan/history');
 }
 
+/**
+ * Delete an archived meal plan
+ */
+export async function deleteArchivedMealPlan(id: string): Promise<void> {
+  return fetchJSON<void>(`/api/meal-plan/history/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 export interface ArchivedMealPlan {
   id: string;
   startDate: string;
@@ -194,6 +203,15 @@ export async function getShoppingListHistory(): Promise<ArchivedShoppingList[]> 
   return fetchJSON<ArchivedShoppingList[]>('/api/shopping-list/history');
 }
 
+/**
+ * Delete an archived shopping list
+ */
+export async function deleteArchivedShoppingList(id: string): Promise<void> {
+  return fetchJSON<void>(`/api/shopping-list/history/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 // ========== TRMNL API ==========
 
 export interface TRMNLPushResponse {
@@ -222,4 +240,17 @@ export async function pushToTRMNL(): Promise<TRMNLPushResponse> {
  */
 export async function getTRMNLConfig(): Promise<TRMNLConfig> {
   return fetchJSON<TRMNLConfig>('/api/trmnl/config');
+}
+
+export interface TRMNLStatus {
+  lastPushAt: string | null;
+  lastPushError: string | null;
+  hasPushed: boolean;
+}
+
+/**
+ * Get TRMNL push status
+ */
+export async function getTRMNLStatus(): Promise<TRMNLStatus> {
+  return fetchJSON<TRMNLStatus>('/api/trmnl/status');
 }
