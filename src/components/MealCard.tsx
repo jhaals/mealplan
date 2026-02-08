@@ -50,7 +50,7 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
     <Card
       ref={setNodeRef}
       style={style}
-      className={`p-3 mb-2 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50' : ''} ${isOver ? 'ring-2 ring-primary-500 bg-primary-50' : ''}`}
+      className={`p-3 mb-2 cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-50' : ''} ${isOver ? 'ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/30' : ''}`}
       {...listeners}
       {...attributes}
     >
@@ -58,7 +58,7 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
         {/* Drag Handle */}
         <div className="flex-shrink-0 touch-none">
           <svg
-            className="w-5 h-5 text-gray-400"
+            className="w-5 h-5 text-gray-400 dark:text-gray-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -74,20 +74,20 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
 
         {/* Day Info */}
         <div className="flex-shrink-0 text-sm w-24">
-          <div className="font-semibold text-gray-900">{dayName}</div>
-          <div className="text-gray-600">{dateStr}</div>
+          <div className="font-semibold text-gray-900 dark:text-gray-100">{dayName}</div>
+          <div className="text-gray-600 dark:text-gray-400">{dateStr}</div>
         </div>
 
         {/* Meal Content */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900 text-base">{meal.name}</h4>
+          <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-base">{meal.name}</h4>
         </div>
 
         {/* Delete Button */}
         <button
           onClick={handleDelete}
           onPointerDown={(e) => e.stopPropagation()}
-          className="flex-shrink-0 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+          className="flex-shrink-0 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Delete meal"
         >
           <svg
