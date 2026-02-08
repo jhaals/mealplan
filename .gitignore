@@ -37,3 +37,10 @@ test-data
 
 # Package lock (project uses bun)
 package-lock.json
+
+# Playwright
+test-results/
+playwright-report/
+server/prisma/test.db
+server/prisma/test.db-journal
+server/prisma/test.db-wal
