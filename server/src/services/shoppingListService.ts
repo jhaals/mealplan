@@ -200,3 +200,46 @@ export async function deleteArchivedShoppingList(id: string): Promise<void> {
     where: { id },
   });
 }
+
+/**
+ * Sort shopping list items using AI
+ */
+export async function sortItemsWithAI(): Promise<void> {
+  const { sortShoppingItems } = await import('./geminiService');
+
+  // Get all items
+  const items = await prisma.shoppingListItem.findMany({
+    where: { shoppingListId: 'singleton' },
+    orderBy: { sortOrder: 'asc' },
+  });
+
+  // Separate checked and unchecked items
+  const uncheckedItems = items.filter(item => !item.checked);
+  const checkedItems = items.filter(item => item.checked);
+
+  // Only sort if we have at least 2 unchecked items
+  if (uncheckedItems.length < 2) {
+    return;
+  }
+
+  // Extract names for AI sorting
+  const uncheckedNames = uncheckedItems.map(item => item.name);
+
+  // Get sorted names from AI
+  const sortedNames = await sortShoppingItems(uncheckedNames);
+
+  // Map sorted names back to item IDs
+  const nameToItem = new Map(uncheckedItems.map(item => [item.name, item]));
+  const sortedUncheckedIds = sortedNames
+    .map(name => nameToItem.get(name)?.id)
+    .filter((id): id is string => id !== undefined);
+
+  // Combine: sorted unchecked items first, then checked items
+  const allItemIds = [
+    ...sortedUncheckedIds,
+    ...checkedItems.map(item => item.id),
+  ];
+
+  // Reorder using existing function
+  await reorderItems(allItemIds);
+}

@@ -110,4 +110,13 @@ shoppingList.delete('/history/:id', async (c) => {
   }
 });
 
+/**
+ * POST /api/shopping-list/sort
+ * Sort shopping list items using AI
+ */
+shoppingList.post('/sort', async (c) => {
+  await shoppingListService.sortItemsWithAI();
+  return c.json({ success: true });
+});
+
 export default shoppingList;

@@ -128,6 +128,21 @@ export function useShoppingList() {
     }
   }, []);
 
+  const sortItems = useCallback(async () => {
+    try {
+      setIsSaving(true);
+      setError(null);
+      await api.sortShoppingItems();
+      await refreshState();
+    } catch (err) {
+      console.error('Failed to sort items:', err);
+      setError(err instanceof Error ? err.message : 'Failed to sort items');
+      throw err;
+    } finally {
+      setIsSaving(false);
+    }
+  }, [refreshState]);
+
   const retry = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -150,6 +165,7 @@ export function useShoppingList() {
     toggleItem,
     deleteItem,
     reorderItems,
+    sortItems,
     archiveAndCreateNew,
     retry,
   };

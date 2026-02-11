@@ -212,6 +212,15 @@ export async function deleteArchivedShoppingList(id: string): Promise<void> {
   });
 }
 
+/**
+ * Sort shopping list items using AI
+ */
+export async function sortShoppingItems(): Promise<void> {
+  return fetchJSON<void>('/api/shopping-list/sort', {
+    method: 'POST',
+  });
+}
+
 // ========== TRMNL API ==========
 
 export interface TRMNLPushResponse {

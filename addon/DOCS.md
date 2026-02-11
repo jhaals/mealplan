@@ -24,6 +24,7 @@ MealPlan is a mobile-first meal planning application with an intuitive drag-and-
 ```yaml
 port: 3001                    # Web interface port (optional)
 trmnl_webhook_url: ""         # TRMNL webhook URL (optional)
+google_api_key: ""            # Google AI Studio API key (optional)
 ```
 
 ### Option: `port`
@@ -43,6 +44,18 @@ To enable TRMNL integration:
 4. Restart the add-on
 
 When configured, your meal plan will be automatically pushed to your TRMNL device whenever it changes. You can also manually trigger a push from the web interface.
+
+### Option: `google_api_key`
+
+Google AI Studio API key for AI-powered shopping list sorting (optional).
+
+To enable shopping list AI sorting:
+1. Visit https://aistudio.google.com/apikey
+2. Create a new API key (free tier available)
+3. Add the API key to this configuration option
+4. Restart the add-on
+
+When configured, the shopping list "Sort" button will organize your items according to Swedish grocery store layout (fruits → dairy → cleaning supplies, etc.). This uses Google's Gemini 2.5 Flash-Lite model, which has generous free tier limits perfect for personal use.
 
 ## Usage
 

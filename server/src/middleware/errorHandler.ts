@@ -21,7 +21,7 @@ export const errorHandler = (err: Error, c: Context) => {
           statusCode: err.statusCode,
         },
       },
-      err.statusCode
+      err.statusCode as any
     );
   }
 
