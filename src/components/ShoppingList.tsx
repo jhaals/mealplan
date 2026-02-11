@@ -16,6 +16,8 @@ import {
 import { useShoppingList } from '../hooks/useShoppingList';
 import { ShoppingListItem } from './ShoppingListItem';
 import { ShoppingListHistory } from './ShoppingListHistory';
+import { SortPromptEditor } from './SortPromptEditor';
+import * as api from '../utils/api';
 
 export function ShoppingList() {
   const {
@@ -29,13 +31,17 @@ export function ShoppingList() {
     reorderItems,
     sortItems,
     archiveAndCreateNew,
+    updateConfig,
     retry,
   } = useShoppingList();
 
   const [newItemName, setNewItemName] = useState('');
-  const [activeTab, setActiveTab] = useState<'list' | 'history'>('list');
+  const [activeTab, setActiveTab] = useState<'list' | 'history' | 'prompt'>('list');
   const [lastUnchecked, setLastUnchecked] = useState<{ id: string; name: string } | null>(null);
   const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [sortingPrompt, setSortingPrompt] = useState<string>('');
+  const [defaultPrompt, setDefaultPrompt] = useState<string>('');
+  const [isLoadingPrompt, setIsLoadingPrompt] = useState(false);
 
   // Cleanup undo timeout on unmount
   useEffect(() => {
@@ -45,6 +51,30 @@ export function ShoppingList() {
       }
     };
   }, []);
+
+  // Load sorting prompt when prompt tab is active
+  useEffect(() => {
+    const loadPrompts = async () => {
+      try {
+        setIsLoadingPrompt(true);
+        const [config, defaultData] = await Promise.all([
+          api.getShoppingListConfig(),
+          api.getDefaultSortingPrompt()
+        ]);
+
+        setSortingPrompt(config.sortingPrompt || '');
+        setDefaultPrompt(defaultData.defaultPrompt);
+      } catch (err) {
+        console.error('Failed to load prompts:', err);
+      } finally {
+        setIsLoadingPrompt(false);
+      }
+    };
+
+    if (activeTab === 'prompt') {
+      loadPrompts();
+    }
+  }, [activeTab]);
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: { distance: 10 },
@@ -166,6 +196,16 @@ export function ShoppingList() {
           >
             History
           </button>
+          <button
+            onClick={() => setActiveTab('prompt')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === 'prompt'
+                ? 'border-primary-600 text-primary-700 dark:text-primary-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            }`}
+          >
+            Sort Prompt
+          </button>
         </div>
       </div>
 
@@ -285,9 +325,25 @@ export function ShoppingList() {
             </div>
           )}
         </div>
-      ) : (
+      ) : activeTab === 'history' ? (
         <div className="p-4">
           <ShoppingListHistory />
+        </div>
+      ) : (
+        <div className="p-4">
+          <SortPromptEditor
+            currentPrompt={sortingPrompt}
+            defaultPrompt={defaultPrompt}
+            isLoading={isLoadingPrompt}
+            isSaving={isSaving}
+            onSave={async (prompt) => {
+              await updateConfig(prompt || null);
+              setSortingPrompt(prompt);
+            }}
+            onReset={() => {
+              setSortingPrompt('');
+            }}
+          />
         </div>
       )}
     </div>

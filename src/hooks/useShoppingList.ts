@@ -143,6 +143,20 @@ export function useShoppingList() {
     }
   }, [refreshState]);
 
+  const updateConfig = useCallback(async (sortingPrompt: string | null) => {
+    try {
+      setIsSaving(true);
+      setError(null);
+      await api.updateShoppingListConfig(sortingPrompt);
+    } catch (err) {
+      console.error('Failed to update config:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update config');
+      throw err;
+    } finally {
+      setIsSaving(false);
+    }
+  }, []);
+
   const retry = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -167,6 +181,7 @@ export function useShoppingList() {
     reorderItems,
     sortItems,
     archiveAndCreateNew,
+    updateConfig,
     retry,
   };
 }

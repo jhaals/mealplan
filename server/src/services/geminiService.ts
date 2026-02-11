@@ -1,41 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 /**
- * Get Gemini configuration and validate API key
+ * Default Swedish grocery store sorting prompt
  */
-export function getGeminiConfig() {
-  const apiKey = process.env.GOOGLE_API_KEY;
-
-  if (!apiKey) {
-    throw new Error(
-      "GOOGLE_API_KEY is not configured in environment variables",
-    );
-  }
-
-  return new GoogleGenerativeAI(apiKey);
-}
-
-/**
- * Sort shopping items using AI based on store walking path
- * Returns sorted array of item names
- */
-export async function sortShoppingItems(items: string[]): Promise<string[]> {
-  if (items.length <= 1) {
-    return items;
-  }
-
-  try {
-    const genAI = getGeminiConfig();
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-lite",
-      generationConfig: {
-        temperature: 0,
-        responseMimeType: "application/json",
-      },
-    });
-
-    // Gemini doesn't have separate system role - combine prompts
-    const prompt = `Du är en hjälpsam assistent som sorterar svenska matvaror enligt en butiks gångstig.
+export const DEFAULT_SORTING_PROMPT = `Du är en hjälpsam assistent som sorterar svenska matvaror enligt en butiks gångstig.
 
 Sortera följande matvaror enligt gångstig i en svensk matbutik. Returnera endast en JSON-array med de sorterade namnen i exakt samma format som de gavs.
 
@@ -60,7 +28,48 @@ Gångstig genom butiken (i ordning):
 18. Renhållning (t.ex. diskmedel, tvättmedel, rengöring)
 19. Godis och glass (t.ex. choklad, lösgodis)
 
-Om en vara inte passar perfekt i en kategori, gissa vart den hör hemma baserat på liknande varor.
+Om en vara inte passar perfekt i en kategori, gissa vart den hör hemma baserat på liknande varor.`;
+
+/**
+ * Get Gemini configuration and validate API key
+ */
+export function getGeminiConfig() {
+  const apiKey = process.env.GOOGLE_API_KEY;
+
+  if (!apiKey) {
+    throw new Error(
+      "GOOGLE_API_KEY is not configured in environment variables",
+    );
+  }
+
+  return new GoogleGenerativeAI(apiKey);
+}
+
+/**
+ * Sort shopping items using AI based on store walking path
+ * Returns sorted array of item names
+ */
+export async function sortShoppingItems(
+  items: string[],
+  customPrompt?: string
+): Promise<string[]> {
+  if (items.length <= 1) {
+    return items;
+  }
+
+  try {
+    const genAI = getGeminiConfig();
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash-lite",
+      generationConfig: {
+        temperature: 0,
+        responseMimeType: "application/json",
+      },
+    });
+
+    // Use custom prompt if provided, otherwise default
+    const basePrompt = customPrompt || DEFAULT_SORTING_PROMPT;
+    const prompt = `${basePrompt}
 
 Varor att sortera:
 ${items.join("\n")}

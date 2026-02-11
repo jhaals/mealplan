@@ -119,4 +119,39 @@ shoppingList.post('/sort', async (c) => {
   return c.json({ success: true });
 });
 
+/**
+ * GET /api/shopping-list/config
+ * Get shopping list configuration (custom sorting prompt)
+ */
+shoppingList.get('/config', async (c) => {
+  const config = await shoppingListService.getConfig();
+  return c.json(config);
+});
+
+/**
+ * PUT /api/shopping-list/config
+ * Update shopping list configuration (custom sorting prompt)
+ */
+shoppingList.put('/config', async (c) => {
+  const body = await c.req.json();
+  const { sortingPrompt } = body;
+
+  // Validate: must be null or non-empty string
+  if (sortingPrompt !== null && (typeof sortingPrompt !== 'string' || sortingPrompt.trim() === '')) {
+    return c.json({ error: 'sortingPrompt must be null or a non-empty string' }, 400);
+  }
+
+  await shoppingListService.updateConfig(sortingPrompt);
+  return c.json({ success: true });
+});
+
+/**
+ * GET /api/shopping-list/config/default-prompt
+ * Get the default sorting prompt (for reference in UI)
+ */
+shoppingList.get('/config/default-prompt', async (c) => {
+  const { DEFAULT_SORTING_PROMPT } = await import('../services/geminiService');
+  return c.json({ defaultPrompt: DEFAULT_SORTING_PROMPT });
+});
+
 export default shoppingList;

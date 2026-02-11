@@ -13,6 +13,7 @@ The database has exactly ONE MealPlan record with id "singleton". All operations
 - **On fresh setup**: Run `bun run db:seed` to create the singleton record
 - **All queries**: Use `{ id: 'singleton' }` when querying MealPlan
 - **Service layer**: All functions in `server/src/services/mealPlanService.ts` operate on the singleton
+- **Global settings**: The MealPlan singleton also stores app-wide settings (TRMNL config, shopping list sorting prompt) that persist across shopping list archives and meal plan resets
 
 ### State Management Pattern
 The frontend uses a **server-as-source-of-truth** pattern:

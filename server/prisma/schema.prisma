@@ -23,6 +23,9 @@ model MealPlan {
   lastPushAt    DateTime? // Timestamp of last successful push
   lastPushError String?   // Last error message if push failed
 
+  // Global app settings
+  sortingPrompt String?   // Custom AI sorting prompt for shopping list (null = use default)
+
   days          DayPlan[]
 }
 

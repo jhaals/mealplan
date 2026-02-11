@@ -221,6 +221,30 @@ export async function sortShoppingItems(): Promise<void> {
   });
 }
 
+/**
+ * Get shopping list configuration
+ */
+export async function getShoppingListConfig(): Promise<{ sortingPrompt: string | null }> {
+  return fetchJSON<{ sortingPrompt: string | null }>('/api/shopping-list/config');
+}
+
+/**
+ * Update shopping list configuration
+ */
+export async function updateShoppingListConfig(sortingPrompt: string | null): Promise<void> {
+  return fetchJSON<void>('/api/shopping-list/config', {
+    method: 'PUT',
+    body: JSON.stringify({ sortingPrompt }),
+  });
+}
+
+/**
+ * Get default sorting prompt
+ */
+export async function getDefaultSortingPrompt(): Promise<{ defaultPrompt: string }> {
+  return fetchJSON<{ defaultPrompt: string }>('/api/shopping-list/config/default-prompt');
+}
+
 // ========== TRMNL API ==========
 
 export interface TRMNLPushResponse {

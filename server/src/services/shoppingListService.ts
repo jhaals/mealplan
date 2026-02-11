@@ -202,10 +202,56 @@ export async function deleteArchivedShoppingList(id: string): Promise<void> {
 }
 
 /**
+ * Get shopping list configuration (sorting prompt from global settings)
+ */
+export async function getConfig(): Promise<{ sortingPrompt: string | null }> {
+  // Get sorting prompt from MealPlan singleton (global settings)
+  let mealPlan = await prisma.mealPlan.findUnique({
+    where: { id: 'singleton' },
+  });
+
+  if (!mealPlan) {
+    // Create if doesn't exist
+    mealPlan = await prisma.mealPlan.create({
+      data: { id: 'singleton' },
+    });
+  }
+
+  return {
+    sortingPrompt: mealPlan.sortingPrompt,
+  };
+}
+
+/**
+ * Update shopping list configuration (sorting prompt in global settings)
+ */
+export async function updateConfig(sortingPrompt: string | null): Promise<void> {
+  // Ensure MealPlan singleton exists
+  let mealPlan = await prisma.mealPlan.findUnique({
+    where: { id: 'singleton' },
+  });
+
+  if (!mealPlan) {
+    mealPlan = await prisma.mealPlan.create({
+      data: { id: 'singleton' },
+    });
+  }
+
+  // Update sorting prompt on MealPlan (global settings)
+  await prisma.mealPlan.update({
+    where: { id: 'singleton' },
+    data: { sortingPrompt },
+  });
+}
+
+/**
  * Sort shopping list items using AI
  */
 export async function sortItemsWithAI(): Promise<void> {
   const { sortShoppingItems } = await import('./geminiService');
+
+  // Get custom prompt from config
+  const config = await getConfig();
 
   // Get all items
   const items = await prisma.shoppingListItem.findMany({
@@ -225,8 +271,11 @@ export async function sortItemsWithAI(): Promise<void> {
   // Extract names for AI sorting
   const uncheckedNames = uncheckedItems.map(item => item.name);
 
-  // Get sorted names from AI
-  const sortedNames = await sortShoppingItems(uncheckedNames);
+  // Get sorted names from AI with custom prompt
+  const sortedNames = await sortShoppingItems(
+    uncheckedNames,
+    config.sortingPrompt ?? undefined
+  );
 
   // Map sorted names back to item IDs
   const nameToItem = new Map(uncheckedItems.map(item => [item.name, item]));
