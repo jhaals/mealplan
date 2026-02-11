@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface SortPromptEditorProps {
   currentPrompt: string;
@@ -17,6 +18,7 @@ export function SortPromptEditor({
   onSave,
   onReset,
 }: SortPromptEditorProps) {
+  const { t } = useTranslation();
   const [editedPrompt, setEditedPrompt] = useState(currentPrompt);
   const [showDefault, setShowDefault] = useState(false);
 
@@ -46,10 +48,10 @@ export function SortPromptEditor({
       {/* Header */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          AI Sorting Prompt
+          {t('sortPrompt.title')}
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Customize how Gemini AI sorts your shopping list items. Leave empty to use the default Swedish store layout.
+          {t('sortPrompt.description')}
         </p>
       </div>
 
@@ -57,10 +59,10 @@ export function SortPromptEditor({
       <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Current Prompt:
+            {t('sortPrompt.currentPrompt')}
           </span>
           <span className="text-sm px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-            {isCustom ? 'Custom' : 'Default (Swedish store layout)'}
+            {isCustom ? t('sortPrompt.customLabel') : t('sortPrompt.defaultLabel')}
           </span>
         </div>
       </div>
@@ -68,12 +70,12 @@ export function SortPromptEditor({
       {/* Editor */}
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Custom Sorting Instructions
+          {t('sortPrompt.customInstructions')}
         </label>
         <textarea
           value={editedPrompt}
           onChange={(e) => setEditedPrompt(e.target.value)}
-          placeholder="Enter custom sorting instructions for Gemini AI, or leave empty to use default..."
+          placeholder={t('sortPrompt.placeholder')}
           rows={14}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm font-mono focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-vertical"
         />
@@ -86,20 +88,20 @@ export function SortPromptEditor({
           disabled={isSaving || !hasChanges}
           className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSaving ? 'Saving...' : 'Save Prompt'}
+          {isSaving ? t('buttons.saving') : t('sortPrompt.savePrompt')}
         </button>
         <button
           onClick={handleReset}
           disabled={isSaving || !isCustom}
           className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Reset to Default
+          {t('sortPrompt.resetToDefault')}
         </button>
         <button
           onClick={() => setShowDefault(!showDefault)}
           className="px-4 py-2 text-primary-600 dark:text-primary-400 hover:underline text-sm font-medium"
         >
-          {showDefault ? 'Hide' : 'Show'} Default Prompt
+          {showDefault ? t('sortPrompt.hide') : t('sortPrompt.show')} {t('sortPrompt.showDefaultPrompt')}
         </button>
       </div>
 
@@ -107,7 +109,7 @@ export function SortPromptEditor({
       {showDefault && defaultPrompt && (
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
           <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Default Prompt (Swedish Store Layout)
+            {t('sortPrompt.defaultPrompt')}
           </h4>
           <pre className="text-xs text-gray-600 dark:text-gray-400 whitespace-pre-wrap font-mono overflow-x-auto max-h-96 overflow-y-auto">
             {defaultPrompt}
@@ -116,7 +118,7 @@ export function SortPromptEditor({
             onClick={() => setEditedPrompt(defaultPrompt)}
             className="mt-3 text-sm text-primary-600 dark:text-primary-400 hover:underline"
           >
-            Copy to Editor
+            {t('sortPrompt.copyToEditor')}
           </button>
         </div>
       )}

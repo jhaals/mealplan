@@ -22,8 +22,10 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "date-fns": "^4.1.0",
+    "i18next": "^25.8.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-i18next": "^16.5.4",
     "react-router-dom": "^7.13.0"
   },
   "devDependencies": {

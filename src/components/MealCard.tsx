@@ -1,4 +1,5 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
+import { useTranslation } from 'react-i18next';
 import { Card } from './ui/Card';
 import { formatDayDisplay } from '../utils/dateHelpers';
 import type { Meal } from '../types';
@@ -10,6 +11,7 @@ interface MealCardProps {
 }
 
 export function MealCard({ meal, day, onDelete }: MealCardProps) {
+  const { t } = useTranslation();
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({
     id: meal.id,
     data: {
@@ -88,7 +90,7 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
           onClick={handleDelete}
           onPointerDown={(e) => e.stopPropagation()}
           className="flex-shrink-0 p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 rounded transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-w-[44px] min-h-[44px] flex items-center justify-center"
-          aria-label="Delete meal"
+          aria-label={t('aria.deleteMeal')}
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

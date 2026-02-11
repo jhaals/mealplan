@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { MealCard } from './MealCard';
 import type { DayPlan } from '../types';
 
@@ -8,6 +9,8 @@ interface MealListProps {
 }
 
 export function MealList({ days, onDeleteMeal }: MealListProps) {
+  const { t } = useTranslation();
+
   if (days.length === 0) {
     return (
       <div className="text-center py-12">
@@ -26,8 +29,8 @@ export function MealList({ days, onDeleteMeal }: MealListProps) {
             />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">No meals yet</h3>
-        <p className="text-gray-600 dark:text-gray-400">Add your first meal to get started</p>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">{t('messages.emptyMealListTitle')}</h3>
+        <p className="text-gray-600 dark:text-gray-400">{t('messages.emptyMealListDescription')}</p>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   DndContext,
   closestCenter,
@@ -20,6 +21,7 @@ import { SortPromptEditor } from './SortPromptEditor';
 import * as api from '../utils/api';
 
 export function ShoppingList() {
+  const { t } = useTranslation();
   const {
     state,
     isLoading,
@@ -146,7 +148,7 @@ export function ShoppingList() {
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-600 border-t-transparent mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading shopping list...</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('messages.loadingShoppingList')}</p>
         </div>
       </div>
     );
@@ -157,14 +159,14 @@ export function ShoppingList() {
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center max-w-md px-4">
           <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-4">
-            <h2 className="text-xl font-semibold text-red-900 dark:text-red-200 mb-2">Error</h2>
+            <h2 className="text-xl font-semibold text-red-900 dark:text-red-200 mb-2">{t('headings.error')}</h2>
             <p className="text-red-700 dark:text-red-300">{error}</p>
           </div>
           <button
             onClick={retry}
             className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
           >
-            Retry
+            {t('buttons.retry')}
           </button>
         </div>
       </div>
@@ -184,7 +186,7 @@ export function ShoppingList() {
                 : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
-            Current List
+            {t('tabs.currentList')}
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -194,7 +196,7 @@ export function ShoppingList() {
                 : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
-            History
+            {t('tabs.history')}
           </button>
           <button
             onClick={() => setActiveTab('prompt')}
@@ -204,7 +206,7 @@ export function ShoppingList() {
                 : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
             }`}
           >
-            Sort Prompt
+            {t('tabs.sortPrompt')}
           </button>
         </div>
       </div>
@@ -216,7 +218,7 @@ export function ShoppingList() {
             <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4 flex items-start justify-between">
               <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
               <button onClick={retry} className="ml-4 text-sm text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100 font-medium">
-                Retry
+                {t('buttons.retry')}
               </button>
             </div>
           )}
@@ -225,7 +227,7 @@ export function ShoppingList() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
             {/* Card header */}
             <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
-              <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">Shopping List</h2>
+              <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('headings.shoppingList')}</h2>
               <div className="flex items-center gap-2">
                 {isSaving && (
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent"></div>
@@ -236,7 +238,7 @@ export function ShoppingList() {
                     disabled={isSaving}
                     className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                   >
-                    Sort
+                    {t('buttons.sort')}
                   </button>
                 )}
                 {state.items.length > 0 && (
@@ -245,7 +247,7 @@ export function ShoppingList() {
                     disabled={isSaving}
                     className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                   >
-                    New List
+                    {t('buttons.newList')}
                   </button>
                 )}
               </div>
@@ -259,7 +261,7 @@ export function ShoppingList() {
                   type="text"
                   value={newItemName}
                   onChange={(e) => setNewItemName(e.target.value)}
-                  placeholder="Add item..."
+                  placeholder={t('forms.addItemPlaceholder')}
                   className="flex-1 bg-transparent border-none outline-none text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                 />
               </div>
@@ -288,7 +290,7 @@ export function ShoppingList() {
               <div>
                 <div className="px-2 py-0.5 bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600">
                   <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    {checkedItems.length} checked {checkedItems.length === 1 ? 'item' : 'items'}
+                    {t('counts.checkedItems', { count: checkedItems.length })}
                   </span>
                 </div>
                 <div className="divide-y divide-gray-50 dark:divide-gray-700">
@@ -307,7 +309,7 @@ export function ShoppingList() {
             {/* Empty state */}
             {state.items.length === 0 && (
               <div className="px-2 py-3 text-center">
-                <p className="text-gray-400 dark:text-gray-500 text-xs">Your shopping list is empty</p>
+                <p className="text-gray-400 dark:text-gray-500 text-xs">{t('messages.emptyShoppingList')}</p>
               </div>
             )}
           </div>
@@ -315,12 +317,12 @@ export function ShoppingList() {
           {/* Undo toast */}
           {lastUnchecked && (
             <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50">
-              <span className="text-sm">Checked off "{lastUnchecked.name}"</span>
+              <span className="text-sm">{t('messages.checkedOff')} "{lastUnchecked.name}"</span>
               <button
                 onClick={handleUndo}
                 className="text-sm font-semibold text-primary-400 hover:text-primary-300"
               >
-                Undo
+                {t('buttons.undo')}
               </button>
             </div>
           )}

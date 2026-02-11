@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from './ui/Card';
 import { getShoppingListHistory, deleteArchivedShoppingList } from '../utils/api';
 import type { ArchivedShoppingList } from '../types';
 import { format } from 'date-fns';
 
 export function ShoppingListHistory() {
+  const { t } = useTranslation();
   const [history, setHistory] = useState<ArchivedShoppingList[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,7 @@ export function ShoppingListHistory() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this archived shopping list?')) return;
+    if (!confirm(t('confirmations.deleteArchivedList'))) return;
     try {
       setDeletingId(id);
       await deleteArchivedShoppingList(id);
@@ -46,7 +48,7 @@ export function ShoppingListHistory() {
     return (
       <div className="text-center py-8">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-600 border-t-transparent mb-2"></div>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">Loading history...</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">{t('messages.loadingHistory')}</p>
       </div>
     );
   }
@@ -62,7 +64,7 @@ export function ShoppingListHistory() {
   if (history.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500 dark:text-gray-400">No previous shopping lists yet.</p>
+        <p className="text-gray-500 dark:text-gray-400">{t('messages.noPreviousShoppingLists')}</p>
       </div>
     );
   }

@@ -1,0 +1,110 @@
+{
+  "app": {
+    "title": "MealPlan"
+  },
+  "navigation": {
+    "mealPlan": "Meal Plan",
+    "shoppingList": "Shopping List",
+    "trmnl": "TRMNL"
+  },
+  "tabs": {
+    "currentPlan": "Current Plan",
+    "currentList": "Current List",
+    "history": "History",
+    "sortPrompt": "Sort Prompt",
+    "back": "← Back",
+    "viewPrevious": "View Previous Plans"
+  },
+  "buttons": {
+    "startPlanning": "Start Planning",
+    "addMeal": "Add Meal",
+    "retry": "Retry",
+    "startNewWeek": "Start New Week",
+    "sort": "Sort",
+    "newList": "New List",
+    "undo": "Undo",
+    "pushToTRMNL": "Push to TRMNL",
+    "pushing": "Pushing...",
+    "save": "Save",
+    "saving": "Saving...",
+    "reset": "Reset",
+    "delete": "Delete"
+  },
+  "forms": {
+    "startDate": "Start Date",
+    "chooseStartDate": "Choose Your Start Date",
+    "mealName": "Meal Name",
+    "mealNamePlaceholder": "e.g., Chicken Salad",
+    "addItemPlaceholder": "Add item..."
+  },
+  "headings": {
+    "welcomeToMealPlan": "Welcome to MealPlan",
+    "addMeal": "Add Meal",
+    "shoppingList": "Shopping List",
+    "trmnlIntegration": "TRMNL Integration",
+    "status": "Status",
+    "errorLoadingMealPlan": "Error Loading Meal Plan",
+    "error": "Error",
+    "notConfigured": "Not Configured",
+    "lastError": "Last error:"
+  },
+  "messages": {
+    "loadingMealPlan": "Loading meal plan...",
+    "loadingShoppingList": "Loading shopping list...",
+    "loadingTRMNLStatus": "Loading TRMNL status...",
+    "loadingHistory": "Loading history...",
+    "startPlanningInstructions": "Start planning your meals by selecting a start date",
+    "willBeAddedTo": "Will be added to",
+    "emptyShoppingList": "Your shopping list is empty",
+    "emptyMealListTitle": "No meals yet",
+    "emptyMealListDescription": "Add your first meal to get started",
+    "noPreviousMealPlans": "No previous meal plans yet.",
+    "noPreviousShoppingLists": "No previous shopping lists yet.",
+    "trmnlDescription": "Push your weekly meal plan to a TRMNL e-ink display device for at-a-glance viewing.",
+    "trmnlPushDescription": "Push your weekly meal plan to your TRMNL e-ink display device.",
+    "trmnlNotConfigured": "Set the TRMNL_WEBHOOK_URL environment variable in server/.env to enable TRMNL integration.",
+    "trmnlPushSuccess": "Successfully pushed to TRMNL device",
+    "trmnlPushFailed": "Push failed",
+    "checkedOff": "Checked off"
+  },
+  "status": {
+    "webhookConfigured": "Webhook configured",
+    "autoSync": "Auto-sync",
+    "everyHour": "Every hour",
+    "lastPush": "Last push",
+    "never": "Never",
+    "yes": "✓ Yes"
+  },
+  "counts": {
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "meals_one": "{{count}} meal",
+    "meals_other": "{{count}} meals",
+    "checkedItems_one": "{{count}} checked item",
+    "checkedItems_other": "{{count}} checked items"
+  },
+  "confirmations": {
+    "deleteArchivedPlan": "Delete this archived meal plan?",
+    "deleteArchivedList": "Delete this archived shopping list?"
+  },
+  "aria": {
+    "deleteArchivedPlan": "Delete archived plan",
+    "deleteMeal": "Delete meal"
+  },
+  "sortPrompt": {
+    "title": "AI Sorting Prompt",
+    "description": "Customize how Gemini AI sorts your shopping list items. Leave empty to use the default Swedish store layout.",
+    "currentPrompt": "Current Prompt:",
+    "customLabel": "Custom",
+    "defaultLabel": "Default (Swedish store layout)",
+    "customInstructions": "Custom Sorting Instructions",
+    "placeholder": "Enter custom sorting instructions for Gemini AI, or leave empty to use default...",
+    "defaultPrompt": "Default Prompt (Swedish Store Layout)",
+    "resetToDefault": "Reset to Default",
+    "savePrompt": "Save Prompt",
+    "show": "Show",
+    "hide": "Hide",
+    "showDefaultPrompt": "Default Prompt",
+    "copyToEditor": "Copy to Editor"
+  }
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toISODate } from '../utils/dateHelpers';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
@@ -9,6 +10,7 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ value, onChange }: DatePickerProps) {
+  const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState<string>(
     value || toISODate(new Date())
   );
@@ -22,7 +24,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
   return (
     <Card className="p-6 max-w-md w-full">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-        Choose Your Start Date
+        {t('forms.chooseStartDate')}
       </h3>
       <div className="space-y-4">
         <div>
@@ -30,7 +32,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
             htmlFor="start-date"
             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
           >
-            Start Date
+            {t('forms.startDate')}
           </label>
           <input
             id="start-date"
@@ -41,7 +43,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
           />
         </div>
         <Button onClick={handleSubmit} size="lg" className="w-full">
-          Start Planning
+          {t('buttons.startPlanning')}
         </Button>
       </div>
     </Card>

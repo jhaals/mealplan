@@ -1,5 +1,7 @@
 import { format, addDays, startOfDay } from 'date-fns';
+import { enUS, sv } from 'date-fns/locale';
 import type { DayPlan } from '../types';
+import i18n from '../locales';
 
 /**
  * Creates a single DayPlan object for a given date
@@ -21,14 +23,24 @@ export function getNextDay(currentDate: string): string {
 }
 
 /**
+ * Get date-fns locale based on current i18n language
+ */
+function getDateLocale() {
+  const language = i18n.language;
+  return language === 'sv' ? sv : enUS;
+}
+
+/**
  * Formats a date for display
- * Returns: { dayName: "Monday", dateStr: "Jan 15" }
+ * Returns: { dayName: "Monday", dateStr: "Jan 15" } (English)
+ * or: { dayName: "Måndag", dateStr: "jan 15" } (Swedish)
  */
 export function formatDayDisplay(date: string): { dayName: string; dateStr: string } {
   const d = new Date(date);
+  const locale = getDateLocale();
   return {
-    dayName: format(d, 'EEEE'), // "Monday"
-    dateStr: format(d, 'MMM d'), // "Jan 15"
+    dayName: format(d, 'EEEE', { locale }), // "Monday" or "Måndag"
+    dateStr: format(d, 'MMM d', { locale }), // "Jan 15" or "jan 15"
   };
 }
 

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from './ui/Card';
 import { formatDayDisplay } from '../utils/dateHelpers';
 import { getMealPlanHistory, deleteArchivedMealPlan, type ArchivedMealPlan } from '../utils/api';
 
 export function MealPlanHistory() {
+  const { t } = useTranslation();
   const [history, setHistory] = useState<ArchivedMealPlan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ export function MealPlanHistory() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this archived meal plan?')) return;
+    if (!confirm(t('confirmations.deleteArchivedPlan'))) return;
     try {
       setDeletingId(id);
       await deleteArchivedMealPlan(id);
@@ -45,7 +47,7 @@ export function MealPlanHistory() {
     return (
       <div className="text-center py-8">
         <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-600 border-t-transparent mb-2"></div>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">Loading history...</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">{t('messages.loadingHistory')}</p>
       </div>
     );
   }
@@ -61,7 +63,7 @@ export function MealPlanHistory() {
   if (history.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500 dark:text-gray-400">No previous meal plans yet.</p>
+        <p className="text-gray-500 dark:text-gray-400">{t('messages.noPreviousMealPlans')}</p>
       </div>
     );
   }
@@ -87,7 +89,7 @@ export function MealPlanHistory() {
                       {startDisplay.dateStr} – {endDisplay.dateStr}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {plan.days.length} days · {totalMeals} meals
+                      {t('counts.days', { count: plan.days.length })} · {t('counts.meals', { count: totalMeals })}
                     </p>
                   </div>
                   <span className="text-gray-400 dark:text-gray-500 text-lg">
@@ -99,7 +101,7 @@ export function MealPlanHistory() {
                 onClick={() => handleDelete(plan.id)}
                 disabled={deletingId === plan.id}
                 className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 rounded transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 disabled:opacity-50 flex-shrink-0 min-w-[32px] min-h-[32px] flex items-center justify-center"
-                aria-label="Delete archived plan"
+                aria-label={t('aria.deleteArchivedPlan')}
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

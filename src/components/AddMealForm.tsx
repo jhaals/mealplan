@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { formatDayDisplay } from '../utils/dateHelpers';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
@@ -11,6 +12,7 @@ interface AddMealFormProps {
 }
 
 export function AddMealForm({ currentDay, onAddMeal }: AddMealFormProps) {
+  const { t } = useTranslation();
   const [mealName, setMealName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,11 +34,11 @@ export function AddMealForm({ currentDay, onAddMeal }: AddMealFormProps) {
 
   return (
     <Card className="p-3">
-      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">Add Meal</h3>
+      <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('headings.addMeal')}</h3>
       <form onSubmit={handleSubmit} className="space-y-2">
         <Input
-          label="Meal Name"
-          placeholder="e.g., Chicken Salad"
+          label={t('forms.mealName')}
+          placeholder={t('forms.mealNamePlaceholder')}
           value={mealName}
           onChange={(e) => setMealName(e.target.value)}
           required
@@ -45,12 +47,12 @@ export function AddMealForm({ currentDay, onAddMeal }: AddMealFormProps) {
 
         {targetDayDisplay && (
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Will be added to <span className="font-medium">{targetDayDisplay.dayName}, {targetDayDisplay.dateStr}</span>
+            {t('messages.willBeAddedTo')} <span className="font-medium">{targetDayDisplay.dayName}, {targetDayDisplay.dateStr}</span>
           </p>
         )}
 
         <Button type="submit" size="lg" className="w-full">
-          Add Meal
+          {t('buttons.addMeal')}
         </Button>
       </form>
     </Card>

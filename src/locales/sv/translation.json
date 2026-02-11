@@ -1,0 +1,110 @@
+{
+  "app": {
+    "title": "Måltidsplan"
+  },
+  "navigation": {
+    "mealPlan": "Måltidsplan",
+    "shoppingList": "Inköpslista",
+    "trmnl": "TRMNL"
+  },
+  "tabs": {
+    "currentPlan": "Aktuell Plan",
+    "currentList": "Aktuell Lista",
+    "history": "Historik",
+    "sortPrompt": "Sorteringsprompt",
+    "back": "← Tillbaka",
+    "viewPrevious": "Visa Tidigare Planer"
+  },
+  "buttons": {
+    "startPlanning": "Börja Planera",
+    "addMeal": "Lägg Till Måltid",
+    "retry": "Försök Igen",
+    "startNewWeek": "Starta Ny Vecka",
+    "sort": "Sortera",
+    "newList": "Ny Lista",
+    "undo": "Ångra",
+    "pushToTRMNL": "Skicka till TRMNL",
+    "pushing": "Skickar...",
+    "save": "Spara",
+    "saving": "Sparar...",
+    "reset": "Återställ",
+    "delete": "Ta Bort"
+  },
+  "forms": {
+    "startDate": "Startdatum",
+    "chooseStartDate": "Välj Ditt Startdatum",
+    "mealName": "Måltidsnamn",
+    "mealNamePlaceholder": "t.ex. Kycklingssallad",
+    "addItemPlaceholder": "Lägg till vara..."
+  },
+  "headings": {
+    "welcomeToMealPlan": "Välkommen till Måltidsplan",
+    "addMeal": "Lägg Till Måltid",
+    "shoppingList": "Inköpslista",
+    "trmnlIntegration": "TRMNL-integration",
+    "status": "Status",
+    "errorLoadingMealPlan": "Fel vid Laddning av Måltidsplan",
+    "error": "Fel",
+    "notConfigured": "Inte Konfigurerad",
+    "lastError": "Senaste fel:"
+  },
+  "messages": {
+    "loadingMealPlan": "Laddar måltidsplan...",
+    "loadingShoppingList": "Laddar inköpslista...",
+    "loadingTRMNLStatus": "Laddar TRMNL-status...",
+    "loadingHistory": "Laddar historik...",
+    "startPlanningInstructions": "Börja planera dina måltider genom att välja ett startdatum",
+    "willBeAddedTo": "Kommer att läggas till",
+    "emptyShoppingList": "Din inköpslista är tom",
+    "emptyMealListTitle": "Inga måltider ännu",
+    "emptyMealListDescription": "Lägg till din första måltid för att komma igång",
+    "noPreviousMealPlans": "Inga tidigare måltidsplaner ännu.",
+    "noPreviousShoppingLists": "Inga tidigare inköpslistor ännu.",
+    "trmnlDescription": "Skicka din veckoplan till en TRMNL e-ink-skärm för snabb överblick.",
+    "trmnlPushDescription": "Skicka din veckoplan till din TRMNL e-ink-skärm.",
+    "trmnlNotConfigured": "Sätt miljövariabeln TRMNL_WEBHOOK_URL i server/.env för att aktivera TRMNL-integration.",
+    "trmnlPushSuccess": "Framgångsrikt skickad till TRMNL-enhet",
+    "trmnlPushFailed": "Skickning misslyckades",
+    "checkedOff": "Avbockad"
+  },
+  "status": {
+    "webhookConfigured": "Webhook konfigurerad",
+    "autoSync": "Automatisk synkning",
+    "everyHour": "Varje timme",
+    "lastPush": "Senaste skickning",
+    "never": "Aldrig",
+    "yes": "✓ Ja"
+  },
+  "counts": {
+    "days_one": "{{count}} dag",
+    "days_other": "{{count}} dagar",
+    "meals_one": "{{count}} måltid",
+    "meals_other": "{{count}} måltider",
+    "checkedItems_one": "{{count}} avbockad vara",
+    "checkedItems_other": "{{count}} avbockade varor"
+  },
+  "confirmations": {
+    "deleteArchivedPlan": "Ta bort denna arkiverade måltidsplan?",
+    "deleteArchivedList": "Ta bort denna arkiverade inköpslista?"
+  },
+  "aria": {
+    "deleteArchivedPlan": "Ta bort arkiverad plan",
+    "deleteMeal": "Ta bort måltid"
+  },
+  "sortPrompt": {
+    "title": "AI-sorteringsprompt",
+    "description": "Anpassa hur Gemini AI sorterar dina inköpslistor. Lämna tom för att använda standardlayouten för svenska butiker.",
+    "currentPrompt": "Aktuell Prompt:",
+    "customLabel": "Anpassad",
+    "defaultLabel": "Standard (svensk butikslayout)",
+    "customInstructions": "Anpassade Sorteringsinstruktioner",
+    "placeholder": "Ange anpassade sorteringsinstruktioner för Gemini AI, eller lämna tom för standard...",
+    "defaultPrompt": "Standardprompt (Svensk Butikslayout)",
+    "resetToDefault": "Återställ till Standard",
+    "savePrompt": "Spara Prompt",
+    "show": "Visa",
+    "hide": "Dölj",
+    "showDefaultPrompt": "Standardprompt",
+    "copyToEditor": "Kopiera till Redigerare"
+  }
+}

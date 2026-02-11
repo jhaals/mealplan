@@ -1,34 +1,18 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import i18n from '../locales';
 
 /**
- * Default Swedish grocery store sorting prompt
+ * Get the default sorting prompt based on current language
  */
-export const DEFAULT_SORTING_PROMPT = `Du är en hjälpsam assistent som sorterar svenska matvaror enligt en butiks gångstig.
+export function getDefaultSortingPrompt(): string {
+  return i18n.t('defaultSortingPrompt');
+}
 
-Sortera följande matvaror enligt gångstig i en svensk matbutik. Returnera endast en JSON-array med de sorterade namnen i exakt samma format som de gavs.
-
-Gångstig genom butiken (i ordning):
-1. Frukt och grönt (t.ex. äpplen, bananer, tomater, sallad, gurka)
-2. Ostar (t.ex. herrgård, präst, brie, cheddar)
-3. Chark (t.ex. skinka, salami, korv)
-4. Olja (t.ex. olivolja, rapsolja)
-5. Kryddor (t.ex. salt, peppar, paprika, oregano)
-6. Oliver (t.ex. gröna oliver, svarta oliver)
-7. Burkmat (t.ex. tonfisk, bönor, tomater på burk, ketchup)
-8. Pasta och korn (t.ex. pasta, ris, couscous, quinoa)
-9. Frysmat (t.ex. frysta grönsaker, frysta bär, fryst kyckling eller fisk)
-10. Mjöl (t.ex. vetemjöl, bakpulver, jäst)
-11. Öl (t.ex. lager, IPA)
-12. Kaffe (t.ex. kaffebönor, bryggkaffe)
-13. Mejeri (t.ex. mjölk, yoghurt, grädde, smör)
-14. Ägg
-15. Nötter (t.ex. mandlar, cashew, jordnötter)
-16. Toapapper
-17. Blöjor
-18. Renhållning (t.ex. diskmedel, tvättmedel, rengöring)
-19. Godis och glass (t.ex. choklad, lösgodis)
-
-Om en vara inte passar perfekt i en kategori, gissa vart den hör hemma baserat på liknande varor.`;
+/**
+ * Exported for backwards compatibility
+ * @deprecated Use getDefaultSortingPrompt() instead
+ */
+export const DEFAULT_SORTING_PROMPT = getDefaultSortingPrompt();
 
 /**
  * Get Gemini configuration and validate API key
@@ -67,14 +51,19 @@ export async function sortShoppingItems(
       },
     });
 
-    // Use custom prompt if provided, otherwise default
-    const basePrompt = customPrompt || DEFAULT_SORTING_PROMPT;
+    // Use custom prompt if provided, otherwise default localized prompt
+    const basePrompt = customPrompt || getDefaultSortingPrompt();
+    const itemsInstructions = i18n.t('sortingItemsInstructions');
+    const returnInstruction = i18n.language === 'sv'
+      ? 'Returnera endast JSON-arrayen, inget annat.'
+      : 'Return only the JSON array, nothing else.';
+
     const prompt = `${basePrompt}
 
-Varor att sortera:
+${itemsInstructions}
 ${items.join("\n")}
 
-Returnera endast JSON-arrayen, inget annat.`;
+${returnInstruction}`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
