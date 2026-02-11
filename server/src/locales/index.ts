@@ -75,6 +75,7 @@ i18next.init({
       }
     },
   },
+  debug: false, // Suppress i18next promotional messages
 });
 
 export default i18next;

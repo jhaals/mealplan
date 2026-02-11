@@ -18,6 +18,7 @@ i18n
     },
     returnNull: false,
     returnEmptyString: false,
+    debug: false, // Suppress i18next promotional messages
   });
 
 /**
