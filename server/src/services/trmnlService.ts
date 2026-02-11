@@ -1,5 +1,5 @@
 import { prisma } from '../db';
-import { getMealPlan } from './mealPlanService';
+import { getMealPlan, type MealPlanState } from './mealPlanService';
 import { createHash } from 'crypto';
 import { format, parseISO } from 'date-fns';
 
@@ -64,6 +64,30 @@ export async function getPushStatus(): Promise<TRMNLPushStatus> {
  */
 function generateDataHash(data: string): string {
   return createHash('sha256').update(data).digest('hex');
+}
+
+/**
+ * Extract stable content from meal plan for hash calculation
+ * Only includes data that represents actual meal plan changes
+ * Excludes timestamps and computed metadata that would cause false positives
+ */
+function extractStableContent(mealPlan: MealPlanState) {
+  // If no meal plan data, return minimal structure
+  if (!mealPlan.startDate || mealPlan.days.length === 0) {
+    return {
+      startDate: null,
+      days: [],
+    };
+  }
+
+  // Extract only: startDate, days with dates and meal names
+  return {
+    startDate: mealPlan.startDate,
+    days: mealPlan.days.map((day) => ({
+      date: day.date,
+      meals: day.meals.map((meal) => meal.name),
+    })),
+  };
 }
 
 /**
@@ -145,12 +169,18 @@ export async function pushToTRMNL(force: boolean = false): Promise<TRMNLPushResu
   }
 
   try {
-    // Format the payload
+    // Get meal plan data for hash calculation
+    const mealPlan = await getMealPlan();
+
+    // Format the payload for TRMNL display (includes timestamps, formatting)
     const payload = await formatMealPlanForTRMNL();
 
-    // Generate hash of the payload for change detection
-    const dataString = JSON.stringify(payload.merge_variables);
+    // Generate hash ONLY from stable content (excludes timestamps and metadata)
+    const stableContent = extractStableContent(mealPlan);
+    const dataString = JSON.stringify(stableContent);
     const currentHash = generateDataHash(dataString);
+
+    console.log('[TRMNL] Content hash:', currentHash.substring(0, 8) + '...');
 
     // Check if data has changed (unless force push)
     if (!force) {
@@ -161,11 +191,13 @@ export async function pushToTRMNL(force: boolean = false): Promise<TRMNLPushResu
 
       if (plan?.lastPushHash === currentHash) {
         // No changes detected, skip push
+        console.log('[TRMNL] No changes detected - skipping push');
         return {
           success: true,
           changeDetected: false,
         };
       }
+      console.log('[TRMNL] Changes detected - pushing to TRMNL');
     }
 
     // Push to TRMNL webhook
