@@ -19,7 +19,9 @@ options:
   port: 3001
   trmnl_webhook_url: ""
   google_api_key: ""
+  language: "en"
 schema:
   port: "port?"
   trmnl_webhook_url: "str?"
   google_api_key: "str?"
+  language: "list(en|sv)?"

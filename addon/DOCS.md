@@ -25,6 +25,7 @@ MealPlan is a mobile-first meal planning application with an intuitive drag-and-
 port: 3001                    # Web interface port (optional)
 trmnl_webhook_url: ""         # TRMNL webhook URL (optional)
 google_api_key: ""            # Google AI Studio API key (optional)
+language: "en"                # UI language: "en" or "sv" (optional)
 ```
 
 ### Option: `port`
@@ -56,6 +57,17 @@ To enable shopping list AI sorting:
 4. Restart the add-on
 
 When configured, the shopping list "Sort" button will organize your items according to Swedish grocery store layout (fruits → dairy → cleaning supplies, etc.). This uses Google's Gemini 2.5 Flash-Lite model, which has generous free tier limits perfect for personal use.
+
+### Option: `language`
+
+Set the UI language and AI sorting prompt language. Options: `en` (English) or `sv` (Swedish). Default: `en`
+
+This affects:
+- User interface text and labels
+- AI shopping list sorting prompts (Swedish mode uses Swedish grocery store layout)
+- Date formatting
+
+No restart required - changes take effect immediately.
 
 ## Usage
 
