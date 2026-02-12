@@ -85,7 +85,9 @@ bun run lint             # Run ESLint
 
 ### Database
 - `server/prisma/schema.prisma` - 3 models: MealPlan (singleton), DayPlan, Meal
-- `server/src/db.ts` - Prisma Client singleton
+- `server/prisma.config.ts` - Prisma config with datasource URL (required for Prisma 7)
+- `server/src/db.ts` - Prisma Client singleton (uses @prisma/adapter-better-sqlite3)
+- `server/src/generated/prisma/` - Generated Prisma Client (run `bunx prisma generate` to regenerate)
 - `server/src/utils/seed.ts` - Creates the singleton MealPlan record
 
 ## Common Gotchas
