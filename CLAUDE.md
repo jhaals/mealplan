@@ -10,7 +10,7 @@ MealPlan is a mobile-first meal planning application with a React frontend and H
 
 ### Singleton Pattern
 The database has exactly ONE MealPlan record with id "singleton". All operations assume this singleton exists:
-- **On fresh setup**: Run `bun run db:seed` to create the singleton record
+- **On fresh setup**: Run `npm run db:seed` to create the singleton record
 - **All queries**: Use `{ id: 'singleton' }` when querying MealPlan
 - **Service layer**: All functions in `server/src/services/mealPlanService.ts` operate on the singleton
 - **Global settings**: The MealPlan singleton also stores app-wide settings (TRMNL config, shopping list sorting prompt) that persist across shopping list archives and meal plan resets
@@ -46,29 +46,29 @@ The app runs on ONE server (port 3001) that serves both static files and API:
 ### Development Workflow
 ```bash
 # Standard development (manual rebuild on frontend changes)
-bun run dev              # Builds frontend once, then runs server on :3001
+npm run dev              # Builds frontend once, then runs server on :3001
 
 # Auto-rebuild development (recommended for active development)
-bun run dev:watch        # Watches frontend, auto-rebuilds + runs server
+npm run dev:watch        # Watches frontend, auto-rebuilds + runs server
 
 # Run frontend and backend separately (advanced)
-bun run dev:frontend     # Vite dev server on :5173 (proxies /api to :3001)
-bun run dev:backend      # Backend only on :3001
+npm run dev:frontend     # Vite dev server on :5173 (proxies /api to :3001)
+npm run dev:backend      # Backend only on :3001
 ```
 
 ### Database Operations
 ```bash
-bun run db:migrate       # Run migrations (creates/updates schema)
-bun run db:seed          # Create singleton MealPlan record (REQUIRED on fresh setup)
-bun run db:studio        # Open Prisma Studio to view/edit database
-cd server && bunx prisma generate  # Regenerate Prisma Client after schema changes
+npm run db:migrate       # Run migrations (creates/updates schema)
+npm run db:seed          # Create singleton MealPlan record (REQUIRED on fresh setup)
+npm run db:studio        # Open Prisma Studio to view/edit database
+cd server && npx prisma generate  # Regenerate Prisma Client after schema changes
 ```
 
 ### Build and Deploy
 ```bash
-bun run build            # Build frontend for production (output: dist/)
-bun run start            # Production mode - serves built files from dist/
-bun run lint             # Run ESLint
+npm run build            # Build frontend for production (output: dist/)
+npm run start            # Production mode - serves built files from dist/
+npm run lint             # Run ESLint
 ```
 
 ## Critical Files
@@ -87,27 +87,27 @@ bun run lint             # Run ESLint
 - `server/prisma/schema.prisma` - 3 models: MealPlan (singleton), DayPlan, Meal
 - `server/prisma.config.ts` - Prisma config with datasource URL (required for Prisma 7)
 - `server/src/db.ts` - Prisma Client singleton (uses @prisma/adapter-better-sqlite3)
-- `server/src/generated/prisma/` - Generated Prisma Client (run `bunx prisma generate` to regenerate)
+- `server/src/generated/prisma/` - Generated Prisma Client (run `npx prisma generate` to regenerate)
 - `server/src/utils/seed.ts` - Creates the singleton MealPlan record
 
 ## Common Gotchas
 
 ### "Meal plan not found" Error
-The singleton MealPlan record doesn't exist. Run: `bun run db:seed`
+The singleton MealPlan record doesn't exist. Run: `npm run db:seed`
 
 ### Frontend Changes Not Showing
-- If using `bun run dev`: Manually rebuild with `bun run build`
-- Switch to `bun run dev:watch` for auto-rebuild
+- If using `npm run dev`: Manually rebuild with `npm run build`
+- Switch to `npm run dev:watch` for auto-rebuild
 
 ### Server Won't Start / 404 Errors
-Frontend not built. Run: `bun run build` before `bun run dev` or `bun run start`
+Frontend not built. Run: `npm run build` before `npm run dev` or `npm run start`
 
 ### Port 3001 Already in Use
 Check for running processes: `lsof -i :3001`
 
 ### After Schema Changes
-1. Run `cd server && bunx prisma generate` to update Prisma Client
-2. Run `bun run db:migrate` to create migration
+1. Run `cd server && npx prisma generate` to update Prisma Client
+2. Run `npm run db:migrate` to create migration
 3. Restart the server
 
 ## Date Handling
@@ -130,7 +130,7 @@ Sensors configured for both mouse and touch:
 
 ## Testing the App
 
-After starting the server (`bun run dev`), navigate to http://localhost:3001:
+After starting the server (`npm run dev`), navigate to http://localhost:3001:
 1. Pick a start date
 2. Add meals (each meal auto-advances to next day)
 3. Drag meals between days to reorganize
@@ -155,7 +155,7 @@ Push your weekly meal plan to a TRMNL e-ink display device for at-a-glance viewi
    ```bash
    TRMNL_WEBHOOK_URL=https://usetrmnl.com/api/custom_plugins/YOUR_PLUGIN_UUID
    ```
-4. Restart server: `bun run dev`
+4. Restart server: `npm run dev`
 
 ### Behavior
 - **Automatic Push**: Every hour (only if meal plan data has changed)

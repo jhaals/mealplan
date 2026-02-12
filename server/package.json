@@ -6,10 +6,10 @@
     "dev": "tsx watch src/index.ts",
     "start": "node --import tsx src/index.ts",
     "build": "tsc",
-    "db:migrate": "bunx prisma migrate dev",
-    "db:studio": "bunx prisma studio",
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio",
     "db:seed": "node --import tsx src/utils/seed.ts",
-    "db:generate": "bunx prisma generate"
+    "db:generate": "npx prisma generate"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

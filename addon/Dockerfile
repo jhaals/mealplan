@@ -1,10 +1,10 @@
 # Stage 1: Build Frontend
-FROM oven/bun:1-alpine AS frontend-builder
+FROM node:22-alpine AS frontend-builder
 
 WORKDIR /build
 
 # Copy frontend files
-COPY package.json bun.lock ./
+COPY package.json package-lock.json ./
 COPY tsconfig*.json vite.config.ts ./
 COPY tailwind.config.js postcss.config.js ./
 COPY index.html ./
@@ -12,26 +12,23 @@ COPY public/ ./public/
 COPY src/ ./src/
 
 # Install and build
-RUN bun install
-RUN bun run build
+RUN npm ci
+RUN npm run build
 
 # Stage 2: Build Backend
 FROM node:22-alpine AS backend-builder
 
-# Install bun for package management
-RUN npm install -g bun
-
 WORKDIR /build/server
 
 # Copy backend files
-COPY server/package.json ./
+COPY server/package.json server/package-lock.json ./
 COPY server/tsconfig.json ./
 COPY server/prisma.config.ts ./
 COPY server/src/ ./src/
 COPY server/prisma/ ./prisma/
 
 # Install dependencies
-RUN bun install
+RUN npm ci
 
 # Generate Prisma Client
 RUN npx prisma generate

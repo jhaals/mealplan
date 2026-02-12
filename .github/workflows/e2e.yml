@@ -18,13 +18,10 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
       - name: Install dependencies
         run: |
-          bun install
-          cd server && bun install
+          npm install
+          cd server && npm install
 
       - name: Setup database
         run: |
@@ -34,7 +31,7 @@ jobs:
           DATABASE_URL="file:./test.db" node --import tsx src/utils/seed.ts
 
       - name: Build frontend
-        run: bun run build
+        run: npm run build
 
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
