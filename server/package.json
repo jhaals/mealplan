@@ -20,7 +20,7 @@
     "i18next": "^25.8.5"
   },
   "devDependencies": {
-    "prisma": "^5.22.0",
+    "prisma": "^7.4.0",
     "@types/bun": "latest"
   }
 }
