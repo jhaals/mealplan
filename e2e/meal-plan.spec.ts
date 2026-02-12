@@ -101,7 +101,7 @@ test.describe('Meal Plan', () => {
     // View history
     await page.getByRole('button', { name: 'View Previous Plans' }).click();
     // History items are collapsed - expand the first entry
-    await page.getByText('1 days · 1 meals').click();
+    await page.getByText('1 day · 1 meal').click();
     await expect(page.getByText('Archived Meal')).toBeVisible();
   });
 });
