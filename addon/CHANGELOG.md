@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-1c821d4] - 2026-02-12
+
+## What's Changed
+* Upgrade Prisma from v5 to v7 and migrate from Bun to Node.js/npm by @Copilot in https://github.com/jhaals/mealplan/pull/22
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-f4cf8e1...v1.0.0-1c821d4
+
 ## [1.0.0-f4cf8e1] - 2026-02-12
 
 ## What's Changed
