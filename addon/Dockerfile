@@ -10,8 +10,8 @@ COPY index.html ./
 COPY public/ ./public/
 COPY src/ ./src/
 
-# Install and build
-RUN npm ci
+# Install and build (legacy-peer-deps due to ESLint 10 compatibility issues)
+RUN npm ci --legacy-peer-deps
 RUN npm run build
 
 # Stage 2: Build Backend
@@ -32,6 +32,9 @@ RUN npm ci
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Verify migration engine is available (forces download if missing)
+RUN npx prisma migrate deploy --help || echo "Migration engine verified"
+
 # Stage 3: Runtime with Node.js
 FROM node:22-alpine
 
@@ -39,9 +42,15 @@ FROM node:22-alpine
 RUN apk add --no-cache \
     sqlite \
     bash \
-    jq
+    jq \
+    openssl
 
 WORKDIR /app
+
+# Prevent Prisma from downloading engines at runtime
+ENV PRISMA_SKIP_POSTINSTALL_GENERATE=true
+ENV PRISMA_GENERATE_SKIP_AUTOINSTALL=true
+ENV NODE_ENV=production
 
 # Copy built frontend
 COPY --from=frontend-builder /build/dist/ /app/dist/

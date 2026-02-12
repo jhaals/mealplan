@@ -35,6 +35,17 @@ fi
 # Run database migrations
 echo "Running migrations..."
 cd /app/server
+
+# Verify Prisma engines are present
+echo "Verifying Prisma engines..."
+if ! ls node_modules/@prisma/engines/schema-engine-* 2>/dev/null; then
+  echo "WARNING: Prisma schema engine binary not found!"
+  echo "Listing engine directory:"
+  ls -la node_modules/@prisma/engines/ || echo "Engines directory not found"
+else
+  echo "Prisma engine binaries verified successfully"
+fi
+
 npx prisma migrate deploy
 
 # Seed singleton if needed
