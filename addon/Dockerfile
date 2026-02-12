@@ -1,6 +1,9 @@
 # Stage 1: Build Frontend
 FROM node:22-alpine AS frontend-builder
 
+# Configure Node.js for better QEMU compatibility
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 WORKDIR /build
 
 # Copy frontend files
@@ -11,11 +14,15 @@ COPY public/ ./public/
 COPY src/ ./src/
 
 # Install and build (legacy-peer-deps due to ESLint 10 compatibility issues)
-RUN npm ci --legacy-peer-deps
+# Additional flags for QEMU compatibility
+RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 RUN npm run build
 
 # Stage 2: Build Backend
 FROM node:22-alpine AS backend-builder
+
+# Configure Node.js for better QEMU compatibility
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 WORKDIR /build/server
 
@@ -27,7 +34,8 @@ COPY server/src/ ./src/
 COPY server/prisma/ ./prisma/
 
 # Install dependencies
-RUN npm ci
+# Additional flags for QEMU compatibility
+RUN npm ci --no-audit --prefer-offline --no-fund
 
 # Generate Prisma Client
 RUN npx prisma generate

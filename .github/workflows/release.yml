@@ -55,11 +55,14 @@ jobs:
           file: addon/Dockerfile
           platforms: ${{ matrix.platform }}
           push: true
+          provenance: false
           tags: |
             ghcr.io/${{ github.repository_owner }}/mealplan-${{ matrix.arch }}:${{ steps.version.outputs.version }}
             ghcr.io/${{ github.repository_owner }}/mealplan-${{ matrix.arch }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            BUILDPLATFORM=${{ matrix.platform }}
 
   release:
     needs: build
