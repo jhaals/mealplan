@@ -13,6 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
@@ -24,9 +29,9 @@ jobs:
       - name: Setup database
         run: |
           cd server
-          bunx prisma generate
-          DATABASE_URL="file:./test.db" bunx prisma migrate deploy
-          DATABASE_URL="file:./test.db" bun run src/utils/seed.ts
+          npx prisma generate
+          DATABASE_URL="file:./test.db" npx prisma migrate deploy
+          DATABASE_URL="file:./test.db" node --import tsx src/utils/seed.ts
 
       - name: Build frontend
         run: bun run build

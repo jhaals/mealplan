@@ -16,7 +16,10 @@ RUN bun install
 RUN bun run build
 
 # Stage 2: Build Backend
-FROM oven/bun:1-alpine AS backend-builder
+FROM node:22-alpine AS backend-builder
+
+# Install bun for package management
+RUN npm install -g bun
 
 WORKDIR /build/server
 
@@ -27,26 +30,20 @@ COPY server/prisma.config.ts ./
 COPY server/src/ ./src/
 COPY server/prisma/ ./prisma/
 
-# Install production dependencies
-RUN bun install --production
+# Install dependencies
+RUN bun install
 
 # Generate Prisma Client
-RUN bunx prisma generate
+RUN npx prisma generate
 
-# Build TypeScript using Bun's native bundler
-RUN bun build src/index.ts --outdir dist --target bun && \
-    bun build src/utils/seed.ts --outdir dist/utils --target bun
+# Stage 3: Runtime with Node.js
+FROM node:22-alpine
 
-# Stage 3: Runtime with Bun
-FROM oven/bun:1-alpine
-
-# Install runtime dependencies including OpenSSL for Prisma
+# Install runtime dependencies
 RUN apk add --no-cache \
     sqlite \
     bash \
-    jq \
-    openssl \
-    openssl-dev
+    jq
 
 WORKDIR /app
 
@@ -56,7 +53,7 @@ COPY --from=frontend-builder /build/dist/ /app/dist/
 # Copy backend
 COPY --from=backend-builder /build/server/package.json /app/server/
 COPY --from=backend-builder /build/server/prisma.config.ts /app/server/
-COPY --from=backend-builder /build/server/dist/ /app/server/dist/
+COPY --from=backend-builder /build/server/src/ /app/server/src/
 COPY --from=backend-builder /build/server/node_modules/ /app/server/node_modules/
 COPY --from=backend-builder /build/server/prisma/ /app/server/prisma/
 

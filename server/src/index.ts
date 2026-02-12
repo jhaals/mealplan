@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
-import { serveStatic } from 'hono/bun';
+import { serve } from '@hono/node-server';
+import { serveStatic } from '@hono/node-server/serve-static';
 import { errorHandler } from './middleware/errorHandler';
 import mealPlanRoutes from './routes/mealPlan';
 import shoppingListRoutes from './routes/shoppingList';
@@ -34,12 +35,12 @@ const port = Number(process.env.PORT) || 3001;
 console.log(`Server starting on http://localhost:${port}`);
 
 // Start server
-Bun.serve({
+serve({
   port,
   fetch: app.fetch,
+}, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
-
-console.log(`Server running on http://localhost:${port}`);
 
 // TRMNL Periodic Push
 const TRMNL_PUSH_INTERVAL = 60 * 60 * 1000; // 1 hour
