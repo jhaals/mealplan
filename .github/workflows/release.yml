@@ -27,7 +27,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          BASE=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          FULL=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          BASE=$(echo "$FULL" | grep -oP '^\d+\.\d+\.\d+')
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           VERSION="${BASE}-${SHORT_SHA}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
@@ -73,7 +74,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          BASE=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          FULL=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          BASE=$(echo "$FULL" | grep -oP '^\d+\.\d+\.\d+')
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           VERSION="${BASE}-${SHORT_SHA}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
