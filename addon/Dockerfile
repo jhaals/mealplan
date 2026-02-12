@@ -6,7 +6,6 @@ WORKDIR /build
 # Copy frontend files
 COPY package.json bun.lock ./
 COPY tsconfig*.json vite.config.ts ./
-COPY tailwind.config.js postcss.config.js ./
 COPY index.html ./
 COPY public/ ./public/
 COPY src/ ./src/
