@@ -23,6 +23,7 @@ WORKDIR /build/server
 # Copy backend files
 COPY server/package.json ./
 COPY server/tsconfig.json ./
+COPY server/prisma.config.ts ./
 COPY server/src/ ./src/
 COPY server/prisma/ ./prisma/
 
@@ -54,6 +55,7 @@ COPY --from=frontend-builder /build/dist/ /app/dist/
 
 # Copy backend
 COPY --from=backend-builder /build/server/package.json /app/server/
+COPY --from=backend-builder /build/server/prisma.config.ts /app/server/
 COPY --from=backend-builder /build/server/dist/ /app/server/dist/
 COPY --from=backend-builder /build/server/node_modules/ /app/server/node_modules/
 COPY --from=backend-builder /build/server/prisma/ /app/server/prisma/
