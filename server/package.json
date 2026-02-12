@@ -3,24 +3,26 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch src/index.ts",
-    "start": "bun run src/index.ts",
+    "dev": "tsx watch src/index.ts",
+    "start": "node --import tsx src/index.ts",
     "build": "tsc",
-    "db:migrate": "bunx prisma migrate dev",
-    "db:studio": "bunx prisma studio",
-    "db:seed": "bun run src/utils/seed.ts",
-    "db:generate": "bunx prisma generate"
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio",
+    "db:seed": "node --import tsx src/utils/seed.ts",
+    "db:generate": "npx prisma generate"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@hono/node-server": "^1.19.9",
-    "@prisma/client": "^5.22.0",
+    "@prisma/adapter-better-sqlite3": "^7.4.0",
+    "@prisma/client": "^7.4.0",
     "date-fns": "^4.1.0",
     "hono": "^4.11.9",
-    "i18next": "^25.8.5"
+    "i18next": "^25.8.5",
+    "tsx": "^4.19.0"
   },
   "devDependencies": {
-    "prisma": "^5.22.0",
-    "@types/bun": "latest"
+    "@types/node": "^22.0.0",
+    "prisma": "^7.4.0"
   }
 }

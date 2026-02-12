@@ -17,6 +17,9 @@ server/prisma/*.db
 server/prisma/*.db-journal
 server/prisma/*.db-wal
 
+# Generated Prisma Client
+server/src/generated
+
 # Docker testing
 test-data
 
@@ -35,8 +38,8 @@ test-data
 *.sln
 *.sw?
 
-# Package lock (project uses bun)
-package-lock.json
+# Package lock (project uses npm)
+bun.lock
 
 # Playwright
 test-results/

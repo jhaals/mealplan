@@ -35,12 +35,12 @@ fi
 # Run database migrations
 echo "Running migrations..."
 cd /app/server
-bunx prisma migrate deploy
+npx prisma migrate deploy
 
 # Seed singleton if needed
 echo "Checking singleton record..."
-bun run dist/utils/seed.js || true
+node --import tsx src/utils/seed.ts || true
 
 # Start server
 echo "Starting server..."
-exec bun run dist/index.js
+exec node --import tsx src/index.ts
