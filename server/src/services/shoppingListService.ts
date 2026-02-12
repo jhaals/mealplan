@@ -178,7 +178,7 @@ export async function getShoppingListHistory(): Promise<ArchivedShoppingList[]> 
   });
 
   return archived.map((list) => {
-    let items: ShoppingListItem[] = [];
+    let items: ShoppingListItem[];
     try {
       items = JSON.parse(list.data);
     } catch {
@@ -227,12 +227,12 @@ export async function getConfig(): Promise<{ sortingPrompt: string | null }> {
  */
 export async function updateConfig(sortingPrompt: string | null): Promise<void> {
   // Ensure MealPlan singleton exists
-  let mealPlan = await prisma.mealPlan.findUnique({
+  const mealPlan = await prisma.mealPlan.findUnique({
     where: { id: 'singleton' },
   });
 
   if (!mealPlan) {
-    mealPlan = await prisma.mealPlan.create({
+    await prisma.mealPlan.create({
       data: { id: 'singleton' },
     });
   }

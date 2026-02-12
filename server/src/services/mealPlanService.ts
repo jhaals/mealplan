@@ -378,7 +378,7 @@ export async function getMealPlanHistory(): Promise<ArchivedMealPlan[]> {
   });
 
   return archived.map((plan) => {
-    let days: DayPlan[] = [];
+    let days: DayPlan[];
     try {
       days = JSON.parse(plan.data);
     } catch {
