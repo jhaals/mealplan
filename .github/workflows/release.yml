@@ -6,6 +6,7 @@ on:
       - main
     paths-ignore:
       - 'addon/config.yaml'
+      - 'addon/CHANGELOG.md'
 
 jobs:
   build:
@@ -87,13 +88,41 @@ jobs:
           name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
 
-      - name: Update addon version in repository
+      - name: Generate CHANGELOG.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Fetch release body from the just-created release
+          RELEASE_BODY=$(gh release view "v${VERSION}" --json body --jq .body)
+          RELEASE_DATE=$(date -u +"%Y-%m-%d")
+
+          # Create temporary file with new release at top
+          echo "# Changelog" > /tmp/new_changelog.md
+          echo "" >> /tmp/new_changelog.md
+          echo "All notable changes to this project will be documented in this file." >> /tmp/new_changelog.md
+          echo "" >> /tmp/new_changelog.md
+          echo "## [${VERSION}] - ${RELEASE_DATE}" >> /tmp/new_changelog.md
+          echo "" >> /tmp/new_changelog.md
+          echo "${RELEASE_BODY}" >> /tmp/new_changelog.md
+          echo "" >> /tmp/new_changelog.md
+
+          # Append existing changelog if it exists (skip header lines)
+          if [ -f addon/CHANGELOG.md ]; then
+            tail -n +5 addon/CHANGELOG.md >> /tmp/new_changelog.md
+          fi
+
+          # Replace the changelog
+          mv /tmp/new_changelog.md addon/CHANGELOG.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Update addon version and changelog in repository
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           sed -i "s/^version: .*/version: \"$VERSION\"/" addon/config.yaml
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add addon/config.yaml
+          git add addon/config.yaml addon/CHANGELOG.md
           if ! git diff --cached --quiet; then
             git commit -m "Update addon version to $VERSION [skip ci]"
             git push
