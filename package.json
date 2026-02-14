@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run build && cd server && npm run dev",
-    "dev:watch": "concurrently \"npm run build -- --watch\" \"npm run dev:backend\"",
+    "dev": "npm run build && npm run dev:backend",
+    "dev:watch": "concurrently -k \"npm run build -- --watch\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
-    "dev:backend": "cd server && npm run dev",
+    "dev:backend": "cd server && npx tsx watch src/index.ts",
     "build": "tsc -b && vite build",
     "start": "cd server && npm run start",
     "lint": "eslint .",

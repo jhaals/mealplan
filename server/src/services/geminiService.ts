@@ -44,10 +44,22 @@ export async function sortShoppingItems(
   try {
     const genAI = getGeminiConfig();
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-lite",
+      model: "gemini-2.0-flash-exp",
       generationConfig: {
         temperature: 0,
         responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            items: {
+              type: "array",
+              items: {
+                type: "string"
+              }
+            }
+          },
+          required: ["items"]
+        }
       },
     });
 
@@ -55,8 +67,8 @@ export async function sortShoppingItems(
     const basePrompt = customPrompt || getDefaultSortingPrompt();
     const itemsInstructions = i18n.t('sortingItemsInstructions');
     const returnInstruction = i18n.language === 'sv'
-      ? 'Returnera endast JSON-arrayen, inget annat.'
-      : 'Return only the JSON array, nothing else.';
+      ? `VIKTIGT: Du MÅSTE returnera ALLA ${items.length} varor i JSON-objektet {"items": [...]}. Hoppa inte över några varor.`
+      : `IMPORTANT: You MUST return ALL ${items.length} items in the JSON object {"items": [...]}. Do not skip any items.`;
 
     const prompt = `${basePrompt}
 
@@ -76,12 +88,13 @@ ${returnInstruction}`;
     // Parse the JSON response
     const parsed = JSON.parse(content);
 
-    // Handle different possible response formats
+    // With the schema, response should be {items: [...]}
     let sortedItems: string[];
-    if (Array.isArray(parsed)) {
-      sortedItems = parsed;
-    } else if (parsed.items && Array.isArray(parsed.items)) {
+    if (parsed.items && Array.isArray(parsed.items)) {
       sortedItems = parsed.items;
+    } else if (Array.isArray(parsed)) {
+      // Fallback for backwards compatibility
+      sortedItems = parsed;
     } else if (parsed.sortedItems && Array.isArray(parsed.sortedItems)) {
       sortedItems = parsed.sortedItems;
     } else {
@@ -93,6 +106,8 @@ ${returnInstruction}`;
       console.warn(
         "Gemini returned different number of items, falling back to original order",
       );
+      console.warn(`Input items (${items.length}):`, items);
+      console.warn(`Gemini returned (${sortedItems.length}):`, sortedItems);
       return items;
     }
 

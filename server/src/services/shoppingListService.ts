@@ -277,11 +277,22 @@ export async function sortItemsWithAI(): Promise<void> {
     config.sortingPrompt ?? undefined
   );
 
+  console.log('Original unchecked names:', uncheckedNames);
+  console.log('Sorted names from Gemini:', sortedNames);
+
   // Map sorted names back to item IDs
   const nameToItem = new Map(uncheckedItems.map(item => [item.name, item]));
   const sortedUncheckedIds = sortedNames
-    .map(name => nameToItem.get(name)?.id)
+    .map(name => {
+      const item = nameToItem.get(name);
+      if (!item) {
+        console.warn(`Failed to map name back to item: "${name}"`);
+      }
+      return item?.id;
+    })
     .filter((id): id is string => id !== undefined);
+
+  console.log(`Mapped ${sortedUncheckedIds.length} of ${sortedNames.length} items`);
 
   // Combine: sorted unchecked items first, then checked items
   const allItemIds = [
