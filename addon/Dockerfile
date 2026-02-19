@@ -1,5 +1,5 @@
 # Stage 1: Build Frontend
-FROM node:22-alpine AS frontend-builder
+FROM node:25-alpine AS frontend-builder
 
 # Configure Node.js for better QEMU compatibility
 ENV NODE_OPTIONS="--max-old-space-size=4096"
@@ -19,7 +19,7 @@ RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 RUN npm run build
 
 # Stage 2: Build Backend
-FROM node:22-alpine AS backend-builder
+FROM node:25-alpine AS backend-builder
 
 # Configure Node.js for better QEMU compatibility
 ENV NODE_OPTIONS="--max-old-space-size=4096"
@@ -44,7 +44,7 @@ RUN npx prisma generate
 RUN npx prisma migrate deploy --help || echo "Migration engine verified"
 
 # Stage 3: Runtime with Node.js
-FROM node:22-alpine
+FROM node:25-alpine
 
 # Install runtime dependencies
 RUN apk add --no-cache \
