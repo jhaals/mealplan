@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-bfc4e73] - 2026-02-20
+
+## What's Changed
+* Bump i18next from 25.8.5 to 25.8.10 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/30
+* Fix dependabot auto-merge workflow permission error by @Copilot in https://github.com/jhaals/mealplan/pull/32
+* Bump i18next from 25.8.5 to 25.8.10 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/31
+* Bump node from 22-alpine to 25-alpine in /addon by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/27
+* Bump typescript-eslint from 8.55.0 to 8.56.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/29
+* Bump @types/node from 22.19.11 to 25.2.3 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/28
+* Bump actions/setup-node from 4 to 6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/26
+* Bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/12
+* Regenerate server/package-lock.json to fix Docker build by @Copilot in https://github.com/jhaals/mealplan/pull/33
+* Fix ARM Docker build: run prisma generate on native build platform by @Copilot in https://github.com/jhaals/mealplan/pull/34
+* Fix ARM build: stop overriding BUILDPLATFORM with target platform by @Copilot in https://github.com/jhaals/mealplan/pull/35
+
+## New Contributors
+* @dependabot[bot] made their first contribution in https://github.com/jhaals/mealplan/pull/30
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-69b9fe4...v1.0.0-bfc4e73
+
 ## [1.0.0-69b9fe4] - 2026-02-14
 
 **Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-a62af89...v1.0.0-69b9fe4
