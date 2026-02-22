@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import * as shoppingListService from '../services/shoppingListService';
 import { AppError } from '../middleware/errorHandler';
+import { wsManager } from '../services/websocketManager';
 
 const shoppingList = new Hono();
 
@@ -26,6 +27,7 @@ shoppingList.post('/items', async (c) => {
   }
 
   const item = await shoppingListService.addItem(name.trim());
+  wsManager.broadcastShoppingListChange();
   return c.json(item, 201);
 });
 
@@ -38,6 +40,7 @@ shoppingList.put('/items/:itemId/toggle', async (c) => {
 
   try {
     const item = await shoppingListService.toggleItem(itemId);
+    wsManager.broadcastShoppingListChange();
     return c.json(item);
   } catch {
     throw new AppError(404, 'Item not found');
@@ -53,6 +56,7 @@ shoppingList.delete('/items/:itemId', async (c) => {
 
   try {
     await shoppingListService.deleteItem(itemId);
+    wsManager.broadcastShoppingListChange();
     return c.body(null, 204);
   } catch {
     throw new AppError(404, 'Item not found');
@@ -72,6 +76,7 @@ shoppingList.put('/reorder', async (c) => {
   }
 
   await shoppingListService.reorderItems(itemIds);
+  wsManager.broadcastShoppingListChange();
   return c.json({ success: true });
 });
 
@@ -81,6 +86,7 @@ shoppingList.put('/reorder', async (c) => {
  */
 shoppingList.post('/archive', async (c) => {
   const list = await shoppingListService.archiveAndCreateNew();
+  wsManager.broadcastShoppingListChange();
   return c.json(list);
 });
 
@@ -116,6 +122,7 @@ shoppingList.delete('/history/:id', async (c) => {
  */
 shoppingList.post('/sort', async (c) => {
   await shoppingListService.sortItemsWithAI();
+  wsManager.broadcastShoppingListChange();
   return c.json({ success: true });
 });
 

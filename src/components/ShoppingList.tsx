@@ -35,6 +35,8 @@ export function ShoppingList() {
     archiveAndCreateNew,
     updateConfig,
     retry,
+    setIsDragging,
+    isConnected,
   } = useShoppingList();
 
   const [newItemName, setNewItemName] = useState('');
@@ -227,7 +229,19 @@ export function ShoppingList() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
             {/* Card header */}
             <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
-              <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('headings.shoppingList')}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('headings.shoppingList')}</h2>
+                {/* WebSocket status indicator */}
+                <div className="flex items-center gap-1">
+                  <div
+                    className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+                    title={isConnected ? 'Connected' : 'Disconnected'}
+                  />
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {isConnected ? 'Live' : 'Offline'}
+                  </span>
+                </div>
+              </div>
               <div className="flex items-center gap-2">
                 {isSaving && (
                   <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent"></div>
@@ -269,7 +283,16 @@ export function ShoppingList() {
 
             {/* Unchecked items (sortable) */}
             {uncheckedItems.length > 0 && (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={(event) => {
+                  handleDragEnd(event);
+                  setIsDragging(false);
+                }}
+                onDragCancel={() => setIsDragging(false)}
+              >
                 <SortableContext items={uncheckedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                   <div className="divide-y divide-gray-50 dark:divide-gray-700">
                     {uncheckedItems.map((item) => (

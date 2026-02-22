@@ -1,6 +1,7 @@
 import { useReducer, useEffect, useState, useCallback } from 'react';
 import type { ShoppingListState } from '../types';
 import * as api from '../utils/api';
+import { useWebSocket } from './useWebSocket';
 
 const initialState: ShoppingListState = {
   items: [],
@@ -24,6 +25,49 @@ export function useShoppingList() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [pendingUpdate, setPendingUpdate] = useState(false);
+
+  // WebSocket message handler
+  const handleWebSocketMessage = useCallback((data: any) => {
+    if (data.type === 'shopping-list-changed') {
+      console.log('[ShoppingList] Change notification received');
+
+      // If dragging, buffer update to apply after drag completes
+      if (isDragging) {
+        console.log('[ShoppingList] Buffering update (drag in progress)');
+        setPendingUpdate(true);
+        return;
+      }
+
+      // If not loading/saving, refresh immediately
+      if (!isLoading && !isSaving) {
+        refreshState().catch((err) => {
+          console.error('[ShoppingList] Failed to refresh after WS update:', err);
+        });
+      } else {
+        console.log('[ShoppingList] Buffering update (operation in progress)');
+        setPendingUpdate(true);
+      }
+    }
+  }, [isDragging, isLoading, isSaving]);
+
+  const refreshState = useCallback(async () => {
+    try {
+      const data = await api.getShoppingList();
+      dispatch({ type: 'LOAD_STATE', payload: data });
+    } catch (err) {
+      console.error('Failed to refresh state:', err);
+      throw err;
+    }
+  }, []);
+
+  // WebSocket connection
+  const { isConnected } = useWebSocket({
+    url: '/ws/shopping-list',
+    onMessage: handleWebSocketMessage,
+    enabled: true,
+  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -43,15 +87,16 @@ export function useShoppingList() {
     loadData();
   }, []);
 
-  const refreshState = useCallback(async () => {
-    try {
-      const data = await api.getShoppingList();
-      dispatch({ type: 'LOAD_STATE', payload: data });
-    } catch (err) {
-      console.error('Failed to refresh state:', err);
-      throw err;
+  // Apply pending updates after drag completes
+  useEffect(() => {
+    if (!isDragging && pendingUpdate && !isLoading && !isSaving) {
+      console.log('[ShoppingList] Applying buffered update');
+      setPendingUpdate(false);
+      refreshState().catch((err) => {
+        console.error('[ShoppingList] Failed to apply buffered update:', err);
+      });
     }
-  }, []);
+  }, [isDragging, pendingUpdate, isLoading, isSaving, refreshState]);
 
   const addItem = useCallback(async (name: string) => {
     try {
@@ -183,5 +228,7 @@ export function useShoppingList() {
     archiveAndCreateNew,
     updateConfig,
     retry,
+    setIsDragging,
+    isConnected,
   };
 }

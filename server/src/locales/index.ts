@@ -1,6 +1,6 @@
-import i18next from 'i18next';
+import i18next from "i18next";
 
-const defaultLanguage = process.env.LANGUAGE || 'en';
+const defaultLanguage = process.env.LANGUAGE || "en";
 
 // Swedish AI prompt (existing DEFAULT_SORTING_PROMPT from geminiService.ts)
 const svSortingPrompt = `Du är en hjälpsam assistent som sorterar svenska matvaror enligt en butiks gångstig.
@@ -9,7 +9,7 @@ Sortera följande matvaror enligt gångstig i en svensk matbutik. Returnera enda
 
 Gångstig genom butiken (i ordning):
 1. Frukt och grönt (t.ex. äpplen, bananer, tomater, sallad, gurka)
-2. Ostar (t.ex. herrgård, präst, brie, cheddar)
+2. Ostar (t.ex. herrgård, präst, brie, cheddar, tofu)
 3. Chark (t.ex. skinka, salami, korv)
 4. Olja (t.ex. olivolja, rapsolja)
 5. Kryddor (t.ex. salt, peppar, paprika, oregano)
@@ -24,7 +24,7 @@ Gångstig genom butiken (i ordning):
 14. Ägg
 15. Nötter (t.ex. mandlar, cashew, jordnötter)
 16. Toapapper
-17. Blöjor
+17. Blöjor och barnmat
 18. Renhållning (t.ex. diskmedel, tvättmedel, rengöring)
 19. Godis och glass (t.ex. choklad, lösgodis)
 
@@ -60,19 +60,19 @@ If an item doesn't fit perfectly in a category, make your best guess where it be
 
 i18next.init({
   lng: defaultLanguage,
-  fallbackLng: 'en',
+  fallbackLng: "en",
   resources: {
     en: {
       translation: {
         defaultSortingPrompt: enSortingPrompt,
-        sortingItemsInstructions: 'Items to sort:'
-      }
+        sortingItemsInstructions: "Items to sort:",
+      },
     },
     sv: {
       translation: {
         defaultSortingPrompt: svSortingPrompt,
-        sortingItemsInstructions: 'Varor att sortera:'
-      }
+        sortingItemsInstructions: "Varor att sortera:",
+      },
     },
   },
   debug: false, // Suppress i18next promotional messages
