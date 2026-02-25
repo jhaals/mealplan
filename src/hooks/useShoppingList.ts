@@ -1,7 +1,7 @@
 import { useReducer, useEffect, useState, useCallback } from 'react';
 import type { ShoppingListState } from '../types';
 import * as api from '../utils/api';
-import { useWebSocket } from './useWebSocket';
+import { useServerSentEvents } from './useServerSentEvents';
 
 const initialState: ShoppingListState = {
   items: [],
@@ -28,30 +28,6 @@ export function useShoppingList() {
   const [isDragging, setIsDragging] = useState(false);
   const [pendingUpdate, setPendingUpdate] = useState(false);
 
-  // WebSocket message handler
-  const handleWebSocketMessage = useCallback((data: any) => {
-    if (data.type === 'shopping-list-changed') {
-      console.log('[ShoppingList] Change notification received');
-
-      // If dragging, buffer update to apply after drag completes
-      if (isDragging) {
-        console.log('[ShoppingList] Buffering update (drag in progress)');
-        setPendingUpdate(true);
-        return;
-      }
-
-      // If not loading/saving, refresh immediately
-      if (!isLoading && !isSaving) {
-        refreshState().catch((err) => {
-          console.error('[ShoppingList] Failed to refresh after WS update:', err);
-        });
-      } else {
-        console.log('[ShoppingList] Buffering update (operation in progress)');
-        setPendingUpdate(true);
-      }
-    }
-  }, [isDragging, isLoading, isSaving]);
-
   const refreshState = useCallback(async () => {
     try {
       const data = await api.getShoppingList();
@@ -62,10 +38,34 @@ export function useShoppingList() {
     }
   }, []);
 
-  // WebSocket connection
-  const { isConnected } = useWebSocket({
-    url: '/ws/shopping-list',
-    onMessage: handleWebSocketMessage,
+  // SSE message handler
+  const handleSSEMessage = useCallback((data: any) => {
+    if (data.type === 'shopping-list-changed') {
+      console.log('[SSE ShoppingList] Change notification received');
+
+      // If dragging, buffer update to apply after drag completes
+      if (isDragging) {
+        console.log('[SSE ShoppingList] Buffering update (drag in progress)');
+        setPendingUpdate(true);
+        return;
+      }
+
+      // If not loading/saving, refresh immediately
+      if (!isLoading && !isSaving) {
+        refreshState().catch((err) => {
+          console.error('[SSE ShoppingList] Failed to refresh after update:', err);
+        });
+      } else {
+        console.log('[SSE ShoppingList] Buffering update (operation in progress)');
+        setPendingUpdate(true);
+      }
+    }
+  }, [isDragging, isLoading, isSaving, refreshState]);
+
+  // SSE connection
+  const { isConnected } = useServerSentEvents({
+    url: '/api/shopping-list/events',
+    onMessage: handleSSEMessage,
     enabled: true,
   });
 
@@ -90,10 +90,10 @@ export function useShoppingList() {
   // Apply pending updates after drag completes
   useEffect(() => {
     if (!isDragging && pendingUpdate && !isLoading && !isSaving) {
-      console.log('[ShoppingList] Applying buffered update');
+      console.log('[SSE ShoppingList] Applying buffered update');
       setPendingUpdate(false);
       refreshState().catch((err) => {
-        console.error('[ShoppingList] Failed to apply buffered update:', err);
+        console.error('[SSE ShoppingList] Failed to apply buffered update:', err);
       });
     }
   }, [isDragging, pendingUpdate, isLoading, isSaving, refreshState]);

@@ -1,9 +1,36 @@
 import { Hono } from 'hono';
+import { streamSSE } from 'hono/streaming';
 import * as shoppingListService from '../services/shoppingListService';
 import { AppError } from '../middleware/errorHandler';
-import { wsManager } from '../services/websocketManager';
+import { sseManager } from '../services/sseManager';
 
 const shoppingList = new Hono();
+
+/**
+ * GET /api/shopping-list/events
+ * Server-Sent Events endpoint for real-time updates
+ */
+shoppingList.get('/events', async (c) => {
+  return streamSSE(c, async (stream) => {
+    const clientId = crypto.randomUUID();
+
+    // Add client to manager
+    sseManager.addClient(clientId, stream, c.req.raw.signal);
+
+    // Send initial connection success event
+    await stream.writeSSE({
+      event: 'connected',
+      data: JSON.stringify({ clientId, timestamp: new Date().toISOString() }),
+    });
+
+    // Keep connection open - manager handles keep-alive and broadcasts
+    // Connection closes when client disconnects (AbortSignal fires)
+    // Use a loop with reasonable sleep intervals (1 hour) to avoid timeout overflow
+    while (!c.req.raw.signal.aborted) {
+      await stream.sleep(3600000); // 1 hour in milliseconds
+    }
+  });
+});
 
 /**
  * GET /api/shopping-list
@@ -27,7 +54,7 @@ shoppingList.post('/items', async (c) => {
   }
 
   const item = await shoppingListService.addItem(name.trim());
-  wsManager.broadcastShoppingListChange();
+  sseManager.broadcastShoppingListChange();
   return c.json(item, 201);
 });
 
@@ -40,7 +67,7 @@ shoppingList.put('/items/:itemId/toggle', async (c) => {
 
   try {
     const item = await shoppingListService.toggleItem(itemId);
-    wsManager.broadcastShoppingListChange();
+    sseManager.broadcastShoppingListChange();
     return c.json(item);
   } catch {
     throw new AppError(404, 'Item not found');
@@ -56,7 +83,7 @@ shoppingList.delete('/items/:itemId', async (c) => {
 
   try {
     await shoppingListService.deleteItem(itemId);
-    wsManager.broadcastShoppingListChange();
+    sseManager.broadcastShoppingListChange();
     return c.body(null, 204);
   } catch {
     throw new AppError(404, 'Item not found');
@@ -76,7 +103,7 @@ shoppingList.put('/reorder', async (c) => {
   }
 
   await shoppingListService.reorderItems(itemIds);
-  wsManager.broadcastShoppingListChange();
+  sseManager.broadcastShoppingListChange();
   return c.json({ success: true });
 });
 
@@ -86,7 +113,7 @@ shoppingList.put('/reorder', async (c) => {
  */
 shoppingList.post('/archive', async (c) => {
   const list = await shoppingListService.archiveAndCreateNew();
-  wsManager.broadcastShoppingListChange();
+  sseManager.broadcastShoppingListChange();
   return c.json(list);
 });
 
@@ -122,7 +149,7 @@ shoppingList.delete('/history/:id', async (c) => {
  */
 shoppingList.post('/sort', async (c) => {
   await shoppingListService.sortItemsWithAI();
-  wsManager.broadcastShoppingListChange();
+  sseManager.broadcastShoppingListChange();
   return c.json({ success: true });
 });
 

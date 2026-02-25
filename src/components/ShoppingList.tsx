@@ -231,11 +231,11 @@ export function ShoppingList() {
             <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center gap-2">
                 <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('headings.shoppingList')}</h2>
-                {/* WebSocket status indicator */}
+                {/* SSE status indicator */}
                 <div className="flex items-center gap-1">
                   <div
                     className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
-                    title={isConnected ? 'Connected' : 'Disconnected'}
+                    title={isConnected ? 'SSE Connected' : 'SSE Disconnected'}
                   />
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     {isConnected ? 'Live' : 'Offline'}

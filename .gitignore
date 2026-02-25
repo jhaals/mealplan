@@ -16,6 +16,7 @@ dist-ssr
 server/prisma/*.db
 server/prisma/*.db-journal
 server/prisma/*.db-wal
+*.db
 
 # Generated Prisma Client
 server/src/generated
