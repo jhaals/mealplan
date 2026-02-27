@@ -15,7 +15,7 @@
     "@google/generative-ai": "^0.24.1",
     "@hono/node-server": "^1.19.9",
     "@prisma/adapter-better-sqlite3": "^7.4.1",
-    "@prisma/client": "^7.4.0",
+    "@prisma/client": "^7.4.1",
     "date-fns": "^4.1.0",
     "hono": "^4.12.2",
     "i18next": "^25.8.10",
