@@ -31,7 +31,7 @@ COPY server/package.json server/package-lock.json ./
 COPY server/prisma.config.ts ./
 COPY server/prisma/ ./prisma/
 
-RUN npm ci --no-audit --prefer-offline --no-fund
+RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 RUN npx prisma generate
 
 # Stage 2: Build Backend
@@ -52,9 +52,9 @@ COPY server/prisma.config.ts ./
 COPY server/src/ ./src/
 COPY server/prisma/ ./prisma/
 
-# Install dependencies
+# Install dependencies (legacy-peer-deps due to @prisma/studio-core peer deps on react)
 # Additional flags for QEMU compatibility
-RUN npm ci --no-audit --prefer-offline --no-fund
+RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 
 # Copy pre-generated Prisma Client from native build platform
 COPY --from=prisma-gen /build/server/src/generated/prisma/ ./src/generated/prisma/
