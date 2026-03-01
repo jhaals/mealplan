@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-3767165] - 2026-03-01
+
+## What's Changed
+* Bump hono from 4.11.10 to 4.12.2 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/45
+* Bump @prisma/adapter-better-sqlite3 from 7.4.0 to 7.4.1 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/44
+* Bump eslint-plugin-react-refresh from 0.5.0 to 0.5.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/42
+* Bump prisma from 7.4.0 to 7.4.1 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/43
+* Fix dependabot auto-merge: remove PR approval step that lacks GITHUB_TOKEN permission by @Copilot in https://github.com/jhaals/mealplan/pull/46
+* Bump react-router-dom from 7.13.0 to 7.13.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/41
+* Bump eslint from 10.0.0 to 10.0.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/38
+* Bump tailwindcss from 4.1.18 to 4.2.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/40
+* Bump typescript-eslint from 8.56.0 to 8.56.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/37
+* Fix release build: add --legacy-peer-deps to server npm ci in Dockerfile by @Copilot in https://github.com/jhaals/mealplan/pull/47
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-63742f8...v1.0.0-3767165
+
 ## [1.0.0-63742f8] - 2026-02-25
 
 **Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-46f9fca...v1.0.0-63742f8
