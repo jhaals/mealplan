@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-16a5212] - 2026-03-01
+
+## What's Changed
+* Bump @prisma/client from 7.4.0 to 7.4.1 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/39
+* Bump i18next from 25.8.11 to 25.8.13 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/36
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-3767165...v1.0.0-16a5212
+
 ## [1.0.0-3767165] - 2026-03-01
 
 ## What's Changed
