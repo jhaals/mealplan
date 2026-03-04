@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-a9479d7] - 2026-03-04
+
+## What's Changed
+* Bump @types/node from 25.3.0 to 25.3.3 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/50
+* Bump @prisma/client from 7.4.1 to 7.4.2 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/52
+* Bump @hono/node-server from 1.19.9 to 1.19.10 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/55
+* Bump globals from 17.3.0 to 17.4.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/56
+* Bump i18next from 25.8.13 to 25.8.14 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/54
+* Bump i18next from 25.8.10 to 25.8.14 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/51
+* Bump @prisma/adapter-better-sqlite3 from 7.4.1 to 7.4.2 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/58
+* Bump prisma from 7.4.1 to 7.4.2 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/59
+* Bump hono from 4.12.2 to 4.12.4 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/57
+* Bump @tailwindcss/vite from 4.1.18 to 4.2.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/53
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-72b99bd...v1.0.0-a9479d7
+
 ## [1.0.0-16a5212] - 2026-03-01
 
 ## What's Changed
