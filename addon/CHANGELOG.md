@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-39e4760] - 2026-03-05
+
+## What's Changed
+* Bump docker/setup-qemu-action from 3 to 4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/49
+* Bump actions/upload-artifact from 4 to 7 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/48
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-a9479d7...v1.0.0-39e4760
+
 ## [1.0.0-a9479d7] - 2026-03-04
 
 ## What's Changed
