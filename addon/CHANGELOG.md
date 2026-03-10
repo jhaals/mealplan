@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-4401a5a] - 2026-03-10
+
+## What's Changed
+* Simplify README to focus on installation and configuration by @jhaals in https://github.com/jhaals/mealplan/pull/60
+
+## New Contributors
+* @jhaals made their first contribution in https://github.com/jhaals/mealplan/pull/60
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-39e4760...v1.0.0-4401a5a
+
 ## [1.0.0-39e4760] - 2026-03-05
 
 ## What's Changed
