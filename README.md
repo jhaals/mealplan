@@ -1,61 +1,41 @@
 # MealPlan
 
-A meal planning app with a React frontend and Hono backend, backed by SQLite.
-
-## Requirements
-
-- Node.js
-- npm
+Home Assistant add-on for meal planning with a drag-and-drop interface.
 
 ## Installation
 
-```bash
-# Install dependencies
-npm install
-cd server && npm install && cd ..
+1. Go to **Settings** → **Add-ons** → **Add-on Store**
+2. Click the three-dot menu → **Repositories**
+3. Add `https://github.com/jhaals/mealplan`
+4. Install and start the **MealPlan** add-on
+5. Open `http://homeassistant.local:3001`
 
-# Set up the database
-npm run db:migrate
-npm run db:seed
+## Configuration
+
+```yaml
+port: 3001                 # Web interface port (optional, default: 3001)
+trmnl_webhook_url: ""      # TRMNL e-ink display webhook URL (optional)
+google_api_key: ""         # Google AI Studio key for shopping list sorting (optional)
+language: "en"             # UI language: "en" or "sv" (optional)
 ```
 
-## Running
+### TRMNL
 
-```bash
-npm run dev        # Build frontend + run server on :3001
-npm run dev:watch  # Auto-rebuild on file changes
-npm run start      # Production mode
-```
+Get your webhook URL from your TRMNL plugin settings (`https://usetrmnl.com/api/custom_plugins/YOUR_PLUGIN_UUID`). When configured, the meal plan is automatically pushed to the device on changes.
 
-Open [http://localhost:3001](http://localhost:3001)
+### Google AI shopping list sorting
 
-## Environment
+Get an API key at https://aistudio.google.com/apikey. When configured, enables AI-powered sorting of the shopping list grouped by store section.
 
-**`server/.env`**
-```env
-DATABASE_URL="file:./dev.db"
-PORT=3001
-```
+## Data & Backups
 
-Optional TRMNL e-ink display integration:
-```env
-TRMNL_WEBHOOK_URL=https://usetrmnl.com/api/custom_plugins/YOUR_PLUGIN_UUID
-```
-
-## Database
-
-```bash
-npm run db:migrate   # Run migrations
-npm run db:seed      # Create singleton MealPlan record
-npm run db:studio    # Open Prisma Studio
-```
+Meal plan data is stored in `/data/mealplan.db` and included automatically in Home Assistant backups.
 
 ## Troubleshooting
 
-- **"Meal plan not found"** - Run `npm run db:seed`
-- **404 errors** - Frontend not built, run `npm run build`
-- **Port in use** - Check `lsof -i :3001`
-- **Changes not showing** - Use `npm run dev:watch` or rebuild manually with `npm run build`
+- **Add-on won't start** - Check logs; if port 3001 is in use, change it in configuration
+- **"Meal plan not found"** - Restart the add-on to reinitialize the database
+- **Reset database** - Stop add-on, delete `/data/mealplan.db`, restart
 
 ## License
 
