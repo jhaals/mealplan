@@ -4,6 +4,7 @@ import { serveStatic } from '@hono/node-server/serve-static';
 import { errorHandler } from './middleware/errorHandler';
 import mealPlanRoutes from './routes/mealPlan';
 import shoppingListRoutes from './routes/shoppingList';
+import todoListRoutes from './routes/todoList';
 import trmnlRoutes from './routes/trmnl';
 import configRoutes from './routes/config';
 import * as trmnlService from './services/trmnlService';
@@ -18,6 +19,7 @@ app.get('/health', (c) => {
 // API Routes
 app.route('/api/meal-plan', mealPlanRoutes);
 app.route('/api/shopping-list', shoppingListRoutes);
+app.route('/api/todo-list', todoListRoutes);
 app.route('/api/trmnl', trmnlRoutes);
 app.route('/api/config', configRoutes);
 

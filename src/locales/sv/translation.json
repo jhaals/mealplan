@@ -5,6 +5,7 @@
   "navigation": {
     "mealPlan": "Måltidsplan",
     "shoppingList": "Inköpslista",
+    "todoList": "Att göra",
     "trmnl": "TRMNL"
   },
   "tabs": {
@@ -106,5 +107,36 @@
     "hide": "Dölj",
     "showDefaultPrompt": "Standardprompt",
     "copyToEditor": "Kopiera till Redigerare"
+  },
+  "todo": {
+    "heading": "Att göra-lista",
+    "loading": "Laddar att göra-lista...",
+    "emptyList": "Din att göra-lista är tom",
+    "addItemPlaceholder": "Lägg till uppgift...",
+    "recurring": "Återkommande",
+    "recurringLabel": "Återkommande uppgift",
+    "clearCompleted": "Rensa klara",
+    "completedItem": "Klar",
+    "completedCount_one": "{{count}} klar uppgift",
+    "completedCount_other": "{{count}} klara uppgifter",
+    "noRecurringItems": "Inga återkommande uppgifter ännu.",
+    "allRecurringItems": "Alla återkommande uppgifter",
+    "nextDue": "Nästa",
+    "lastCompleted": "Senast klar",
+    "tabs": {
+      "active": "Aktiva",
+      "recurring": "Återkommande"
+    },
+    "intervals": {
+      "daily": "Dagligen",
+      "weekly": "Veckovis",
+      "monthly": "Månadsvis",
+      "custom": "Var {{days}}:e dag"
+    },
+    "aria": {
+      "checkItem": "Bocka av uppgift",
+      "uncheckItem": "Avbocka uppgift",
+      "deleteItem": "Ta bort uppgift"
+    }
   }
 }

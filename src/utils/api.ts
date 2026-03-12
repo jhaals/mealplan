@@ -245,6 +245,94 @@ export async function getDefaultSortingPrompt(): Promise<{ defaultPrompt: string
   return fetchJSON<{ defaultPrompt: string }>('/api/shopping-list/config/default-prompt');
 }
 
+// ========== Todo List API ==========
+
+import type { TodoListState, TodoItem } from '../types';
+
+/**
+ * Get the current todo list (due items only)
+ */
+export async function getTodoList(): Promise<TodoListState> {
+  return fetchJSON<TodoListState>('/api/todo-list');
+}
+
+/**
+ * Get all recurring items (including not yet due)
+ */
+export async function getRecurringTodoItems(): Promise<TodoItem[]> {
+  return fetchJSON<TodoItem[]>('/api/todo-list/recurring');
+}
+
+/**
+ * Add an item to the todo list
+ */
+export async function addTodoItem(
+  name: string,
+  isRecurring: boolean = false,
+  recurrenceInterval: string | null = null,
+  recurrenceDays: number | null = null
+): Promise<TodoItem> {
+  return fetchJSON<TodoItem>('/api/todo-list/items', {
+    method: 'POST',
+    body: JSON.stringify({ name, isRecurring, recurrenceInterval, recurrenceDays }),
+  });
+}
+
+/**
+ * Toggle a todo item's checked state
+ */
+export async function toggleTodoItem(itemId: string): Promise<TodoItem> {
+  return fetchJSON<TodoItem>(`/api/todo-list/items/${itemId}/toggle`, {
+    method: 'PUT',
+  });
+}
+
+/**
+ * Update a todo item
+ */
+export async function updateTodoItem(
+  itemId: string,
+  data: {
+    name?: string;
+    isRecurring?: boolean;
+    recurrenceInterval?: string | null;
+    recurrenceDays?: number | null;
+  }
+): Promise<TodoItem> {
+  return fetchJSON<TodoItem>(`/api/todo-list/items/${itemId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Delete an item from the todo list
+ */
+export async function deleteTodoItem(itemId: string): Promise<void> {
+  return fetchJSON<void>(`/api/todo-list/items/${itemId}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
+ * Reorder items in the todo list
+ */
+export async function reorderTodoItems(itemIds: string[]): Promise<void> {
+  return fetchJSON<void>('/api/todo-list/reorder', {
+    method: 'PUT',
+    body: JSON.stringify({ itemIds }),
+  });
+}
+
+/**
+ * Clear completed non-recurring items
+ */
+export async function clearCompletedTodoItems(): Promise<void> {
+  return fetchJSON<void>('/api/todo-list/clear-completed', {
+    method: 'POST',
+  });
+}
+
 // ========== TRMNL API ==========
 
 export interface TRMNLPushResponse {
