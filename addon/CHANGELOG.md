@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-746200b] - 2026-03-12
+
+## What's Changed
+* Bump @hono/node-server from 1.19.10 to 1.19.11 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/64
+* Bump @types/node from 25.3.3 to 25.4.0 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/66
+* Bump hono from 4.12.4 to 4.12.7 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/67
+* Bump typescript-eslint from 8.56.1 to 8.57.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/71
+* Bump i18next from 25.8.14 to 25.8.17 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/70
+* Bump i18next from 25.8.14 to 25.8.17 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/65
+* Bump eslint from 10.0.2 to 10.0.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/69
+* Bump react-i18next from 16.5.4 to 16.5.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/68
+* Add Todo list with recurring tasks support by @Copilot in https://github.com/jhaals/mealplan/pull/72
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-4401a5a...v1.0.0-746200b
+
 ## [1.0.0-4401a5a] - 2026-03-10
 
 ## What's Changed
