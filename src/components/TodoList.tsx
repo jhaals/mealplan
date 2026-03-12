@@ -246,8 +246,8 @@ export function TodoList() {
                     onClick={() => setIsRecurring(!isRecurring)}
                     className="flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors"
                     style={{
-                      borderColor: isRecurring ? '#16a34a' : '#d1d5db',
-                      backgroundColor: isRecurring ? '#16a34a' : 'transparent',
+                      borderColor: isRecurring ? '#22c55e' : '#d1d5db',
+                      backgroundColor: isRecurring ? '#22c55e' : 'transparent',
                     }}
                   >
                     {isRecurring && (
