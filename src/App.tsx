@@ -318,7 +318,7 @@ function AppHeader() {
             <NavLink
               to="/settings"
               className={({ isActive }) =>
-                `p-2 rounded-lg transition-colors ${
+                `p-2 rounded-lg transition-colors flex items-center justify-center ${
                   isActive
                     ? 'text-primary-700 dark:text-primary-400'
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
