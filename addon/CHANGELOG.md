@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-9c35650] - 2026-03-12
+
+## What's Changed
+* Move TRMNL to settings page with cog icon, shorten nav labels, fix oversized todo checkbox by @Copilot in https://github.com/jhaals/mealplan/pull/73
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-746200b...v1.0.0-9c35650
+
 ## [1.0.0-746200b] - 2026-03-12
 
 ## What's Changed
