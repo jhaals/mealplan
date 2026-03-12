@@ -6,7 +6,8 @@
     "mealPlan": "Meal Plan",
     "shoppingList": "Shopping List",
     "todoList": "Todo List",
-    "trmnl": "TRMNL"
+    "trmnl": "TRMNL",
+    "settings": "Settings"
   },
   "tabs": {
     "currentPlan": "Current Plan",

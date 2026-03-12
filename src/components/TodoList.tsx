@@ -239,12 +239,23 @@ export function TodoList() {
               {/* Recurring toggle */}
               <div className="flex items-center gap-2 mt-1 mb-0.5">
                 <label className="flex items-center gap-1.5 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isRecurring}
-                    onChange={(e) => setIsRecurring(e.target.checked)}
-                    className="rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500 h-3 w-3"
-                  />
+                  <button
+                    type="button"
+                    role="checkbox"
+                    aria-checked={isRecurring}
+                    onClick={() => setIsRecurring(!isRecurring)}
+                    className="flex-shrink-0 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors"
+                    style={{
+                      borderColor: isRecurring ? '#16a34a' : '#d1d5db',
+                      backgroundColor: isRecurring ? '#16a34a' : 'transparent',
+                    }}
+                  >
+                    {isRecurring && (
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
                   <span className="text-[10px] text-gray-500 dark:text-gray-400">{t('todo.recurring')}</span>
                 </label>
                 {isRecurring && (
