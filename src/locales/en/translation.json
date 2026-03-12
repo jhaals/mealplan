@@ -5,6 +5,7 @@
   "navigation": {
     "mealPlan": "Meal Plan",
     "shoppingList": "Shopping List",
+    "todoList": "Todo List",
     "trmnl": "TRMNL"
   },
   "tabs": {
@@ -106,5 +107,36 @@
     "hide": "Hide",
     "showDefaultPrompt": "Default Prompt",
     "copyToEditor": "Copy to Editor"
+  },
+  "todo": {
+    "heading": "Todo List",
+    "loading": "Loading todo list...",
+    "emptyList": "Your todo list is empty",
+    "addItemPlaceholder": "Add task...",
+    "recurring": "Recurring",
+    "recurringLabel": "Recurring task",
+    "clearCompleted": "Clear Completed",
+    "completedItem": "Completed",
+    "completedCount_one": "{{count}} completed item",
+    "completedCount_other": "{{count}} completed items",
+    "noRecurringItems": "No recurring tasks yet.",
+    "allRecurringItems": "All Recurring Tasks",
+    "nextDue": "Next due",
+    "lastCompleted": "Last completed",
+    "tabs": {
+      "active": "Active",
+      "recurring": "Recurring"
+    },
+    "intervals": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "custom": "Every {{days}} days"
+    },
+    "aria": {
+      "checkItem": "Check item",
+      "uncheckItem": "Uncheck item",
+      "deleteItem": "Delete task"
+    }
   }
 }

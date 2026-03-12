@@ -48,3 +48,22 @@ export interface ArchivedShoppingList {
   items: ShoppingListItem[];
   createdAt: string;
 }
+
+// Todo list types
+export interface TodoItem {
+  id: string;
+  name: string;
+  checked: boolean;
+  sortOrder: number;
+  isRecurring: boolean;
+  recurrenceInterval: string | null;
+  recurrenceDays: number | null;
+  nextDueDate: string | null;
+  lastCompletedAt: string | null;
+  createdAt: string;
+}
+
+export interface TodoListState {
+  items: TodoItem[];
+  createdAt: string;
+}

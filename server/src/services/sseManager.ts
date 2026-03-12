@@ -79,6 +79,34 @@ class SSEManager {
     }
   }
 
+  async broadcastTodoListChange() {
+    const data = JSON.stringify({
+      type: 'todo-list-changed',
+      timestamp: new Date().toISOString(),
+    });
+
+    let sentCount = 0;
+    for (const [id, client] of this.clients) {
+      if (!client.aborted) {
+        try {
+          await client.stream.writeSSE({
+            event: 'todo-list-changed',
+            data,
+          });
+          sentCount++;
+        } catch (err) {
+          console.error(`[SSE] Failed to send to client ${id}:`, err);
+          client.aborted = true;
+          this.removeClient(id);
+        }
+      }
+    }
+
+    if (sentCount > 0) {
+      console.log(`[SSE] Broadcast todo list change to ${sentCount} clients`);
+    }
+  }
+
   getClientCount() {
     return this.clients.size;
   }

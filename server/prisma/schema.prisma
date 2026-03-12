@@ -89,3 +89,29 @@ model ArchivedShoppingList {
   data      String   // JSON snapshot of items
   createdAt DateTime @default(now()) // Timestamp of when original list was created
 }
+
+// Todo list (singleton pattern like ShoppingList)
+model TodoList {
+  id        String     @id @default("singleton")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     TodoItem[]
+}
+
+model TodoItem {
+  id                 String    @id @default(cuid())
+  todoListId         String
+  todoList           TodoList  @relation(fields: [todoListId], references: [id], onDelete: Cascade)
+  name               String
+  checked            Boolean   @default(false)
+  sortOrder          Int       @default(0)
+  isRecurring        Boolean   @default(false)
+  recurrenceInterval String?   // e.g., "daily", "weekly", "monthly"
+  recurrenceDays     Int?      // number of days between recurrences (for custom intervals)
+  nextDueDate        String?   // ISO date (YYYY-MM-DD) when task is next due
+  lastCompletedAt    DateTime? // When the task was last completed
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([todoListId])
+}

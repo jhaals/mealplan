@@ -19,6 +19,7 @@ import { MealList } from './components/MealList';
 import { MealCard } from './components/MealCard';
 import { MealPlanHistory } from './components/MealPlanHistory';
 import { ShoppingList } from './components/ShoppingList';
+import { TodoList } from './components/TodoList';
 import { TRMNLPage } from './components/TRMNLPage';
 import { ThemeToggle } from './components/ThemeToggle';
 import type { Meal } from './types';
@@ -301,6 +302,18 @@ function AppHeader() {
               {t('navigation.shoppingList')}
             </NavLink>
             <NavLink
+              to="/todos"
+              className={({ isActive }) =>
+                `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                  isActive
+                    ? 'bg-gray-50 dark:bg-gray-700 text-primary-700 dark:text-primary-400 border-b-2 border-primary-600'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`
+              }
+            >
+              {t('navigation.todoList')}
+            </NavLink>
+            <NavLink
               to="/trmnl"
               className={({ isActive }) =>
                 `px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
@@ -327,6 +340,7 @@ function App() {
       <Routes>
         <Route path="/meals" element={<MealPlanPage />} />
         <Route path="/shopping" element={<ShoppingList />} />
+        <Route path="/todos" element={<TodoList />} />
         <Route path="/trmnl" element={<TRMNLPage />} />
         <Route path="*" element={<Navigate to="/meals" replace />} />
       </Routes>
