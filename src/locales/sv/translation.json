@@ -3,10 +3,11 @@
     "title": "Måltidsplan"
   },
   "navigation": {
-    "mealPlan": "Måltidsplan",
-    "shoppingList": "Inköpslista",
-    "todoList": "Att göra",
-    "trmnl": "TRMNL"
+    "mealPlan": "Måltider",
+    "shoppingList": "Inköp",
+    "todoList": "Todo",
+    "trmnl": "TRMNL",
+    "settings": "Inställningar"
   },
   "tabs": {
     "currentPlan": "Aktuell Plan",

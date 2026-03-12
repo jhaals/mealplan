@@ -3,10 +3,11 @@
     "title": "MealPlan"
   },
   "navigation": {
-    "mealPlan": "Meal Plan",
-    "shoppingList": "Shopping List",
-    "todoList": "Todo List",
-    "trmnl": "TRMNL"
+    "mealPlan": "Meals",
+    "shoppingList": "Shopping",
+    "todoList": "Todo",
+    "trmnl": "TRMNL",
+    "settings": "Settings"
   },
   "tabs": {
     "currentPlan": "Current Plan",
