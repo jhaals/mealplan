@@ -3,9 +3,9 @@
     "title": "MealPlan"
   },
   "navigation": {
-    "mealPlan": "Meal Plan",
-    "shoppingList": "Shopping List",
-    "todoList": "Todo List",
+    "mealPlan": "Meals",
+    "shoppingList": "Shopping",
+    "todoList": "Todo",
     "trmnl": "TRMNL",
     "settings": "Settings"
   },

@@ -3,9 +3,9 @@
     "title": "Måltidsplan"
   },
   "navigation": {
-    "mealPlan": "Måltidsplan",
-    "shoppingList": "Inköpslista",
-    "todoList": "Att göra",
+    "mealPlan": "Måltider",
+    "shoppingList": "Inköp",
+    "todoList": "Todo",
     "trmnl": "TRMNL",
     "settings": "Inställningar"
   },

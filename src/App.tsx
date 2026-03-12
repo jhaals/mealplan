@@ -313,13 +313,15 @@ function AppHeader() {
             >
               {t('navigation.todoList')}
             </NavLink>
+          </nav>
+          <div className="flex items-center">
             <NavLink
               to="/settings"
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+                `p-2 rounded-lg transition-colors ${
                   isActive
-                    ? 'bg-gray-50 dark:bg-gray-700 text-primary-700 dark:text-primary-400 border-b-2 border-primary-600'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    ? 'text-primary-700 dark:text-primary-400'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                 }`
               }
               aria-label={t('navigation.settings')}
@@ -329,8 +331,8 @@ function AppHeader() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </NavLink>
-          </nav>
-          <ThemeToggle />
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>
