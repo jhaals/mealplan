@@ -179,34 +179,46 @@ export function ShoppingList() {
     <div className="max-w-3xl mx-auto">
       {/* Tabs */}
       <div className="px-4 pt-4">
-        <div className="flex border-b border-gray-200 dark:border-gray-700">
+        <div className="flex border-b border-cream-300 dark:border-charcoal-700">
           <button
             onClick={() => setActiveTab('list')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'list'
+            className={`
+              px-5 py-2.5 text-sm font-semibold
+              border-b-2 transition-all duration-200
+              relative
+              ${activeTab === 'list'
                 ? 'border-primary-600 text-primary-700 dark:text-primary-400'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-            }`}
+                : 'border-transparent text-charcoal-600 dark:text-cream-300 hover:text-primary-600 dark:hover:text-primary-400'
+              }
+            `}
           >
             {t('tabs.currentList')}
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'history'
+            className={`
+              px-5 py-2.5 text-sm font-semibold
+              border-b-2 transition-all duration-200
+              relative
+              ${activeTab === 'history'
                 ? 'border-primary-600 text-primary-700 dark:text-primary-400'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-            }`}
+                : 'border-transparent text-charcoal-600 dark:text-cream-300 hover:text-primary-600 dark:hover:text-primary-400'
+              }
+            `}
           >
             {t('tabs.history')}
           </button>
           <button
             onClick={() => setActiveTab('prompt')}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-              activeTab === 'prompt'
+            className={`
+              px-5 py-2.5 text-sm font-semibold
+              border-b-2 transition-all duration-200
+              relative
+              ${activeTab === 'prompt'
                 ? 'border-primary-600 text-primary-700 dark:text-primary-400'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-            }`}
+                : 'border-transparent text-charcoal-600 dark:text-cream-300 hover:text-primary-600 dark:hover:text-primary-400'
+              }
+            `}
           >
             {t('tabs.sortPrompt')}
           </button>
@@ -225,32 +237,37 @@ export function ShoppingList() {
             </div>
           )}
 
-          {/* Google Keep-style card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
+          {/* Kitchen Notepad Card */}
+          <div className="bg-white dark:bg-charcoal-800 rounded-xl shadow-medium border border-cream-300 dark:border-charcoal-700 overflow-hidden relative">
+            {/* Subtle paper texture overlay */}
+            <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" style={{
+              backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(0,0,0,0.1) 31px, rgba(0,0,0,0.1) 32px)`
+            }}></div>
+
             {/* Card header */}
-            <div className="px-2 py-1 flex items-center justify-between border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center gap-2">
-                <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{t('headings.shoppingList')}</h2>
+            <div className="px-4 py-3 flex items-center justify-between border-b border-cream-200 dark:border-charcoal-700 relative z-10">
+              <div className="flex items-center gap-3">
+                <h2 className="font-display font-semibold text-charcoal-800 dark:text-cream-100 text-lg">{t('headings.shoppingList')}</h2>
                 {/* SSE status indicator */}
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-cream-100 dark:bg-charcoal-700">
                   <div
-                    className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+                    className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}
                     title={isConnected ? 'SSE Connected' : 'SSE Disconnected'}
                   />
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs font-medium text-charcoal-600 dark:text-cream-300">
                     {isConnected ? 'Live' : 'Offline'}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 {isSaving && (
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-primary-600 border-t-transparent"></div>
                 )}
                 {uncheckedItems.length > 1 && (
                   <button
                     onClick={sortItems}
                     disabled={isSaving}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    className="px-3 py-1.5 text-xs font-semibold text-charcoal-700 dark:text-cream-200 bg-cream-100 dark:bg-charcoal-700 border border-cream-300 dark:border-charcoal-600 rounded-lg hover:bg-sage-100 dark:hover:bg-charcoal-600 transition-all disabled:opacity-50 shadow-soft"
                   >
                     {t('buttons.sort')}
                   </button>
@@ -259,7 +276,7 @@ export function ShoppingList() {
                   <button
                     onClick={archiveAndCreateNew}
                     disabled={isSaving}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    className="px-3 py-1.5 text-xs font-semibold text-charcoal-700 dark:text-cream-200 bg-cream-100 dark:bg-charcoal-700 border border-cream-300 dark:border-charcoal-600 rounded-lg hover:bg-sage-100 dark:hover:bg-charcoal-600 transition-all disabled:opacity-50 shadow-soft"
                   >
                     {t('buttons.newList')}
                   </button>
@@ -268,15 +285,15 @@ export function ShoppingList() {
             </div>
 
             {/* Add item form */}
-            <form onSubmit={handleAddItem} className="px-2 py-1 border-b border-gray-100 dark:border-gray-700">
-              <div className="flex items-center gap-1.5">
-                <span className="text-primary-600 text-base font-bold">+</span>
+            <form onSubmit={handleAddItem} className="px-4 py-3 border-b border-cream-200 dark:border-charcoal-700 relative z-10">
+              <div className="flex items-center gap-3">
+                <span className="text-primary-600 dark:text-primary-400 text-xl font-bold">+</span>
                 <input
                   type="text"
                   value={newItemName}
                   onChange={(e) => setNewItemName(e.target.value)}
                   placeholder={t('forms.addItemPlaceholder')}
-                  className="flex-1 bg-transparent border-none outline-none text-xs text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                  className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-charcoal-800 dark:text-cream-100 placeholder-charcoal-400 dark:placeholder-charcoal-500"
                 />
               </div>
             </form>
@@ -310,13 +327,13 @@ export function ShoppingList() {
 
             {/* Checked items section */}
             {checkedItems.length > 0 && (
-              <div>
-                <div className="px-2 py-0.5 bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600">
-                  <span className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <div className="relative z-10">
+                <div className="px-4 py-2 bg-sage-100 dark:bg-charcoal-700/70 border-t border-cream-200 dark:border-charcoal-600">
+                  <span className="text-xs font-semibold text-charcoal-600 dark:text-cream-400 uppercase tracking-wide">
                     {t('counts.checkedItems', { count: checkedItems.length })}
                   </span>
                 </div>
-                <div className="divide-y divide-gray-50 dark:divide-gray-700">
+                <div>
                   {checkedItems.map((item) => (
                     <ShoppingListItem
                       key={item.id}
@@ -331,22 +348,27 @@ export function ShoppingList() {
 
             {/* Empty state */}
             {state.items.length === 0 && (
-              <div className="px-2 py-3 text-center">
-                <p className="text-gray-400 dark:text-gray-500 text-xs">{t('messages.emptyShoppingList')}</p>
+              <div className="px-4 py-8 text-center relative z-10">
+                <svg className="w-12 h-12 mx-auto mb-3 text-sage-300 dark:text-charcoal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <p className="text-charcoal-400 dark:text-charcoal-500 text-sm font-medium">{t('messages.emptyShoppingList')}</p>
               </div>
             )}
           </div>
 
-          {/* Undo toast */}
+          {/* Undo toast with elastic animation */}
           {lastUnchecked && (
-            <div className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 z-50">
-              <span className="text-sm">{t('messages.checkedOff')} "{lastUnchecked.name}"</span>
-              <button
-                onClick={handleUndo}
-                className="text-sm font-semibold text-primary-400 hover:text-primary-300"
-              >
-                {t('buttons.undo')}
-              </button>
+            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-[fadeIn_0.3s_ease-out]">
+              <div className="bg-charcoal-800 dark:bg-cream-100 text-cream-100 dark:text-charcoal-800 px-5 py-3 rounded-xl shadow-raised flex items-center gap-4 border border-charcoal-700 dark:border-cream-200">
+                <span className="text-sm font-medium">{t('messages.checkedOff')} <span className="font-semibold">"{lastUnchecked.name}"</span></span>
+                <button
+                  onClick={handleUndo}
+                  className="text-sm font-bold text-primary-400 dark:text-primary-600 hover:text-primary-300 dark:hover:text-primary-500 transition-colors"
+                >
+                  {t('buttons.undo')}
+                </button>
+              </div>
             </div>
           )}
         </div>

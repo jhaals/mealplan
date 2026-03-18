@@ -1,18 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary-50: #f0fdf4;
-  --color-primary-100: #dcfce7;
-  --color-primary-200: #bbf7d0;
-  --color-primary-300: #86efac;
-  --color-primary-400: #4ade80;
-  --color-primary-500: #22c55e;
-  --color-primary-600: #16a34a;
-  --color-primary-700: #15803d;
-  --color-primary-800: #166534;
-  --color-primary-900: #14532d;
+  /* Kitchen Journal Color Palette - Warm & Refined */
+  --color-primary-50: #f4f9f5;
+  --color-primary-100: #e6f2e8;
+  --color-primary-200: #cde5d2;
+  --color-primary-300: #a8d4b3;
+  --color-primary-400: #7bbf8e;
+  --color-primary-500: #52a966;
+  --color-primary-600: #3e8c51;
+  --color-primary-700: #2f6d3f;
+  --color-primary-800: #265736;
+  --color-primary-900: #1e4429;
+
+  /* Warm Neutrals */
+  --color-cream-50: #fefcf8;
+  --color-cream-100: #fdf9f3;
+  --color-cream-200: #f9f3ea;
+  --color-cream-300: #f3ead9;
+  --color-sage-100: #f0f4f1;
+  --color-sage-200: #e1e9e3;
+  --color-sage-300: #c8d6cc;
+
+  /* Dark Mode - Deep Charcoal with Warmth */
+  --color-charcoal-50: #f7f7f6;
+  --color-charcoal-100: #e8e7e5;
+  --color-charcoal-200: #d1cfcb;
+  --color-charcoal-300: #b3b0aa;
+  --color-charcoal-400: #8a8680;
+  --color-charcoal-500: #6b6862;
+  --color-charcoal-600: #544f4a;
+  --color-charcoal-700: #3d3936;
+  --color-charcoal-800: #2a2725;
+  --color-charcoal-900: #1a1916;
+
+  /* Typography */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* Enhanced Shadows - Multi-layer for depth */
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.04), 0 8px 20px rgba(0, 0, 0, 0.06);
+  --shadow-raised: 0 8px 16px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.1), 0 24px 60px rgba(0, 0, 0, 0.15);
+
+  /* Dark Mode Shadows - Softer, more subtle */
+  --shadow-soft-dark: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-medium-dark: 0 4px 6px rgba(0, 0, 0, 0.4), 0 8px 20px rgba(0, 0, 0, 0.3);
+  --shadow-raised-dark: 0 8px 16px rgba(0, 0, 0, 0.5), 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
 @layer base {
@@ -23,9 +61,23 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 antialiased;
+    @apply antialiased;
+    background-color: var(--color-cream-50);
+    color: var(--color-charcoal-800);
+    font-family: var(--font-body);
     /* Prevent pull-to-refresh on mobile */
     overscroll-behavior-y: contain;
+  }
+
+  body.dark {
+    background-color: var(--color-charcoal-900);
+    color: var(--color-cream-50);
+  }
+
+  /* Display font for headings */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
   }
 
   /* Safe area insets for notched devices */
@@ -62,14 +114,138 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-gray-800;
+    background-color: var(--color-cream-200);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track:where(.dark, .dark *) {
+    background-color: var(--color-charcoal-800);
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+    background-color: var(--color-sage-300);
+    border-radius: 999px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:where(.dark, .dark *) {
+    background-color: var(--color-charcoal-600);
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-500;
+    background-color: var(--color-primary-500);
+  }
+
+  /* Shadow utilities */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shadow-soft:where(.dark, .dark *) {
+    box-shadow: var(--shadow-soft-dark);
+  }
+
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+
+  .shadow-medium:where(.dark, .dark *) {
+    box-shadow: var(--shadow-medium-dark);
+  }
+
+  .shadow-raised {
+    box-shadow: var(--shadow-raised);
+  }
+
+  .shadow-raised:where(.dark, .dark *) {
+    box-shadow: var(--shadow-raised-dark);
+  }
+
+  /* Shadow glow for focused inputs */
+  .shadow-glow {
+    box-shadow: 0 0 0 1px rgba(82, 169, 102, 0.1),
+                0 4px 12px rgba(82, 169, 102, 0.15);
+  }
+
+  .shadow-glow:where(.dark, .dark *) {
+    box-shadow: 0 0 0 1px rgba(82, 169, 102, 0.2),
+                0 4px 12px rgba(82, 169, 102, 0.25);
+  }
+
+  /* Inner shadow for inputs */
+  .shadow-inner-sm {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-inner-sm:where(.dark, .dark *) {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Animation Keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInStagger {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes checkboxBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
