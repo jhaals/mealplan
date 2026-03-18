@@ -10,13 +10,23 @@ function getStoredTheme(): Theme {
   return 'system';
 }
 
+function updateThemeColor(isDark: boolean) {
+  const color = isDark ? '#1a1916' : '#fefcf8';
+  const metaTags = document.querySelectorAll('meta[name="theme-color"]');
+  metaTags.forEach((tag) => {
+    tag.setAttribute('content', color);
+  });
+}
+
 function applyTheme(theme: Theme) {
   const root = document.documentElement;
   if (theme === 'system') {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     root.classList.toggle('dark', prefersDark);
+    updateThemeColor(prefersDark);
   } else {
     root.classList.toggle('dark', theme === 'dark');
+    updateThemeColor(theme === 'dark');
   }
 }
 
