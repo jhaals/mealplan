@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-1fa25fc] - 2026-03-18
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-326bd0d...v1.0.0-1fa25fc
+
 ## [1.0.0-326bd0d] - 2026-03-18
 
 **Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-419bc49...v1.0.0-326bd0d
