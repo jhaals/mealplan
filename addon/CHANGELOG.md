@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-114dfee] - 2026-03-18
+
+## What's Changed
+* Bump @types/node from 25.4.0 to 25.5.0 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/74
+* Bump @prisma/adapter-better-sqlite3 from 7.4.2 to 7.5.0 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/78
+* Bump react-i18next from 16.5.6 to 16.5.8 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/81
+* Bump i18next from 25.8.17 to 25.8.18 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/84
+* Bump hono from 4.12.7 to 4.12.8 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/83
+* Bump i18next from 25.8.17 to 25.8.18 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/80
+* Bump prisma from 7.4.2 to 7.5.0 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/77
+* Bump @prisma/client from 7.4.2 to 7.5.0 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/82
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-9c35650...v1.0.0-114dfee
+
 ## [1.0.0-9c35650] - 2026-03-12
 
 ## What's Changed
