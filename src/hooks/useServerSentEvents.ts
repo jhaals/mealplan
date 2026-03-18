@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 interface UseServerSentEventsOptions {
   url: string;
-  onMessage: (data: any) => void;
+  onMessage: (data: { type: string; [key: string]: unknown }) => void;
   enabled?: boolean;
 }
 

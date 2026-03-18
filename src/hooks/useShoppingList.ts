@@ -39,7 +39,7 @@ export function useShoppingList() {
   }, []);
 
   // SSE message handler
-  const handleSSEMessage = useCallback((data: any) => {
+  const handleSSEMessage = useCallback((data: { type: string; [key: string]: unknown }) => {
     if (data.type === 'shopping-list-changed') {
       console.log('[SSE ShoppingList] Change notification received');
 

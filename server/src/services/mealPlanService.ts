@@ -59,7 +59,7 @@ export async function getMealPlan(): Promise<MealPlanState> {
  * Set the start date for the meal plan
  */
 export async function setStartDate(startDate: string): Promise<MealPlanState> {
-  const plan = await prisma.mealPlan.update({
+  await prisma.mealPlan.update({
     where: { id: 'singleton' },
     data: {
       startDate,
@@ -187,7 +187,6 @@ async function shiftDaysAfterDeletion(deletedDay: string): Promise<void> {
   if (!plan || !plan.startDate) return;
 
   const deletedDate = parseISO(deletedDay);
-  const startDate = parseISO(plan.startDate);
 
   // Get all days after the deleted day
   const daysToShift = plan.days.filter((day) => {

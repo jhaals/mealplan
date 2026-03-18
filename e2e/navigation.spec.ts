@@ -3,15 +3,15 @@ import { test, expect } from '@playwright/test';
 test.describe('Navigation', () => {
   test('can navigate between meal plan and shopping list', async ({ page }) => {
     await page.goto('/meals');
-    await expect(page.getByRole('link', { name: 'Meal Plan' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Shopping List' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Meals' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Shopping' })).toBeVisible();
 
     // Navigate to shopping list
-    await page.getByRole('link', { name: 'Shopping List' }).click();
+    await page.getByRole('link', { name: 'Shopping' }).click();
     await expect(page).toHaveURL(/\/shopping/);
 
     // Navigate back to meal plan
-    await page.getByRole('link', { name: 'Meal Plan' }).click();
+    await page.getByRole('link', { name: 'Meals' }).click();
     await expect(page).toHaveURL(/\/meals/);
   });
 
