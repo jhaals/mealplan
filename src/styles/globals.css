@@ -58,6 +58,11 @@
   html {
     font-size: 16px; /* Prevents zoom on input focus on iOS */
     -webkit-tap-highlight-color: transparent;
+    background-color: var(--color-cream-50); /* Fix iOS notch in light mode */
+  }
+
+  html:where(.dark, .dark *) {
+    background-color: var(--color-charcoal-900); /* Fix iOS notch in dark mode */
   }
 
   body {
