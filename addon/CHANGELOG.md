@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-0922186] - 2026-03-18
+
+## What's Changed
+* Fix iOS status bar color to match app background in dark mode by @Copilot in https://github.com/jhaals/mealplan/pull/85
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-114dfee...v1.0.0-0922186
+
 ## [1.0.0-114dfee] - 2026-03-18
 
 ## What's Changed
