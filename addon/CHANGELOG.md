@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-f0b52df] - 2026-03-29
+
+## What's Changed
+* Bump i18next from 25.8.18 to 25.10.9 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/87
+* Bump react-i18next from 16.5.8 to 16.6.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/89
+* Bump i18next from 25.8.18 to 25.10.9 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/92
+* Bump tailwindcss from 4.2.1 to 4.2.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/94
+* Bump vite from 8.0.0 to 8.0.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/95
+* Bump hono from 4.12.8 to 4.12.9 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/90
+* Bump react-router-dom from 7.13.1 to 7.13.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/88
+* Bump typescript-eslint from 8.57.1 to 8.57.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/91
+* Bump eslint from 10.0.3 to 10.1.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/93
+* Bump typescript from 5.9.3 to 6.0.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/86
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-1fa25fc...v1.0.0-f0b52df
+
 ## [1.0.0-1fa25fc] - 2026-03-18
 
 **Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-326bd0d...v1.0.0-1fa25fc
