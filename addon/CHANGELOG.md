@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-1dc7052] - 2026-03-29
+
+## What's Changed
+* Fix iOS home screen icon by adding apple-touch-icon and web manifest by @Copilot in https://github.com/jhaals/mealplan/pull/96
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-f0b52df...v1.0.0-1dc7052
+
 ## [1.0.0-f0b52df] - 2026-03-29
 
 ## What's Changed
