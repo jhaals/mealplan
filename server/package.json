@@ -22,7 +22,7 @@
     "tsx": "^4.19.0"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.5.2",
     "prisma": "^7.6.0"
   }
 }
