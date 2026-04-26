@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Anthropic from "@anthropic-ai/sdk";
 import i18n from '../locales';
 
 /**
@@ -15,18 +15,18 @@ export function getDefaultSortingPrompt(): string {
 export const DEFAULT_SORTING_PROMPT = getDefaultSortingPrompt();
 
 /**
- * Get Gemini configuration and validate API key
+ * Get Anthropic client and validate API key
  */
-export function getGeminiConfig() {
-  const apiKey = process.env.GOOGLE_API_KEY;
+export function getAnthropicClient(): Anthropic {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
 
   if (!apiKey) {
     throw new Error(
-      "GOOGLE_API_KEY is not configured in environment variables",
+      "ANTHROPIC_API_KEY is not configured in environment variables",
     );
   }
 
-  return new GoogleGenerativeAI(apiKey);
+  return new Anthropic({ apiKey });
 }
 
 /**
@@ -42,26 +42,7 @@ export async function sortShoppingItems(
   }
 
   try {
-    const genAI = getGeminiConfig();
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      generationConfig: {
-        temperature: 0,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "object",
-          properties: {
-            items: {
-              type: "array",
-              items: {
-                type: "string"
-              }
-            }
-          },
-          required: ["items"]
-        }
-      },
-    });
+    const client = getAnthropicClient();
 
     // Use custom prompt if provided, otherwise default localized prompt
     const basePrompt = customPrompt || getDefaultSortingPrompt();
@@ -77,18 +58,28 @@ ${items.join("\n")}
 
 ${returnInstruction}`;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const content = response.text();
+    const message = await client.messages.create({
+      model: "claude-haiku-4-5",
+      max_tokens: 1024,
+      temperature: 0,
+      messages: [{ role: "user", content: prompt }],
+    });
 
-    if (!content) {
-      throw new Error("No response from Gemini");
+    const content = message.content[0];
+    if (!content || content.type !== "text") {
+      throw new Error("No response from Anthropic");
+    }
+
+    // Extract JSON from the response (handle possible markdown code blocks)
+    const text = content.text.trim();
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("No JSON found in Anthropic response");
     }
 
     // Parse the JSON response
-    const parsed = JSON.parse(content);
+    const parsed = JSON.parse(jsonMatch[0]);
 
-    // With the schema, response should be {items: [...]}
     let sortedItems: string[];
     if (parsed.items && Array.isArray(parsed.items)) {
       sortedItems = parsed.items;
@@ -98,16 +89,16 @@ ${returnInstruction}`;
     } else if (parsed.sortedItems && Array.isArray(parsed.sortedItems)) {
       sortedItems = parsed.sortedItems;
     } else {
-      throw new Error("Unexpected response format from Gemini");
+      throw new Error("Unexpected response format from Anthropic");
     }
 
     // Validate that all items are present
     if (sortedItems.length !== items.length) {
       console.warn(
-        "Gemini returned different number of items, falling back to original order",
+        "Anthropic returned different number of items, falling back to original order",
       );
       console.warn(`Input items (${items.length}):`, items);
-      console.warn(`Gemini returned (${sortedItems.length}):`, sortedItems);
+      console.warn(`Anthropic returned (${sortedItems.length}):`, sortedItems);
       return items;
     }
 
@@ -118,7 +109,7 @@ ${returnInstruction}`;
     for (const item of originalSet) {
       if (!sortedSet.has(item)) {
         console.warn(
-          "Gemini response missing items, falling back to original order",
+          "Anthropic response missing items, falling back to original order",
         );
         return items;
       }

@@ -184,7 +184,7 @@ shoppingList.put('/config', async (c) => {
  * Get the default sorting prompt (for reference in UI)
  */
 shoppingList.get('/config/default-prompt', async (c) => {
-  const { DEFAULT_SORTING_PROMPT } = await import('../services/geminiService');
+  const { DEFAULT_SORTING_PROMPT } = await import('../services/anthropicService');
   return c.json({ defaultPrompt: DEFAULT_SORTING_PROMPT });
 });
 
