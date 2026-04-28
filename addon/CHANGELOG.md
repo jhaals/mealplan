@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-5586114] - 2026-04-28
+
+## What's Changed
+* Fix esbuild transform error caused by malformed JSDoc in openrouterService.ts by @Copilot in https://github.com/jhaals/mealplan/pull/136
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-4af2d09...v1.0.0-5586114
+
 ## [1.0.0-d6ec351] - 2026-04-28
 
 ## What's Changed
