@@ -12,7 +12,6 @@
     "db:generate": "npx prisma generate"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "@hono/node-server": "^1.19.14",
     "@prisma/adapter-better-sqlite3": "^7.7.0",
     "@prisma/client": "^7.7.0",

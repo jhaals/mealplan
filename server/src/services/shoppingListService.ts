@@ -248,7 +248,7 @@ export async function updateConfig(sortingPrompt: string | null): Promise<void> 
  * Sort shopping list items using AI
  */
 export async function sortItemsWithAI(): Promise<void> {
-  const { sortShoppingItems } = await import('./geminiService');
+  const { sortShoppingItems } = await import('./openrouterService');
 
   // Get custom prompt from config
   const config = await getConfig();
@@ -278,7 +278,7 @@ export async function sortItemsWithAI(): Promise<void> {
   );
 
   console.log('Original unchecked names:', uncheckedNames);
-  console.log('Sorted names from Gemini:', sortedNames);
+  console.log('Sorted names from OpenRouter:', sortedNames);
 
   // Map sorted names back to item IDs
   const nameToItem = new Map(uncheckedItems.map(item => [item.name, item]));
