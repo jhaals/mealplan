@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-d6ec351] - 2026-04-28
+
+## What's Changed
+* Bump @hono/node-server from 1.19.14 to 2.0.0 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/132
+* Bump i18next from 25.10.9 to 26.0.6 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/131
+* Bump i18next from 25.10.9 to 26.0.8 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/123
+* Bump @types/node from 25.5.2 to 25.6.0 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/122
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-029446d...v1.0.0-d6ec351
+
 ## [1.0.0-a03fe0b] - 2026-04-28
 
 ## What's Changed
