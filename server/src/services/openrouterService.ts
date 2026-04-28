@@ -47,6 +47,7 @@ function extractSortedItems(parsed: unknown): string[] {
 }
 
 
+/**
  * Returns sorted array of item names
  */
 export async function sortShoppingItems(
