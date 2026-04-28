@@ -17,7 +17,7 @@
     "@prisma/client": "^7.7.0",
     "date-fns": "^4.1.0",
     "hono": "^4.12.14",
-    "i18next": "^25.10.9",
+    "i18next": "^26.0.6",
     "tsx": "^4.19.0"
   },
   "devDependencies": {
