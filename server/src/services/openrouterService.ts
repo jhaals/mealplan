@@ -32,7 +32,21 @@ export function getOpenRouterConfig() {
 }
 
 /**
- * Sort shopping items using AI via OpenRouter based on store walking path
+ * Extract sorted items array from a parsed OpenRouter JSON response
+ */
+function extractSortedItems(parsed: unknown): string[] {
+  if (Array.isArray(parsed)) {
+    return parsed as string[];
+  }
+  if (parsed && typeof parsed === 'object') {
+    const obj = parsed as Record<string, unknown>;
+    if (Array.isArray(obj.items)) return obj.items as string[];
+    if (Array.isArray(obj.sortedItems)) return obj.sortedItems as string[];
+  }
+  throw new Error("Unexpected response format from OpenRouter");
+}
+
+
  * Returns sorted array of item names
  */
 export async function sortShoppingItems(
@@ -97,16 +111,11 @@ ${returnInstruction}`;
 
     const parsed = JSON.parse(jsonContent) as unknown;
 
-    // With the schema, response should be {items: [...]}
+    // Determine sorted items from response (supports {items:[]}, {sortedItems:[]}, or plain array)
     let sortedItems: string[];
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && 'items' in parsed && Array.isArray((parsed as { items: unknown }).items)) {
-      sortedItems = (parsed as { items: string[] }).items;
-    } else if (Array.isArray(parsed)) {
-      // Fallback for backwards compatibility
-      sortedItems = parsed as string[];
-    } else if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && 'sortedItems' in parsed && Array.isArray((parsed as { sortedItems: unknown }).sortedItems)) {
-      sortedItems = (parsed as { sortedItems: string[] }).sortedItems;
-    } else {
+    try {
+      sortedItems = extractSortedItems(parsed);
+    } catch {
       throw new Error("Unexpected response format from OpenRouter");
     }
 
