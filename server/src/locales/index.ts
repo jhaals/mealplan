@@ -2,7 +2,7 @@ import i18next from "i18next";
 
 const defaultLanguage = process.env.LANGUAGE || "en";
 
-// Swedish AI prompt (existing DEFAULT_SORTING_PROMPT from geminiService.ts)
+// Swedish AI prompt (existing DEFAULT_SORTING_PROMPT from openrouterService.ts)
 const svSortingPrompt = `Du är en hjälpsam assistent som sorterar svenska matvaror enligt en butiks gångstig.
 
 Sortera följande matvaror enligt gångstig i en svensk matbutik. Returnera endast en JSON-array med de sorterade namnen i exakt samma format som de gavs.

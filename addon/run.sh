@@ -7,7 +7,8 @@ echo "Starting MealPlan addon..."
 CONFIG_PATH="/data/options.json"
 PORT=$(jq --raw-output '.port // 3001' $CONFIG_PATH)
 TRMNL_WEBHOOK_URL=$(jq --raw-output '.trmnl_webhook_url // ""' $CONFIG_PATH)
-GOOGLE_API_KEY=$(jq --raw-output '.google_api_key // ""' $CONFIG_PATH)
+OPENROUTER_API_KEY=$(jq --raw-output '.openrouter_api_key // ""' $CONFIG_PATH)
+OPENROUTER_MODEL=$(jq --raw-output '.openrouter_model // ""' $CONFIG_PATH)
 LANGUAGE=$(jq --raw-output '.language // "en"' $CONFIG_PATH)
 
 # Set environment variables
@@ -15,7 +16,8 @@ export DATABASE_URL="file:/data/mealplan.db"
 export PORT=$PORT
 export NODE_ENV="production"
 export TRMNL_WEBHOOK_URL=$TRMNL_WEBHOOK_URL
-export GOOGLE_API_KEY=$GOOGLE_API_KEY
+export OPENROUTER_API_KEY=$OPENROUTER_API_KEY
+export OPENROUTER_MODEL=$OPENROUTER_MODEL
 export LANGUAGE=$LANGUAGE
 
 echo "Database: $DATABASE_URL"
@@ -26,7 +28,7 @@ if [ -n "$TRMNL_WEBHOOK_URL" ]; then
 else
   echo "TRMNL: Disabled"
 fi
-if [ -n "$GOOGLE_API_KEY" ]; then
+if [ -n "$OPENROUTER_API_KEY" ]; then
   echo "Shopping list AI sorting: Enabled"
 else
   echo "Shopping list AI sorting: Disabled"
