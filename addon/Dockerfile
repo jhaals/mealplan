@@ -1,5 +1,5 @@
 # Stage 1: Build Frontend
-FROM node:25-alpine AS frontend-builder
+FROM node:26-alpine AS frontend-builder
 
 # Configure Node.js for better QEMU compatibility
 ENV NODE_OPTIONS="--max-old-space-size=4096"
@@ -23,7 +23,7 @@ RUN npm run build
 # fails under QEMU emulation on ARM. The generated output is pure TypeScript
 # so it is platform-independent and can be copied to the target-arch stage.
 ARG BUILDPLATFORM
-FROM --platform=$BUILDPLATFORM node:25-alpine AS prisma-gen
+FROM --platform=$BUILDPLATFORM node:26-alpine AS prisma-gen
 
 WORKDIR /build/server
 
@@ -35,7 +35,7 @@ RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 RUN npx prisma generate
 
 # Stage 2: Build Backend
-FROM node:25-alpine AS backend-builder
+FROM node:26-alpine AS backend-builder
 
 # Configure Node.js for better QEMU compatibility
 ENV NODE_OPTIONS="--max-old-space-size=4096"
@@ -60,7 +60,7 @@ RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 COPY --from=prisma-gen /build/server/src/generated/prisma/ ./src/generated/prisma/
 
 # Stage 3: Runtime with Node.js
-FROM node:25-alpine
+FROM node:26-alpine
 
 # Install runtime dependencies
 RUN apk add --no-cache \
