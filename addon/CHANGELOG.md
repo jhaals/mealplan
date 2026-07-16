@@ -2,6 +2,79 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-1506787] - 2026-07-16
+
+## What's Changed
+* Bump eslint-plugin-react-hooks from 7.0.1 to 7.1.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/137
+* Bump vite from 8.0.8 to 8.0.10 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/140
+* Bump react-i18next from 17.0.3 to 17.0.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/143
+* Bump typescript from 6.0.2 to 6.0.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/146
+* Bump @tailwindcss/vite from 4.2.2 to 4.2.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/148
+* Bump eslint from 10.2.0 to 10.2.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/139
+* Bump typescript-eslint from 8.58.1 to 8.59.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/142
+* Bump globals from 17.5.0 to 17.6.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/150
+* Bump typescript-eslint from 8.59.1 to 8.59.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/151
+* Bump eslint from 10.2.1 to 10.3.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/152
+* Bump react-router-dom from 7.14.2 to 7.15.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/153
+* Bump @tailwindcss/vite from 4.2.4 to 4.3.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/156
+* Bump react-dom from 19.2.5 to 19.2.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/157
+* Bump tailwindcss from 4.2.4 to 4.3.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/158
+* Bump typescript-eslint from 8.59.2 to 8.59.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/160
+* Bump i18next from 26.0.8 to 26.1.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/163
+* Bump react-i18next from 17.0.6 to 17.0.7 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/155
+* Bump vite from 8.0.10 to 8.0.12 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/159
+* Bump @playwright/test from 1.59.1 to 1.60.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/162
+* Bump react from 19.2.5 to 19.2.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/161
+* Bump eslint from 10.3.0 to 10.4.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/164
+* Bump typescript-eslint from 8.59.3 to 8.59.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/166
+* Bump i18next from 26.1.0 to 26.2.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/167
+* Bump @vitejs/plugin-react from 6.0.1 to 6.0.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/171
+* Bump react-i18next from 17.0.7 to 17.0.8 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/168
+* Bump @types/react from 19.2.14 to 19.2.15 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/165
+* Bump vite from 8.0.12 to 8.0.13 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/169
+* Bump vite from 8.0.13 to 8.0.14 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/172
+* Bump react-router-dom from 7.15.0 to 7.15.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/174
+* Bump i18next from 26.2.0 to 26.3.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/176
+* Bump typescript-eslint from 8.59.4 to 8.60.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/173
+* Bump date-fns from 4.1.0 to 4.3.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/175
+* Bump date-fns from 4.3.0 to 4.4.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/177
+* Bump typescript-eslint from 8.60.0 to 8.60.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/179
+* Bump react and @types/react by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/181
+* Bump eslint from 10.4.0 to 10.4.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/184
+* Bump i18next from 26.3.0 to 26.3.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/178
+* Bump react-dom from 19.2.6 to 19.2.7 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/180
+* Bump vite from 8.0.14 to 8.0.16 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/182
+* Bump @types/react from 19.2.16 to 19.2.17 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/185
+* Bump typescript-eslint from 8.60.1 to 8.61.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/187
+* Bump react-router-dom from 7.15.1 to 7.17.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/186
+* Bump @tailwindcss/vite from 4.3.0 to 4.3.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/188
+* Bump eslint from 10.4.1 to 10.5.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/189
+* Bump tailwindcss from 4.3.0 to 4.3.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/191
+* Bump react-router-dom from 7.17.0 to 7.18.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/193
+* Bump eslint-plugin-react-refresh from 0.5.2 to 0.5.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/190
+* Bump typescript-eslint from 8.61.0 to 8.61.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/192
+* Bump globals from 17.6.0 to 17.7.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/196
+* Bump @vitejs/plugin-react from 6.0.2 to 6.0.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/198
+* Bump vite from 8.0.16 to 8.1.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/199
+* Bump @playwright/test from 1.60.0 to 1.61.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/201
+* Bump typescript-eslint from 8.61.1 to 8.62.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/200
+* Bump vite from 8.1.0 to 8.1.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/202
+* Bump @tailwindcss/vite from 4.3.1 to 4.3.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/203
+* Bump react-router-dom from 7.18.0 to 7.18.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/206
+* Bump i18next from 26.3.1 to 26.3.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/207
+* Bump eslint from 10.5.0 to 10.6.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/204
+* Bump typescript-eslint from 8.62.0 to 8.62.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/205
+* Bump vite from 8.1.2 to 8.1.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/208
+* Bump typescript-eslint from 8.62.1 to 8.63.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/209
+* Bump eslint from 10.6.0 to 10.7.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/212
+* Bump react-i18next from 17.0.8 to 17.0.9 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/213
+* Bump i18next from 26.3.4 to 26.3.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/215
+* Bump vite from 8.1.3 to 8.1.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/216
+* Bump typescript-eslint from 8.63.0 to 8.64.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/214
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-5586114...v1.0.0-1506787
+
 ## [1.0.0-5586114] - 2026-04-28
 
 ## What's Changed
