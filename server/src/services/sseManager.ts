@@ -1,7 +1,7 @@
-import { StreamSSE } from 'hono/streaming';
+import { SSEStreamingApi } from 'hono/streaming';
 
 interface SSEClient {
-  stream: StreamSSE;
+  stream: SSEStreamingApi;
   id: string;
   aborted: boolean;
 }
@@ -17,7 +17,7 @@ class SSEManager {
     }, 30000);
   }
 
-  addClient(id: string, stream: StreamSSE, signal: AbortSignal) {
+  addClient(id: string, stream: SSEStreamingApi, signal: AbortSignal) {
     const client: SSEClient = { stream, id, aborted: false };
     this.clients.set(id, client);
 

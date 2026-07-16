@@ -24,7 +24,7 @@ export function RecurringTodoItems() {
   };
 
   useEffect(() => {
-    loadItems();
+    void Promise.resolve().then(loadItems);
   }, []);
 
   const handleDelete = async (itemId: string) => {

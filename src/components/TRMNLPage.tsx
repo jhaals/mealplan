@@ -30,7 +30,7 @@ export function TRMNLPage() {
   };
 
   useEffect(() => {
-    loadData();
+    void Promise.resolve().then(loadData);
   }, []);
 
   const handlePush = async () => {

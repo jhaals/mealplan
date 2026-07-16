@@ -89,10 +89,13 @@ export function useTodoList() {
   useEffect(() => {
     if (!isDragging && pendingUpdate && !isLoading && !isSaving) {
       console.log('[SSE TodoList] Applying buffered update');
-      setPendingUpdate(false);
-      refreshState().catch((err) => {
-        console.error('[SSE TodoList] Failed to apply buffered update:', err);
-      });
+      refreshState()
+        .catch((err) => {
+          console.error('[SSE TodoList] Failed to apply buffered update:', err);
+        })
+        .finally(() => {
+          setPendingUpdate(false);
+        });
     }
   }, [isDragging, pendingUpdate, isLoading, isSaving, refreshState]);
 

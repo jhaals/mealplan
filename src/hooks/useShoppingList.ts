@@ -91,10 +91,13 @@ export function useShoppingList() {
   useEffect(() => {
     if (!isDragging && pendingUpdate && !isLoading && !isSaving) {
       console.log('[SSE ShoppingList] Applying buffered update');
-      setPendingUpdate(false);
-      refreshState().catch((err) => {
-        console.error('[SSE ShoppingList] Failed to apply buffered update:', err);
-      });
+      refreshState()
+        .catch((err) => {
+          console.error('[SSE ShoppingList] Failed to apply buffered update:', err);
+        })
+        .finally(() => {
+          setPendingUpdate(false);
+        });
     }
   }, [isDragging, pendingUpdate, isLoading, isSaving, refreshState]);
 
