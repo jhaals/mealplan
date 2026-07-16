@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1-78] - 2026-07-16
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-1506787...v1.0.1-78
+
 ## [1.0.0-1506787] - 2026-07-16
 
 ## What's Changed
