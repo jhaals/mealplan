@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1-81] - 2026-07-17
+
+## What's Changed
+* Bump node from 25-alpine to 26-alpine in /addon by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/154
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.1-80...v1.0.1-81
+
 ## [1.0.1-80] - 2026-07-17
 
 ## What's Changed
