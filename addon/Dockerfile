@@ -10,6 +10,10 @@ WORKDIR /build
 COPY package.json package-lock.json ./
 COPY tsconfig*.json vite.config.ts ./
 COPY index.html ./
+# tokens.css lives at the project root (it is the portable design-token export)
+# and is @imported by src/styles/globals.css. It must be in the build context or
+# the CSS fails to resolve. See design.md.
+COPY tokens.css ./
 COPY public/ ./public/
 COPY src/ ./src/
 
