@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1-80] - 2026-07-17
+
+## What's Changed
+* Redesign the app around the Hum design system, mobile-first by @jhaals in https://github.com/jhaals/mealplan/pull/217
+* Fix container build: copy tokens.css into the frontend build context by @jhaals in https://github.com/jhaals/mealplan/pull/218
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.1-78...v1.0.1-80
+
 ## [1.0.1-78] - 2026-07-16
 
 **Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.0-1506787...v1.0.1-78
