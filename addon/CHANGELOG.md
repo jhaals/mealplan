@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1-83] - 2026-07-17
+
+## What's Changed
+* Bump actions/setup-node from 6 to 7 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/210
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.1-82...v1.0.1-83
+
 ## [1.0.1-82] - 2026-07-17
 
 ## What's Changed
