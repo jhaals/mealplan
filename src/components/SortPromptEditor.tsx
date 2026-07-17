@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from './ui/Button';
 
 interface SortPromptEditorProps {
   currentPrompt: string;
@@ -21,6 +22,7 @@ export function SortPromptEditor({
   const { t } = useTranslation();
   const [editedPrompt, setEditedPrompt] = useState(currentPrompt);
   const [showDefault, setShowDefault] = useState(false);
+  const fieldId = useId();
 
   const handleSave = async () => {
     await onSave(editedPrompt.trim());
@@ -38,88 +40,68 @@ export function SortPromptEditor({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-600 border-t-transparent"></div>
+        <span
+          className="inline-block h-8 w-8 rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--color-accent-2)', borderTopColor: 'transparent', animation: 'hum-spin 700ms linear infinite' }}
+          aria-label={t('buttons.saving')}
+        />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 max-w-4xl">
-      {/* Header */}
+    <div className="grid gap-4">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          {t('sortPrompt.title')}
-        </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {t('sortPrompt.description')}
-        </p>
-      </div>
-
-      {/* Current Status */}
-      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t('sortPrompt.currentPrompt')}
-          </span>
-          <span className="text-sm px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 style={{ fontSize: 'var(--text-lg)' }}>{t('sortPrompt.title')}</h3>
+          <span className={`chip ${isCustom ? 'tint-cyan' : 'tint-pear'}`}>
             {isCustom ? t('sortPrompt.customLabel') : t('sortPrompt.defaultLabel')}
           </span>
         </div>
+        <p className="text-sm text-muted mt-2 max-w-prose">{t('sortPrompt.description')}</p>
       </div>
 
-      {/* Editor */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label htmlFor={fieldId} className="mono-label block mb-1.5">
           {t('sortPrompt.customInstructions')}
         </label>
         <textarea
+          id={fieldId}
           value={editedPrompt}
           onChange={(e) => setEditedPrompt(e.target.value)}
           placeholder={t('sortPrompt.placeholder')}
-          rows={14}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm font-mono focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-vertical"
+          rows={12}
+          className="field"
+          style={{ fontFamily: 'var(--font-label)', fontSize: 'var(--text-sm)', resize: 'vertical', lineHeight: 1.6 }}
         />
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <button
-          onClick={handleSave}
-          disabled={isSaving || !hasChanges}
-          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSaving ? t('buttons.saving') : t('sortPrompt.savePrompt')}
-        </button>
-        <button
-          onClick={handleReset}
-          disabled={isSaving || !isCustom}
-          className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+      <div className="flex items-center gap-2 flex-wrap">
+        <Button onClick={handleSave} disabled={!hasChanges} loading={isSaving}>
+          {t('sortPrompt.savePrompt')}
+        </Button>
+        <Button variant="secondary" onClick={handleReset} disabled={isSaving || !isCustom}>
           {t('sortPrompt.resetToDefault')}
-        </button>
-        <button
-          onClick={() => setShowDefault(!showDefault)}
-          className="px-4 py-2 text-primary-600 dark:text-primary-400 hover:underline text-sm font-medium"
-        >
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => setShowDefault(!showDefault)} aria-expanded={showDefault}>
           {showDefault ? t('sortPrompt.hide') : t('sortPrompt.show')} {t('sortPrompt.showDefaultPrompt')}
-        </button>
+        </Button>
       </div>
 
-      {/* Default Prompt Display */}
       {showDefault && defaultPrompt && (
-        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            {t('sortPrompt.defaultPrompt')}
-          </h4>
-          <pre className="text-xs text-gray-600 dark:text-gray-400 whitespace-pre-wrap font-mono overflow-x-auto max-h-96 overflow-y-auto">
+        <div className="card p-4" style={{ background: 'var(--color-paper-2)', boxShadow: 'none' }}>
+          <h4 className="mono-label mb-2">{t('sortPrompt.defaultPrompt')}</h4>
+          {/* Wide content scrolls inside its own container — the page body
+            * must never scroll horizontally. */}
+          <pre
+            className="custom-scrollbar text-xs text-muted whitespace-pre-wrap overflow-x-auto overflow-y-auto"
+            style={{ fontFamily: 'var(--font-label)', maxHeight: '24rem', lineHeight: 1.6 }}
+          >
             {defaultPrompt}
           </pre>
-          <button
-            onClick={() => setEditedPrompt(defaultPrompt)}
-            className="mt-3 text-sm text-primary-600 dark:text-primary-400 hover:underline"
-          >
+          <Button variant="outline" size="sm" className="mt-3" onClick={() => setEditedPrompt(defaultPrompt)}>
             {t('sortPrompt.copyToEditor')}
-          </button>
+          </Button>
         </div>
       )}
     </div>

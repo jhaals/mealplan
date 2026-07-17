@@ -20,103 +20,90 @@ export function TodoListItem({ item, onToggle, onDelete }: TodoListItemProps) {
     isDragging,
   } = useSortable({ id: item.id });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
+    ...(isDragging ? { opacity: 0.5, boxShadow: 'var(--shadow-lift)', zIndex: 50 } : null),
   };
 
   return (
-    <div
+    <li
       ref={setNodeRef}
       style={style}
-      className={`
-        flex items-center gap-2 px-3 py-2 group
-        hover:bg-cream-100 dark:hover:bg-charcoal-700/50
-        transition-all duration-200
-        border-b border-cream-200/50 dark:border-charcoal-700/50
-        ${isDragging ? 'opacity-50 bg-cream-100 dark:bg-charcoal-700 shadow-medium z-50' : ''}
-      `}
+      className="group flex items-center gap-1 px-2 py-1 rounded-xl transition-colors"
     >
-      {/* Drag handle */}
-      <div
-        className="flex-shrink-0 cursor-grab active:cursor-grabbing touch-none opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all p-1"
+      <span
+        className="shrink-0 grid place-items-center cursor-grab active:cursor-grabbing touch-none text-muted transition-colors group-hover:text-ink"
+        style={{ width: 28, height: 28 }}
         {...listeners}
         {...attributes}
       >
-        <svg className="w-4 h-4 text-sage-300 dark:text-charcoal-500 group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+          <path d="M5 9h14M5 15h14" />
         </svg>
-      </div>
+      </span>
 
-      {/* Custom Checkbox with spring bounce */}
+      {/* Mint means done-ness everywhere in this app. */}
       <button
         onClick={() => onToggle(item.id)}
         onPointerDown={(e) => e.stopPropagation()}
-        className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center min-w-[36px] min-h-[36px] hover:bg-cream-200 dark:hover:bg-charcoal-600 transition-colors"
+        className="shrink-0 grid place-items-center rounded-lg"
+        style={{ width: 44, height: 44, minWidth: 44 }}
+        aria-pressed={item.checked}
         aria-label={item.checked ? t('todo.aria.uncheckItem') : t('todo.aria.checkItem')}
       >
-        <div
-          className={`
-            w-5 h-5 rounded-md border-2 flex items-center justify-center
-            transition-all duration-200
-            ${item.checked
-              ? 'border-primary-500 bg-primary-500 scale-100 animate-[checkboxBounce_0.3s_ease-out]'
-              : 'border-sage-300 dark:border-charcoal-500 bg-transparent hover:border-primary-400'
-            }
-          `}
+        <span
+          className="grid place-items-center rounded-md transition-[background-color,border-color]"
+          style={{
+            width: 20,
+            height: 20,
+            border: `2px solid ${item.checked ? 'var(--color-mint)' : 'var(--color-rule)'}`,
+            background: item.checked ? 'var(--color-mint)' : 'transparent',
+            transitionDuration: 'var(--dur-hover)',
+          }}
         >
           {item.checked && (
-            <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-ink)" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="m5 13 4 4L19 7" />
             </svg>
           )}
-        </div>
+        </span>
       </button>
 
-      {/* Item name + recurring indicator */}
-      <div className="flex-1 flex items-center gap-2 min-w-0">
-        <span
-          className={`
-            text-sm font-medium truncate transition-all duration-300
-            ${item.checked
-              ? 'line-through text-charcoal-400 dark:text-charcoal-500 opacity-60'
-              : 'text-charcoal-800 dark:text-cream-100'
-            }
-          `}
-        >
-          {item.name}
-        </span>
-        {item.isRecurring && (
-          <span
-            className="flex-shrink-0 px-1.5 py-0.5 text-xs font-semibold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 rounded-md"
-            title={t('todo.recurringLabel')}
-          >
-            ↻
-          </span>
-        )}
-      </div>
+      <span
+        className="flex-1 min-w-0 text-sm font-medium break-words transition-colors"
+        style={
+          item.checked
+            ? { textDecoration: 'line-through', color: 'var(--color-ink-2)', opacity: 0.7 }
+            : { color: 'var(--color-ink)' }
+        }
+      >
+        {item.name}
+      </span>
 
-      {/* Delete button */}
+      {item.isRecurring && (
+        <span className="chip tint-lav shrink-0" title={t('todo.recurringLabel')}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+            <path d="M21 3v5h-5" />
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+            <path d="M3 21v-5h5" />
+          </svg>
+          <span className="sr-only">{t('todo.recurringLabel')}</span>
+        </span>
+      )}
+
       <button
         onClick={() => onDelete(item.id)}
         onPointerDown={(e) => e.stopPropagation()}
-        className="
-          flex-shrink-0 p-2
-          text-sage-300 dark:text-charcoal-500
-          hover:text-red-600 dark:hover:text-red-400
-          hover:bg-red-50 dark:hover:bg-red-900/20
-          rounded-lg
-          transition-all duration-200
-          opacity-100 sm:opacity-0 sm:group-hover:opacity-100
-          min-w-[36px] min-h-[36px]
-          flex items-center justify-center
-        "
+        className="shrink-0 grid place-items-center rounded-full text-muted transition-colors hover:text-accent-3"
+        style={{ width: 44, height: 44, minWidth: 44 }}
         aria-label={t('todo.aria.deleteItem')}
       >
-        <svg className="w-3.5 h-3.5 transition-transform hover:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+          <path d="M6 18 18 6M6 6l12 12" />
         </svg>
       </button>
-    </div>
+    </li>
   );
 }

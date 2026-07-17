@@ -1,0 +1,16 @@
+[
+  {
+    "date": "2026-07-17",
+    "scope": "app",
+    "genre": "playful",
+    "macrostructure": "Workbench",
+    "theme": "Hum",
+    "theme_axes": "light / rounded-sans / multi (pear+cyan+coral)",
+    "enrichment": "none (app pages — function carries the page)",
+    "nav": "bottom tab bar (app chrome; N1a–N13 are marketing navs, see design.md)",
+    "footer": "none",
+    "design_system": "design.md",
+    "brief": "MealPlan · family food planning app · whole-app redesign, mobile-first, Hum + constructed dark variant",
+    "notes": "Dark variant is original work for this project — Hum ships light-only. Built by inverting the anchor roles. Diversification is INVERTED for this project: pages must share the system, not differ (redesign.md § Multi-page)."
+  }
+]

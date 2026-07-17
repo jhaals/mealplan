@@ -22,7 +22,7 @@ test.describe('Meal Plan', () => {
     await page.goto('/meals');
     await page.getByLabel('Start Date').fill('2026-02-09');
     await page.getByRole('button', { name: 'Start Planning' }).click();
-    await expect(page.getByRole('heading', { name: 'Add Meal' })).toBeVisible();
+    await expect(page.getByPlaceholder('e.g., Chicken Salad')).toBeVisible();
     await expect(page.getByText('No meals yet')).toBeVisible();
   });
 
@@ -30,7 +30,7 @@ test.describe('Meal Plan', () => {
     await page.goto('/meals');
     await page.getByLabel('Start Date').fill('2026-02-09');
     await page.getByRole('button', { name: 'Start Planning' }).click();
-    await expect(page.getByRole('heading', { name: 'Add Meal' })).toBeVisible();
+    await expect(page.getByPlaceholder('e.g., Chicken Salad')).toBeVisible();
 
     await page.getByPlaceholder('e.g., Chicken Salad').fill('Pasta Bolognese');
     await page.getByRole('button', { name: 'Add Meal' }).click();

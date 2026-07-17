@@ -1,43 +1,48 @@
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../hooks/useTheme';
+
+const ORDER = ['system', 'light', 'dark'] as const;
+
+const GLYPH = {
+  light: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" width="18" height="18" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2.5M12 19.5V22M22 12h-2.5M4.5 12H2M19.07 4.93l-1.77 1.77M6.7 17.3l-1.77 1.77M19.07 19.07l-1.77-1.77M6.7 6.7 4.93 4.93" />
+    </svg>
+  ),
+  dark: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" width="18" height="18" aria-hidden="true">
+      <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" />
+    </svg>
+  ),
+  system: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" width="18" height="18" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <path d="M9 20h6M12 16v4" />
+    </svg>
+  ),
+};
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const { t } = useTranslation();
 
   const nextTheme = () => {
-    const order: Array<'system' | 'light' | 'dark'> = ['system', 'light', 'dark'];
-    const currentIndex = order.indexOf(theme);
-    setTheme(order[(currentIndex + 1) % order.length]);
+    const currentIndex = ORDER.indexOf(theme);
+    setTheme(ORDER[(currentIndex + 1) % ORDER.length]);
   };
+
+  const label = t(`theme.${theme}`);
 
   return (
     <button
       onClick={nextTheme}
-      className="
-        p-2.5 rounded-xl
-        text-charcoal-500 hover:text-primary-600
-        dark:text-cream-400 dark:hover:text-primary-400
-        hover:bg-cream-100 dark:hover:bg-charcoal-700
-        transition-all duration-300
-        group
-      "
-      title={`Theme: ${theme}`}
-      aria-label={`Current theme: ${theme}. Click to change.`}
+      className="grid place-items-center rounded-full text-muted transition-colors hover:text-ink"
+      style={{ width: 44, height: 44 }}
+      title={label}
+      aria-label={t('theme.toggleLabel', { theme: label })}
     >
-      {theme === 'light' && (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 transition-transform group-hover:rotate-180 duration-500">
-          <path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM10 15a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zM10 7a3 3 0 100 6 3 3 0 000-6zM15.657 5.404a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM6.464 14.596a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM18 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0118 10zM5 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 015 10zM14.596 15.657a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06zM5.404 6.464a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06z" />
-        </svg>
-      )}
-      {theme === 'dark' && (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 transition-transform group-hover:scale-110 duration-300">
-          <path fillRule="evenodd" d="M7.455 2.004a.75.75 0 01.26.77 7 7 0 009.958 7.967.75.75 0 011.067.853A8.5 8.5 0 116.647 1.921a.75.75 0 01.808.083z" clipRule="evenodd" />
-        </svg>
-      )}
-      {theme === 'system' && (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 transition-transform group-hover:scale-105 duration-300">
-          <path fillRule="evenodd" d="M2 4.25A2.25 2.25 0 014.25 2h11.5A2.25 2.25 0 0118 4.25v8.5A2.25 2.25 0 0115.75 15h-3.105a3.501 3.501 0 001.1 1.677A.75.75 0 0113.26 18H6.74a.75.75 0 01-.484-1.323A3.501 3.501 0 007.355 15H4.25A2.25 2.25 0 012 12.75v-8.5zm1.5 0a.75.75 0 01.75-.75h11.5a.75.75 0 01.75.75v7.5a.75.75 0 01-.75.75H4.25a.75.75 0 01-.75-.75v-7.5z" clipRule="evenodd" />
-        </svg>
-      )}
+      {GLYPH[theme]}
     </button>
   );
 }

@@ -1,5 +1,7 @@
+import { useDroppable } from '@dnd-kit/core';
 import { useTranslation } from 'react-i18next';
 import { MealCard } from './MealCard';
+import { formatDayDisplay, toISODate } from '../utils/dateHelpers';
 import type { DayPlan } from '../types';
 
 interface MealListProps {
@@ -8,57 +10,87 @@ interface MealListProps {
   onMoveMeal: (mealId: string, sourceDay: string, targetDay: string) => void;
 }
 
+/* One row of the day rail. Each day is a drop target, which is what makes
+ * "drag a meal onto another day" reachable — the previous flat list rendered
+ * no day containers, so the day droppable never mounted. */
+function DayRow({
+  day,
+  index,
+  isToday,
+  onDeleteMeal,
+}: {
+  day: DayPlan;
+  index: number;
+  isToday: boolean;
+  onDeleteMeal: (mealId: string, day: string) => void;
+}) {
+  const { t } = useTranslation();
+  const { dayName, dateStr } = formatDayDisplay(day.date);
+  const dayOfMonth = new Date(day.date).getDate();
+
+  const { setNodeRef, isOver } = useDroppable({
+    id: day.date,
+    data: { type: 'day', date: day.date },
+  });
+
+  return (
+    <li
+      className={`day ${isToday ? 'day--today' : ''}`}
+      style={{ animation: `hum-rise 400ms var(--ease-snap) ${index * 60}ms backwards` }}
+    >
+      <span className="day__num" aria-hidden="true">
+        {dayOfMonth}
+      </span>
+
+      <div className="day__head">
+        <h3 className="day__name">{dayName}</h3>
+        <span className="mono-label">{dateStr}</span>
+        {isToday && <span className="chip tint-coral">{t('messages.today')}</span>}
+      </div>
+
+      <div ref={setNodeRef} className={`day__body ${isOver ? 'is-over' : ''}`}>
+        {day.meals.length === 0 ? (
+          <p className="day__empty">{t('messages.dropMealHere')}</p>
+        ) : (
+          day.meals.map((meal) => (
+            <MealCard key={meal.id} meal={meal} day={day.date} onDelete={onDeleteMeal} />
+          ))
+        )}
+      </div>
+    </li>
+  );
+}
+
 export function MealList({ days, onDeleteMeal }: MealListProps) {
   const { t } = useTranslation();
 
   if (days.length === 0) {
     return (
-      <div className="text-center py-16 animate-[fadeIn_0.6s_ease-out]">
-        <div className="text-sage-300 dark:text-charcoal-500 mb-5">
-          <svg
-            className="w-20 h-20 mx-auto opacity-60"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-            />
-          </svg>
+      <div className="py-12">
+        <div className="flex items-start gap-3">
+          <span className="mark mt-2 shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <h3 style={{ fontSize: 'var(--text-xl)' }}>{t('messages.emptyMealListTitle')}</h3>
+            <p className="text-muted mt-2 max-w-prose">{t('messages.emptyMealListDescription')}</p>
+          </div>
         </div>
-        <h3 className="text-xl font-display font-semibold text-charcoal-800 dark:text-cream-100 mb-2">
-          {t('messages.emptyMealListTitle')}
-        </h3>
-        <p className="text-charcoal-600 dark:text-cream-300 max-w-md mx-auto">
-          {t('messages.emptyMealListDescription')}
-        </p>
       </div>
     );
   }
 
+  const today = toISODate(new Date());
+
   return (
-    <div className="space-y-3">
-      {days.map((day, dayIndex) => (
-        <div key={day.date}>
-          {day.meals.map((meal, mealIndex) => (
-            <div
-              key={meal.id}
-              style={{
-                animation: `fadeInStagger 0.4s ease-out ${(dayIndex * 50 + mealIndex * 100)}ms backwards`
-              }}
-            >
-              <MealCard
-                meal={meal}
-                day={day.date}
-                onDelete={onDeleteMeal}
-              />
-            </div>
-          ))}
-        </div>
+    <ol className="rail">
+      {days.map((day, index) => (
+        <DayRow
+          key={day.date}
+          day={day}
+          index={index}
+          isToday={day.date === today}
+          onDeleteMeal={onDeleteMeal}
+        />
       ))}
-    </div>
+    </ol>
   );
 }

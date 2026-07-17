@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from './ui/Button';
+import { formatDayDisplay } from '../utils/dateHelpers';
 import type { TodoItem } from '../types';
 import * as api from '../utils/api';
 
@@ -37,6 +39,12 @@ export function RecurringTodoItems() {
     }
   };
 
+  /* nextDueDate is an ISO day string; lastCompletedAt is a full timestamp.
+   * formatDayDisplay handles the locale (en / sv) for both.
+   * Date only, no weekday: "Monthly · Next due: Friday, Jul 17" wraps this
+   * mono meta line at 390px and strands the date on its own row. */
+  const formatDate = (value: string): string => formatDayDisplay(value).dateStr;
+
   const formatInterval = (item: TodoItem): string => {
     switch (item.recurrenceInterval) {
       case 'daily':
@@ -54,68 +62,86 @@ export function RecurringTodoItems() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-600 border-t-transparent"></div>
+      <div className="flex items-center justify-center py-10">
+        <span
+          className="inline-block h-8 w-8 rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--color-lavender)', borderTopColor: 'transparent', animation: 'hum-spin 700ms linear infinite' }}
+          aria-label={t('todo.loading')}
+        />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
-        <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
-        <button
-          onClick={loadItems}
-          className="mt-2 text-sm text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-red-100 font-medium"
-        >
+      <div
+        className="card card--tint tint-coral p-4"
+        style={{ boxShadow: 'none' }}
+        role="alert"
+      >
+        <p className="text-sm text-ink break-words">{error}</p>
+        <Button variant="secondary" size="sm" className="mt-3" onClick={loadItems}>
           {t('buttons.retry')}
-        </button>
+        </Button>
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-400 dark:text-gray-500 text-sm">{t('todo.noRecurringItems')}</p>
+      <div className="py-10 flex items-start gap-3">
+        <span className="mark mt-1.5 shrink-0" aria-hidden="true" />
+        <p className="text-muted">{t('todo.noRecurringItems')}</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="px-2 py-1 border-b border-gray-100 dark:border-gray-700">
-        <h2 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
-          {t('todo.allRecurringItems')}
-        </h2>
-      </div>
-      <div className="divide-y divide-gray-50 dark:divide-gray-700">
+    <section>
+      <h2 className="mono-label mb-3">{t('todo.allRecurringItems')}</h2>
+
+      <ul className="grid gap-1.5 list-none p-0 m-0">
         {items.map((item) => (
-          <div key={item.id} className="flex items-center gap-2 px-2 py-1.5 group hover:bg-gray-50 dark:hover:bg-gray-700">
+          <li
+            key={item.id}
+            className="card card--tint tint-lav group flex items-center gap-2 p-3"
+            style={{ boxShadow: 'none' }}
+          >
+            {/* The interval rides a chip next to the name rather than the meta
+              * line: "Monthly · Next due: Jul 17" is too wide for mono at 320px
+              * and stranded the date on its own row. The chip also matches the
+              * lavender ↻ badge these tasks wear in the active list. */}
             <div className="flex-1 min-w-0">
-              <span className="text-xs text-gray-900 dark:text-gray-100 block truncate">{item.name}</span>
-              <span className="text-[10px] text-gray-500 dark:text-gray-400">
-                {formatInterval(item)}
-                {item.nextDueDate && (
-                  <> · {t('todo.nextDue')}: {item.nextDueDate}</>
-                )}
-                {item.lastCompletedAt && (
-                  <> · {t('todo.lastCompleted')}: {new Date(item.lastCompletedAt).toLocaleDateString()}</>
-                )}
-              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-medium text-ink break-words min-w-0">{item.name}</span>
+                <span className="chip tint-lav shrink-0">{formatInterval(item)}</span>
+              </div>
+              {/* Dates are formatted and locale-aware like everywhere else in
+                * the app — nextDueDate arrives as a raw ISO string. */}
+              {(item.nextDueDate || item.lastCompletedAt) && (
+                <span className="mono-label block mt-0.5" style={{ textTransform: 'none' }}>
+                  {item.nextDueDate && <>{t('todo.nextDue')}: {formatDate(item.nextDueDate)}</>}
+                  {item.nextDueDate && item.lastCompletedAt && ' · '}
+                  {item.lastCompletedAt && (
+                    <>{t('todo.lastCompleted')}: {formatDate(item.lastCompletedAt)}</>
+                  )}
+                </span>
+              )}
             </div>
+
             <button
               onClick={() => handleDelete(item.id)}
-              className="flex-shrink-0 p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 rounded transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-w-[32px] min-h-[32px] flex items-center justify-center"
+              className="shrink-0 grid place-items-center rounded-full text-muted transition-colors hover:text-accent-3"
+              style={{ width: 44, height: 44, minWidth: 44 }}
               aria-label={t('todo.aria.deleteItem')}
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+                <path d="M6 18 18 6M6 6l12 12" />
               </svg>
             </button>
-          </div>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </section>
   );
 }

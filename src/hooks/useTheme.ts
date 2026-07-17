@@ -11,7 +11,8 @@ function getStoredTheme(): Theme {
 }
 
 function updateThemeColor(isDark: boolean) {
-  const color = isDark ? '#1a1916' : '#fefcf8';
+  // Mirrors --color-paper in tokens.css for each mode.
+  const color = isDark ? '#1b1d22' : '#faf8ef';
   const metaTags = document.querySelectorAll('meta[name="theme-color"]');
   metaTags.forEach((tag) => {
     tag.setAttribute('content', color);

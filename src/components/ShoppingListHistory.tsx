@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card } from './ui/Card';
 import { getShoppingListHistory, deleteArchivedShoppingList } from '../utils/api';
 import type { ArchivedShoppingList } from '../types';
 import { format } from 'date-fns';
@@ -30,6 +29,8 @@ export function ShoppingListHistory() {
     loadHistory();
   }, []);
 
+  /* Same reasoning as MealPlanHistory — the archive delete is irreversible
+   * server-side, so it keeps a real confirm() rather than optimistic + Undo. */
   const handleDelete = async (id: string) => {
     if (!confirm(t('confirmations.deleteArchivedList'))) return;
     try {
@@ -47,98 +48,122 @@ export function ShoppingListHistory() {
   if (isLoading) {
     return (
       <div className="text-center py-8">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-600 border-t-transparent mb-2"></div>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">{t('messages.loadingHistory')}</p>
+        <span
+          className="inline-block h-8 w-8 mb-2 rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--color-accent-2)', borderTopColor: 'transparent', animation: 'hum-spin 700ms linear infinite' }}
+          aria-hidden="true"
+        />
+        <p className="text-muted text-sm">{t('messages.loadingHistory')}</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
-        <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+      <div className="card card--tint tint-coral p-4" style={{ boxShadow: 'none' }} role="alert">
+        <p className="text-sm text-ink break-words">{error}</p>
       </div>
     );
   }
 
   if (history.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 dark:text-gray-400">{t('messages.noPreviousShoppingLists')}</p>
+      <div className="py-10 flex items-start gap-3">
+        <span className="mark mt-1.5 shrink-0" aria-hidden="true" />
+        <p className="text-muted">{t('messages.noPreviousShoppingLists')}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <ul className="grid gap-2 list-none p-0 m-0">
       {history.map((list) => {
         const isExpanded = expandedId === list.id;
         const totalItems = list.items.length;
         const checkedItems = list.items.filter(i => i.checked).length;
         const dateStr = format(new Date(list.createdAt), 'MMM d, yyyy');
+        const panelId = `list-${list.id}`;
 
         return (
-          <Card key={list.id} className="p-3">
-            <div className="flex items-start gap-2">
-              <button
-                onClick={() => setExpandedId(isExpanded ? null : list.id)}
-                className="flex-1 text-left"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{dateStr}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {totalItems} {totalItems === 1 ? 'item' : 'items'} · {checkedItems} checked
-                    </p>
-                  </div>
-                  <span className="text-gray-400 dark:text-gray-500 text-lg">
-                    {isExpanded ? '▲' : '▼'}
-                  </span>
+          <li key={list.id} className="card p-1.5 flex items-start gap-1">
+            <button
+              onClick={() => setExpandedId(isExpanded ? null : list.id)}
+              className="flex-1 min-w-0 text-left p-2 rounded-2xl"
+              aria-expanded={isExpanded}
+              aria-controls={panelId}
+            >
+              <div className="flex justify-between items-center gap-2">
+                <div className="min-w-0">
+                  <p className="font-display font-semibold text-ink">{dateStr}</p>
+                  <p className="mono-label mt-0.5">
+                    {t('counts.items', { count: totalItems })} ·{' '}
+                    {t('counts.checked', { count: checkedItems })}
+                  </p>
                 </div>
-              </button>
-              <button
-                onClick={() => handleDelete(list.id)}
-                disabled={deletingId === list.id}
-                className="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors disabled:opacity-50 flex-shrink-0"
-                title="Delete archived list"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <svg
+                  width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+                  className="shrink-0 text-muted transition-transform"
+                  style={{ transform: isExpanded ? 'rotate(180deg)' : 'none' }}
+                  aria-hidden="true"
+                >
+                  <path d="m6 9 6 6 6-6" />
                 </svg>
-              </button>
-            </div>
-
-            {isExpanded && (
-              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 space-y-1">
-                {list.items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-2 py-0.5">
-                    <div
-                      className="w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                      style={{
-                        borderColor: item.checked ? '#22c55e' : '#d1d5db',
-                        backgroundColor: item.checked ? '#22c55e' : 'transparent',
-                      }}
-                    >
-                      {item.checked && (
-                        <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </div>
-                    <span
-                      className={`text-sm ${
-                        item.checked ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'
-                      }`}
-                    >
-                      {item.name}
-                    </span>
-                  </div>
-                ))}
               </div>
-            )}
-          </Card>
+
+              {isExpanded && (
+                <div id={panelId} className="mt-3">
+                  <hr className="seam mb-2" />
+                  <ul className="grid gap-1 list-none p-0 m-0">
+                    {list.items.map((item) => (
+                      <li key={item.id} className="flex items-center gap-2">
+                        <span
+                          className="grid place-items-center rounded-full shrink-0"
+                          style={{
+                            width: 16,
+                            height: 16,
+                            border: `2px solid ${item.checked ? 'var(--color-mint)' : 'var(--color-rule)'}`,
+                            background: item.checked ? 'var(--color-mint)' : 'transparent',
+                          }}
+                          aria-hidden="true"
+                        >
+                          {item.checked && (
+                            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-ink)" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round">
+                              <path d="m5 13 4 4L19 7" />
+                            </svg>
+                          )}
+                        </span>
+                        <span
+                          className="text-sm min-w-0 break-words"
+                          style={
+                            item.checked
+                              ? { textDecoration: 'line-through', color: 'var(--color-ink-2)', opacity: 0.7 }
+                              : { color: 'var(--color-ink)' }
+                          }
+                        >
+                          {item.name}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleDelete(list.id)}
+              disabled={deletingId === list.id}
+              className="shrink-0 grid place-items-center rounded-full text-muted transition-colors hover:text-accent-3 disabled:opacity-50"
+              style={{ width: 44, height: 44, minWidth: 44 }}
+              aria-label={t('aria.deleteArchivedList')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+                <path d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }
