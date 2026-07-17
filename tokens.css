@@ -1,0 +1,138 @@
+/* Hallmark · genre: playful · theme: Hum (+ constructed dark variant) · design-system: design.md · designed-as-app
+ * Hum axes: paper=light-cream · display=rounded-sans · accent=multi (pear/cyan/coral)
+ * The dark block is original work for MealPlan — Hum ships no dark variant.
+ * It inverts the anchor roles: Hum's cream becomes ink, Hum's ink becomes paper.
+ * Disqualifiers held in BOTH modes: no pure white paper, no pure black ink,
+ * no square corners, no accent-to-accent gradients, no serif.
+ */
+
+:root {
+  /* ---- Paper + ink · light (canonical Hum) ---- */
+  --color-paper:        oklch(97% 0.012 95);
+  --color-paper-2:      oklch(94% 0.016 95);
+  --color-paper-3:      oklch(91% 0.020 95);
+  --color-ink:          oklch(20% 0.012 250);
+
+  /* ---- Accents · light ----
+   * Every accent ships an explicit -deep partner at the SAME hue. Do not derive
+   * one with color-mix(in oklch, <accent>, <ink>): oklch interpolates hue along
+   * the shorter arc, so coral (H18) mixed toward ink (H250) swings backwards
+   * through magenta (H340). Deep values are hand-set: same H, lower L, ~ -0.02 C. */
+  --color-accent:         oklch(86% 0.18 95);    /* pear — primary action */
+  --color-accent-deep:    oklch(76% 0.20 95);    /* pear button edge */
+  --color-accent-2:       oklch(66% 0.18 235);   /* sky-cyan — tints, shopping */
+  --color-accent-2-deep:  oklch(54% 0.16 235);
+  --color-accent-3:       oklch(68% 0.24 18);    /* coral — ONE moment per page */
+  --color-accent-3-deep:  oklch(55% 0.21 18);
+  --color-mint:           oklch(80% 0.16 150);   /* success, todos */
+  --color-mint-deep:      oklch(66% 0.15 150);
+  --color-lavender:       oklch(74% 0.16 305);   /* occasional chips */
+  --color-lavender-deep:  oklch(61% 0.15 305);
+  --color-link:           oklch(50% 0.15 240);   /* cyan darkened for text contrast */
+  --color-focus:          oklch(50% 0.15 240);
+
+  /* ---- Cast shadows per accent · light ---- */
+  --cast-pear:          oklch(76% 0.20 95 / 0.45);
+  --cast-ink:           oklch(20% 0.012 250 / 0.12);
+  --cast-ink-contact:   oklch(20% 0.012 250 / 0.08);
+
+  /* ---- Derived · both modes ----
+   * oklab, not oklch: ink (H250) and paper (H95) are near-opposite hues, and an
+   * oklch mix would rotate the blend through cyan. oklab is rectangular — it
+   * blends straight through, which is what a neutral tint wants. */
+  --color-ink-2:        color-mix(in oklab, var(--color-ink) 62%, var(--color-paper));
+  --color-rule:         color-mix(in oklab, var(--color-ink) 14%, var(--color-paper));
+  --color-accent-ink:   oklch(20% 0.012 250);  /* text on pear — light in both modes */
+  /* Text on coral. Tinted toward the anchor hue rather than a pure oklch(99% 0 0):
+   * zero-chroma neutrals read flat (gate 22), and an inline value would bypass
+   * the token block (gate 48). Light in both modes — coral is dark in both. */
+  --color-on-coral:     oklch(99% 0.006 95);
+
+  /* ---- Type ---- */
+  --font-display: "Plus Jakarta Sans", "Geist", ui-rounded, system-ui, sans-serif;
+  --font-body:    "Plus Jakarta Sans", "Geist", ui-rounded, system-ui, sans-serif;
+  --font-label:   "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  --text-xs:      0.75rem;
+  --text-sm:      0.875rem;
+  --text-base:    1rem;
+  --text-md:      1.125rem;
+  --text-lg:      1.375rem;
+  --text-xl:      1.75rem;
+  --text-2xl:     2.25rem;
+  --text-display: clamp(2rem, 6vw + 0.5rem, 3.25rem);
+  --text-counter: clamp(3rem, 5vw + 1rem, 5rem);
+
+  --tracking-display: -0.025em;
+  --tracking-label:   0.10em;
+
+  /* ---- Space · 4-point scale ---- */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs:  0.75rem;
+  --space-sm:  1rem;
+  --space-md:  1.5rem;
+  --space-lg:  2rem;
+  --space-xl:  3rem;
+  --space-2xl: 4.5rem;
+  --space-3xl: 7rem;
+
+  /* ---- Shell ---- */
+  --page-max:     46rem;
+  --page-gutter:  var(--space-sm);
+  --section-gap:  var(--space-lg);
+  --shell:        var(--page-max);
+  --tabbar-h:     4rem;
+
+  /* ---- Radius · no square corners anywhere ---- */
+  --radius-card:  20px;
+  --radius-input: 12px;
+  --radius-pill:  999px;
+  --radius-chip:  10px;
+
+  /* ---- Motion ---- */
+  --ease-press:   cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snap:    cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+
+  --dur-press:    70ms;
+  --dur-hover:    140ms;
+  --dur-short:    220ms;
+  --dur-reveal:   600ms;
+  --dur-tick:     1200ms;
+
+  /* ---- Rules + elevation ---- */
+  --rule-hair:    1px solid var(--color-rule);
+  --rule-dash:    1px dashed var(--color-rule);
+  --shadow-card:  0 1px 2px 0 var(--cast-ink-contact), 0 12px 32px -16px var(--cast-ink);
+  --shadow-lift:  0 2px 4px 0 var(--cast-ink-contact), 0 20px 40px -18px var(--cast-ink);
+}
+
+/* ---- Dark · constructed for MealPlan, not canonical Hum ---- */
+.dark {
+  --color-paper:        oklch(21% 0.014 250);  /* the ink family, lifted */
+  --color-paper-2:      oklch(25% 0.016 250);
+  --color-paper-3:      oklch(30% 0.018 250);
+  --color-ink:          oklch(94% 0.012 95);   /* the cream, as text */
+
+  --color-accent:         oklch(84% 0.17 95);
+  --color-accent-deep:    oklch(70% 0.19 95);
+  --color-accent-2:       oklch(74% 0.15 235);
+  --color-accent-2-deep:  oklch(60% 0.14 235);
+  --color-accent-3:       oklch(70% 0.22 18);
+  --color-accent-3-deep:  oklch(57% 0.19 18);
+  --color-mint:           oklch(78% 0.15 150);
+  --color-mint-deep:      oklch(64% 0.14 150);
+  --color-lavender:       oklch(76% 0.15 305);
+  --color-lavender-deep:  oklch(62% 0.14 305);
+  --color-link:           oklch(78% 0.13 235);   /* lifted, not darkened */
+  --color-focus:          oklch(78% 0.13 235);
+
+  --cast-pear:          oklch(70% 0.19 95 / 0.35);
+  --cast-ink:           oklch(8% 0.01 250 / 0.55);
+  --cast-ink-contact:   oklch(8% 0.01 250 / 0.40);
+
+  /* ink-2 and rule re-derive automatically from the new ink/paper above */
+}

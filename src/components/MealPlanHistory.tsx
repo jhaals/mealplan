@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card } from './ui/Card';
 import { formatDayDisplay } from '../utils/dateHelpers';
 import { getMealPlanHistory, deleteArchivedMealPlan, type ArchivedMealPlan } from '../utils/api';
 
@@ -29,6 +28,9 @@ export function MealPlanHistory() {
     loadHistory();
   }, []);
 
+  /* A real confirm() stays here on purpose. The house stance is optimistic
+   * update + Undo, but deleting an archived plan is irreversible server-side —
+   * there is nothing to undo it with. */
   const handleDelete = async (id: string) => {
     if (!confirm(t('confirmations.deleteArchivedPlan'))) return;
     try {
@@ -46,91 +48,109 @@ export function MealPlanHistory() {
   if (isLoading) {
     return (
       <div className="text-center py-8">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-600 border-t-transparent mb-2"></div>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">{t('messages.loadingHistory')}</p>
+        <span
+          className="inline-block h-8 w-8 mb-2 rounded-full border-2 border-t-transparent"
+          style={{ borderColor: 'var(--color-accent-deep)', borderTopColor: 'transparent', animation: 'hum-spin 700ms linear infinite' }}
+          aria-hidden="true"
+        />
+        <p className="text-muted text-sm">{t('messages.loadingHistory')}</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4">
-        <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
+      <div className="card card--tint tint-coral p-4" style={{ boxShadow: 'none' }} role="alert">
+        <p className="text-sm text-ink break-words">{error}</p>
       </div>
     );
   }
 
   if (history.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 dark:text-gray-400">{t('messages.noPreviousMealPlans')}</p>
+      <div className="py-10 flex items-start gap-3">
+        <span className="mark mt-1.5 shrink-0" aria-hidden="true" />
+        <p className="text-muted">{t('messages.noPreviousMealPlans')}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <ul className="grid gap-2 list-none p-0 m-0">
       {history.map((plan) => {
         const startDisplay = formatDayDisplay(plan.startDate);
         const endDisplay = formatDayDisplay(plan.endDate);
         const isExpanded = expandedId === plan.id;
         const totalMeals = plan.days.reduce((sum, day) => sum + day.meals.length, 0);
+        const panelId = `plan-${plan.id}`;
 
         return (
-          <Card key={plan.id} className="p-3 group">
-            <div className="flex items-start gap-2">
-              <button
-                onClick={() => setExpandedId(isExpanded ? null : plan.id)}
-                className="flex-1 text-left"
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">
-                      {startDisplay.dateStr} – {endDisplay.dateStr}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {t('counts.days', { count: plan.days.length })} · {t('counts.meals', { count: totalMeals })}
-                    </p>
-                  </div>
-                  <span className="text-gray-400 dark:text-gray-500 text-lg">
-                    {isExpanded ? '▲' : '▼'}
-                  </span>
+          <li key={plan.id} className="card p-1.5 flex items-start gap-1">
+            <button
+              onClick={() => setExpandedId(isExpanded ? null : plan.id)}
+              className="flex-1 min-w-0 text-left p-2 rounded-2xl"
+              aria-expanded={isExpanded}
+              aria-controls={panelId}
+            >
+              <div className="flex justify-between items-center gap-2">
+                <div className="min-w-0">
+                  <p className="font-display font-semibold text-ink">
+                    {startDisplay.dateStr} – {endDisplay.dateStr}
+                  </p>
+                  <p className="mono-label mt-0.5">
+                    {t('counts.days', { count: plan.days.length })} · {t('counts.meals', { count: totalMeals })}
+                  </p>
                 </div>
-              </button>
-              <button
-                onClick={() => handleDelete(plan.id)}
-                disabled={deletingId === plan.id}
-                className="p-1 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 rounded transition-colors opacity-100 sm:opacity-0 sm:group-hover:opacity-100 disabled:opacity-50 flex-shrink-0 min-w-[32px] min-h-[32px] flex items-center justify-center"
-                aria-label={t('aria.deleteArchivedPlan')}
-              >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+                  className="shrink-0 text-muted transition-transform"
+                  style={{ transform: isExpanded ? 'rotate(180deg)' : 'none' }}
+                  aria-hidden="true"
+                >
+                  <path d="m6 9 6 6 6-6" />
                 </svg>
-              </button>
-            </div>
-
-            {isExpanded && (
-              <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                {plan.days.map((day) => {
-                  const dayDisplay = formatDayDisplay(day.date);
-                  return (
-                    <div key={day.date}>
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {dayDisplay.dayName}, {dayDisplay.dateStr}
-                      </p>
-                      <ul className="ml-4 text-sm text-gray-600 dark:text-gray-400">
-                        {day.meals.map((meal) => (
-                          <li key={meal.id}>• {meal.name}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                })}
               </div>
-            )}
-          </Card>
+
+              {isExpanded && (
+                <div id={panelId} className="mt-3 grid gap-2">
+                  <hr className="seam" />
+                  {plan.days.map((day) => {
+                    const dayDisplay = formatDayDisplay(day.date);
+                    return (
+                      <div key={day.date}>
+                        <p className="text-sm font-medium text-ink">
+                          {dayDisplay.dayName}, {dayDisplay.dateStr}
+                        </p>
+                        <ul className="mt-0.5 grid gap-0.5 list-none p-0 m-0">
+                          {day.meals.map((meal) => (
+                            <li key={meal.id} className="text-sm text-muted flex gap-2">
+                              <span aria-hidden="true">·</span>
+                              <span className="min-w-0 break-words">{meal.name}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleDelete(plan.id)}
+              disabled={deletingId === plan.id}
+              className="shrink-0 grid place-items-center rounded-full text-muted transition-colors hover:text-accent-3 disabled:opacity-50"
+              style={{ width: 44, height: 44, minWidth: 44 }}
+              aria-label={t('aria.deleteArchivedPlan')}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+                <path d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }

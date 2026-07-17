@@ -48,7 +48,9 @@
     "errorLoadingMealPlan": "Error Loading Meal Plan",
     "error": "Error",
     "notConfigured": "Not Configured",
-    "lastError": "Last error:"
+    "lastError": "Last error:",
+    "settings": "Settings",
+    "mealPlan": "Meal plan"
   },
   "messages": {
     "loadingMealPlan": "Loading meal plan...",
@@ -67,7 +69,9 @@
     "trmnlNotConfigured": "Set the TRMNL_WEBHOOK_URL environment variable in server/.env to enable TRMNL integration.",
     "trmnlPushSuccess": "Successfully pushed to TRMNL device",
     "trmnlPushFailed": "Push failed",
-    "checkedOff": "Checked off"
+    "checkedOff": "Checked off",
+    "today": "Today",
+    "dropMealHere": "Nothing planned — drop a meal here"
   },
   "status": {
     "webhookConfigured": "Webhook configured",
@@ -75,7 +79,9 @@
     "everyHour": "Every hour",
     "lastPush": "Last push",
     "never": "Never",
-    "yes": "✓ Yes"
+    "yes": "✓ Yes",
+    "live": "Live",
+    "offline": "Offline"
   },
   "counts": {
     "days_one": "{{count}} day",
@@ -83,7 +89,11 @@
     "meals_one": "{{count}} meal",
     "meals_other": "{{count}} meals",
     "checkedItems_one": "{{count}} checked item",
-    "checkedItems_other": "{{count}} checked items"
+    "checkedItems_other": "{{count}} checked items",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items",
+    "checked_one": "{{count}} checked",
+    "checked_other": "{{count}} checked"
   },
   "confirmations": {
     "deleteArchivedPlan": "Delete this archived meal plan?",
@@ -91,7 +101,11 @@
   },
   "aria": {
     "deleteArchivedPlan": "Delete archived plan",
-    "deleteMeal": "Delete meal"
+    "deleteMeal": "Delete meal",
+    "checkItem": "Check item",
+    "uncheckItem": "Uncheck item",
+    "deleteItem": "Delete item",
+    "deleteArchivedList": "Delete archived list"
   },
   "sortPrompt": {
     "title": "AI Sorting Prompt",
@@ -139,5 +153,12 @@
       "uncheckItem": "Uncheck item",
       "deleteItem": "Delete task"
     }
+  },
+  "theme": {
+    "system": "System theme",
+    "light": "Light theme",
+    "dark": "Dark theme",
+    "toggleLabel": "Theme: {{theme}}. Change theme.",
+    "label": "Appearance"
   }
 }

@@ -48,7 +48,9 @@
     "errorLoadingMealPlan": "Fel vid Laddning av Måltidsplan",
     "error": "Fel",
     "notConfigured": "Inte Konfigurerad",
-    "lastError": "Senaste fel:"
+    "lastError": "Senaste fel:",
+    "settings": "Inställningar",
+    "mealPlan": "Matsedel"
   },
   "messages": {
     "loadingMealPlan": "Laddar måltidsplan...",
@@ -67,7 +69,9 @@
     "trmnlNotConfigured": "Sätt miljövariabeln TRMNL_WEBHOOK_URL i server/.env för att aktivera TRMNL-integration.",
     "trmnlPushSuccess": "Framgångsrikt skickad till TRMNL-enhet",
     "trmnlPushFailed": "Skickning misslyckades",
-    "checkedOff": "Avbockad"
+    "checkedOff": "Avbockad",
+    "today": "Idag",
+    "dropMealHere": "Inget planerat – släpp en måltid här"
   },
   "status": {
     "webhookConfigured": "Webhook konfigurerad",
@@ -75,7 +79,9 @@
     "everyHour": "Varje timme",
     "lastPush": "Senaste skickning",
     "never": "Aldrig",
-    "yes": "✓ Ja"
+    "yes": "✓ Ja",
+    "live": "Live",
+    "offline": "Offline"
   },
   "counts": {
     "days_one": "{{count}} dag",
@@ -83,7 +89,11 @@
     "meals_one": "{{count}} måltid",
     "meals_other": "{{count}} måltider",
     "checkedItems_one": "{{count}} avbockad vara",
-    "checkedItems_other": "{{count}} avbockade varor"
+    "checkedItems_other": "{{count}} avbockade varor",
+    "items_one": "{{count}} vara",
+    "items_other": "{{count}} varor",
+    "checked_one": "{{count}} avbockad",
+    "checked_other": "{{count}} avbockade"
   },
   "confirmations": {
     "deleteArchivedPlan": "Ta bort denna arkiverade måltidsplan?",
@@ -91,7 +101,11 @@
   },
   "aria": {
     "deleteArchivedPlan": "Ta bort arkiverad plan",
-    "deleteMeal": "Ta bort måltid"
+    "deleteMeal": "Ta bort måltid",
+    "checkItem": "Bocka av",
+    "uncheckItem": "Ångra avbockning",
+    "deleteItem": "Ta bort",
+    "deleteArchivedList": "Ta bort arkiverad lista"
   },
   "sortPrompt": {
     "title": "AI-sorteringsprompt",
@@ -139,5 +153,12 @@
       "uncheckItem": "Avbocka uppgift",
       "deleteItem": "Ta bort uppgift"
     }
+  },
+  "theme": {
+    "system": "Systemtema",
+    "light": "Ljust tema",
+    "dark": "Mörkt tema",
+    "toggleLabel": "Tema: {{theme}}. Byt tema.",
+    "label": "Utseende"
   }
 }
