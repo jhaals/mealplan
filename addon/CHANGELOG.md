@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1-82] - 2026-07-17
+
+## What's Changed
+* Bump typescript from 6.0.3 to 7.0.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/211
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.1-81...v1.0.1-82
+
 ## [1.0.1-81] - 2026-07-17
 
 ## What's Changed
