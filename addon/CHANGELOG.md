@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3-84] - 2026-07-17
+
+## What's Changed
+* Update config.yaml by @jhaals in https://github.com/jhaals/mealplan/pull/219
+* Bump actions/checkout from 6 to 7 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/195
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.1-83...v1.0.3-84
+
 ## [1.0.1-83] - 2026-07-17
 
 ## What's Changed
