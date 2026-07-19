@@ -22,6 +22,8 @@
     "addMeal": "Add Meal",
     "retry": "Retry",
     "startNewWeek": "Start New Week",
+    "showEarlierDays": "Show earlier days ({{count}})",
+    "hideEarlierDays": "Hide earlier days",
     "sort": "Sort",
     "newList": "New List",
     "undo": "Undo",
@@ -71,7 +73,9 @@
     "trmnlPushFailed": "Push failed",
     "checkedOff": "Checked off",
     "today": "Today",
-    "dropMealHere": "Nothing planned — drop a meal here"
+    "dropMealHere": "Nothing planned — drop a meal here",
+    "allDaysPast": "No upcoming days planned. Add a meal to start a new day, or show earlier days to reuse a past one.",
+    "pastDay": "Past"
   },
   "status": {
     "webhookConfigured": "Webhook configured",

@@ -52,8 +52,12 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
       ref={setNodeRef}
       style={style}
       variant="interactive"
-      /* The day now lives on the rail, so the card carries only the meal. */
-      className="group flex items-center gap-2 p-3 cursor-grab active:cursor-grabbing touch-none"
+      /* The day now lives on the rail, so the card carries only the meal.
+       * touch-pan-y (not touch-none) keeps vertical scrolling working when a
+       * swipe starts on a card — the TouchSensor's press-and-hold delay is
+       * what distinguishes a drag from a scroll, so the browser can keep
+       * ownership of the pan gesture until the hold fires. */
+      className="group flex items-center gap-2 p-3 cursor-grab active:cursor-grabbing touch-pan-y"
       {...listeners}
       {...attributes}
     >

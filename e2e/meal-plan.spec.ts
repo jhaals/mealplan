@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+// Use today's date so added meals always land on a day the "hide past days"
+// timeline feature keeps visible, instead of a hardcoded date that ages into the past.
+const START_DATE = new Date().toISOString().slice(0, 10);
+
 test.describe('Meal Plan', () => {
   test.beforeEach(async ({ request }) => {
     // Reset the meal plan before each test via API
@@ -20,7 +24,7 @@ test.describe('Meal Plan', () => {
 
   test('can set a start date and begin planning', async ({ page }) => {
     await page.goto('/meals');
-    await page.getByLabel('Start Date').fill('2026-02-09');
+    await page.getByLabel('Start Date').fill(START_DATE);
     await page.getByRole('button', { name: 'Start Planning' }).click();
     await expect(page.getByPlaceholder('e.g., Chicken Salad')).toBeVisible();
     await expect(page.getByText('No meals yet')).toBeVisible();
@@ -28,7 +32,7 @@ test.describe('Meal Plan', () => {
 
   test('can add a meal', async ({ page }) => {
     await page.goto('/meals');
-    await page.getByLabel('Start Date').fill('2026-02-09');
+    await page.getByLabel('Start Date').fill(START_DATE);
     await page.getByRole('button', { name: 'Start Planning' }).click();
     await expect(page.getByPlaceholder('e.g., Chicken Salad')).toBeVisible();
 
@@ -40,7 +44,7 @@ test.describe('Meal Plan', () => {
 
   test('auto-advances current day after adding a meal', async ({ page }) => {
     await page.goto('/meals');
-    await page.getByLabel('Start Date').fill('2026-02-09');
+    await page.getByLabel('Start Date').fill(START_DATE);
     await page.getByRole('button', { name: 'Start Planning' }).click();
 
     // Add first meal
@@ -60,7 +64,7 @@ test.describe('Meal Plan', () => {
 
   test('can delete a meal', async ({ page }) => {
     await page.goto('/meals');
-    await page.getByLabel('Start Date').fill('2026-02-09');
+    await page.getByLabel('Start Date').fill(START_DATE);
     await page.getByRole('button', { name: 'Start Planning' }).click();
 
     await page.getByPlaceholder('e.g., Chicken Salad').fill('Meal to Delete');
@@ -74,7 +78,7 @@ test.describe('Meal Plan', () => {
 
   test('can reset meal plan (start new week)', async ({ page }) => {
     await page.goto('/meals');
-    await page.getByLabel('Start Date').fill('2026-02-09');
+    await page.getByLabel('Start Date').fill(START_DATE);
     await page.getByRole('button', { name: 'Start Planning' }).click();
 
     await page.getByPlaceholder('e.g., Chicken Salad').fill('Some Meal');
@@ -87,7 +91,7 @@ test.describe('Meal Plan', () => {
 
   test('can view meal plan history after reset', async ({ page }) => {
     await page.goto('/meals');
-    await page.getByLabel('Start Date').fill('2026-02-09');
+    await page.getByLabel('Start Date').fill(START_DATE);
     await page.getByRole('button', { name: 'Start Planning' }).click();
 
     await page.getByPlaceholder('e.g., Chicken Salad').fill('Archived Meal');
