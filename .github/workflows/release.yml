@@ -29,8 +29,8 @@ jobs:
         id: version
         run: |
           FULL=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
-          BASE=$(echo "$FULL" | grep -oP '^\d+\.\d+\.\d+')
-          VERSION="${BASE}-${{ github.run_number }}"
+          MAJOR_MINOR=$(echo "$FULL" | grep -oP '^\d+\.\d+')
+          VERSION="${MAJOR_MINOR}.${{ github.run_number }}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           sed -i "s/^version: .*/version: \"$VERSION\"/" addon/config.yaml
 
@@ -76,8 +76,8 @@ jobs:
         id: version
         run: |
           FULL=$(grep '^version:' addon/config.yaml | sed 's/version: *"\(.*\)"/\1/')
-          BASE=$(echo "$FULL" | grep -oP '^\d+\.\d+\.\d+')
-          VERSION="${BASE}-${{ github.run_number }}"
+          MAJOR_MINOR=$(echo "$FULL" | grep -oP '^\d+\.\d+')
+          VERSION="${MAJOR_MINOR}.${{ github.run_number }}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
