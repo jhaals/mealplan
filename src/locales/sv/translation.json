@@ -22,6 +22,8 @@
     "addMeal": "Lägg Till Måltid",
     "retry": "Försök Igen",
     "startNewWeek": "Starta Ny Vecka",
+    "showEarlierDays": "Visa tidigare dagar ({{count}})",
+    "hideEarlierDays": "Dölj tidigare dagar",
     "sort": "Sortera",
     "newList": "Ny Lista",
     "undo": "Ångra",
@@ -71,7 +73,9 @@
     "trmnlPushFailed": "Skickning misslyckades",
     "checkedOff": "Avbockad",
     "today": "Idag",
-    "dropMealHere": "Inget planerat – släpp en måltid här"
+    "dropMealHere": "Inget planerat – släpp en måltid här",
+    "allDaysPast": "Inga kommande dagar planerade. Lägg till en måltid för att starta en ny dag, eller visa tidigare dagar för att återanvända en.",
+    "pastDay": "Tidigare"
   },
   "status": {
     "webhookConfigured": "Webhook konfigurerad",

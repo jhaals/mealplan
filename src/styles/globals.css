@@ -540,6 +540,23 @@
     font-size: var(--text-sm);
   }
 
+  /* Past days · shown on demand, dimmed so they read as "history you can
+   * still reach into" rather than part of the live plan. Meals stay fully
+   * legible and draggable — only the surrounding chrome recedes. */
+  .day--past .day__num {
+    background: transparent;
+    color: var(--color-ink-2);
+    box-shadow: inset 0 0 0 1px var(--color-rule);
+  }
+  .day--past .day__name {
+    color: var(--color-ink-2);
+    font-weight: 500;
+  }
+  .day--past .chip {
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
+  }
+
   /* ---- Character mark · one per page ----------------------------------
    * Built in CSS. Pear is its colour. Pulses at rest; stops under
    * reduced-motion. */
