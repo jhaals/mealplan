@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.86] - 2026-07-19
+
+## What's Changed
+* Use patch version for Home Assistant build number by @jhaals in https://github.com/jhaals/mealplan/pull/221
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.3-85...v1.0.86
+
 ## [1.0.3-85] - 2026-07-19
 
 ## What's Changed
