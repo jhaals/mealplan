@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3-85] - 2026-07-19
+
+## What's Changed
+* Hide past days by default, show on demand with toggle by @jhaals in https://github.com/jhaals/mealplan/pull/220
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.3-84...v1.0.3-85
+
 ## [1.0.3-84] - 2026-07-17
 
 ## What's Changed
