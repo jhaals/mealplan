@@ -1,0 +1,35 @@
+{% comment %}
+Meal Plan — top or bottom half of a 1Tx1B mashup. Wide and short, so we show
+today + tomorrow side by side instead of stacked.
+{% endcomment %}
+<div class="layout">
+  <div class="columns">
+    {% for day in days limit:2 %}
+      <div class="column">
+        <span class="label label--underline">{{ day.dayName }}</span>
+
+        <div class="grid grid--cols-1 gap--xsmall">
+          {% if day.meals.size > 0 %}
+            {% for meal in day.meals %}
+              <div class="item">
+                <div class="content">
+                  <span class="title title--xsmall" data-clamp="1">{{ meal }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="item">
+              <div class="content">
+                <span class="description">Inga måltider planerade</span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="title_bar">
+  <span class="title">Matsedel</span>
+</div>

@@ -1,0 +1,49 @@
+{% comment %}
+Meal Plan — full view.
+merge_variables come from server/src/services/trmnlService.ts:
+  days: [{ date, dayName, formattedDate, meals: string[], mealCount, isToday }]
+  totalDays, totalMeals
+Only today and future days are ever sent — past days are filtered server-side.
+
+.layout defaults to flex-direction: row, so layout--col is required here —
+without it every day's label and meal grid lay out side by side instead of
+stacking. .columns/.column is a fixed side-by-side panel component (like a
+2-up page split), not a repeatable per-item header, so the day label is a
+plain .label sibling of its .grid instead.
+
+layout--top would center the cross-axis on a layout--col (it's meant for
+row layouts), leaving the day label centered above a left-aligned grid —
+layout--align-start/layout--justify-start set each axis independently, so
+both the label and the grid sit flush left, top to bottom.
+{% endcomment %}
+<div class="layout layout--col layout--align-start layout--justify-start">
+  {% for day in days limit:7 %}
+    <span class="label label--underline">{{ day.dayName }}</span>
+
+    <div class="grid grid--cols-1 gap--xsmall">
+      {% if day.meals.size > 0 %}
+        {% for meal in day.meals %}
+          <div class="item">
+            <div class="meta">
+              <span class="index">{{ forloop.index }}</span>
+            </div>
+            <div class="content">
+              <span class="title title--small" data-clamp="1">{{ meal }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="item">
+          <div class="content">
+            <span class="description">Inga måltider planerade</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<div class="title_bar">
+  <span class="title">Matsedel</span>
+  <span class="instance">{{ totalMeals }} måltider · {{ totalDays }} dagar framåt</span>
+</div>

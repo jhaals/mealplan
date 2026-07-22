@@ -1,0 +1,35 @@
+{% comment %}
+Meal Plan — left or right half of a 1Lx1R mashup. Narrow and tall, so we stack
+the next four days as compact rows.
+
+Not using .item's .meta/.index for the weekday: the framework hard-codes
+--item-meta-width to 10px (sized for a single-digit rank number), so any
+multi-letter text put there overflows its box and overlaps .content
+regardless of font-size. A .label--outline chip has no such fixed width, so
+"Ons"/"Tors" sit cleanly on the same line as the meal text instead.
+
+The chip needs an explicit min-width too — Swedish weekday abbreviations
+aren't all the same length ("Fre" vs "Tors"), so without one each row's chip
+renders at its own natural width and the meal text after it starts at a
+different x per row. Fixing the width keeps every row's text flush.
+{% endcomment %}
+<div class="layout">
+  <div class="grid grid--cols-1 gap--xsmall">
+    {% for day in days limit:4 %}
+      <div class="item">
+        <div class="content">
+          <div class="flex flex--center-y gap--small">
+            <span class="label label--large label--outline" style="display: inline-block; min-width: 3.2em; text-align: center;">{{ day.dayName }}</span>
+            <span class="title title--large" data-clamp="1">
+              {% if day.meals.size > 0 %}{{ day.meals | join: ", " }}{% else %}Inga måltider planerade{% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="title_bar">
+  <span class="title">Matsedel</span>
+</div>

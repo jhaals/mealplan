@@ -1,0 +1,9 @@
+---
+# Local dev-server config for `trmnlp serve` (https://github.com/usetrmnl/trmnlp).
+# Not uploaded to TRMNL — only src/ and src/settings.yml are.
+watch:
+  - .trmnlp.yml
+  - src
+
+custom_fields: {}
+framework_version: latest

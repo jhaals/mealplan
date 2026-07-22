@@ -1,0 +1,49 @@
+{
+  "startDate": "2026-07-20",
+  "lastUpdated": "2026-07-22T08:00:00.000Z",
+  "totalDays": 5,
+  "totalMeals": 7,
+  "days": [
+    {
+      "date": "2026-07-22",
+      "dayName": "Ons",
+      "formattedDate": "22 juli",
+      "meals": ["Tacos", "Greek Salad"],
+      "mealCount": 2,
+      "isToday": true
+    },
+    {
+      "date": "2026-07-23",
+      "dayName": "Tors",
+      "formattedDate": "23 juli",
+      "meals": ["Spaghetti Bolognese"],
+      "mealCount": 1,
+      "isToday": false
+    },
+    {
+      "date": "2026-07-24",
+      "dayName": "Fre",
+      "formattedDate": "24 juli",
+      "meals": [],
+      "mealCount": 0,
+      "isToday": false
+    },
+    {
+      "date": "2026-07-25",
+      "dayName": "Lör",
+      "formattedDate": "25 juli",
+      "meals": ["Grilled Salmon", "Roasted Veg", "Rice"],
+      "mealCount": 3,
+      "isToday": false
+    },
+    {
+      "date": "2026-07-26",
+      "dayName": "Sön",
+      "formattedDate": "26 juli",
+      "meals": ["Leftovers"],
+      "mealCount": 1,
+      "isToday": false
+    }
+  ],
+  "displayText": "MATSEDEL - Från 22 juli\n\nOns 22 juli:\n• Tacos\n• Greek Salad\n\nTors 23 juli:\n• Spaghetti Bolognese\n\nFre 24 juli:\n\nLör 25 juli:\n• Grilled Salmon\n• Roasted Veg\n• Rice\n\nSön 26 juli:\n• Leftovers"
+}

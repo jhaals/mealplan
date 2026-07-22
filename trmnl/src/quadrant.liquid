@@ -1,0 +1,28 @@
+{% comment %}
+Meal Plan — one quarter of a 2x2 mashup. Same list treatment as
+half_vertical.liquid: a .label--outline weekday chip and the meals as
+.title--large text, flowing on one line (see half_vertical.liquid for why
+this doesn't use .item's .meta/.index, and for the fixed chip min-width —
+Swedish weekday abbreviations vary in length, e.g. "Fre" vs "Tors").
+Tighter limit since the tile is a quarter of the space.
+{% endcomment %}
+<div class="layout">
+  <div class="grid grid--cols-1 gap--xsmall">
+    {% for day in days limit:3 %}
+      <div class="item">
+        <div class="content">
+          <div class="flex flex--center-y gap--small">
+            <span class="label label--large label--outline" style="display: inline-block; min-width: 3.2em; text-align: center;">{{ day.dayName }}</span>
+            <span class="title title--large" data-clamp="1">
+              {% if day.meals.size > 0 %}{{ day.meals | join: ", " }}{% else %}Inga måltider planerade{% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="title_bar">
+  <span class="title">Matsedel</span>
+</div>

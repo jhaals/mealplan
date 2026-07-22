@@ -2,6 +2,7 @@ import { prisma } from '../db';
 import { getMealPlan, type MealPlanState } from './mealPlanService';
 import { createHash } from 'crypto';
 import { format, parseISO } from 'date-fns';
+import { sv } from 'date-fns/locale';
 
 export interface TRMNLConfig {
   enabled: boolean;
@@ -66,14 +67,23 @@ function generateDataHash(data: string): string {
   return createHash('sha256').update(data).digest('hex');
 }
 
+// date-fns's sv locale returns weekday abbreviations lowercase ("mån", "tors");
+// capitalized to match how the English "EEE" format already reads ("Wed", "Thu").
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 /**
  * Extract stable content from meal plan for hash calculation
  * Only includes data that represents actual meal plan changes
  * Excludes timestamps and computed metadata that would cause false positives
  */
 function extractStableContent(mealPlan: MealPlanState) {
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const upcomingDays = mealPlan.days.filter((day) => day.date >= today);
+
   // If no meal plan data, return minimal structure
-  if (!mealPlan.startDate || mealPlan.days.length === 0) {
+  if (!mealPlan.startDate || upcomingDays.length === 0) {
     return {
       startDate: null,
       days: [],
@@ -83,7 +93,7 @@ function extractStableContent(mealPlan: MealPlanState) {
   // Extract only: startDate, days with dates and meal names
   return {
     startDate: mealPlan.startDate,
-    days: mealPlan.days.map((day) => ({
+    days: upcomingDays.map((day) => ({
       date: day.date,
       meals: day.meals.map((meal) => meal.name),
     })),
@@ -92,12 +102,16 @@ function extractStableContent(mealPlan: MealPlanState) {
 
 /**
  * Format meal plan data for TRMNL webhook payload
+ * Only includes today and future days, mirroring the "hide past days"
+ * behavior of the meal timeline in the app itself.
  */
 async function formatMealPlanForTRMNL() {
   const mealPlan = await getMealPlan();
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const upcomingDays = mealPlan.days.filter((day) => day.date >= today);
 
-  // If no meal plan or no start date, send empty message
-  if (!mealPlan.startDate || mealPlan.days.length === 0) {
+  // If no meal plan or nothing upcoming, send empty message
+  if (!mealPlan.startDate || upcomingDays.length === 0) {
     return {
       merge_variables: {
         startDate: null,
@@ -105,33 +119,34 @@ async function formatMealPlanForTRMNL() {
         totalDays: 0,
         totalMeals: 0,
         days: [],
-        displayText: 'No meals planned',
+        displayText: 'Inga måltider planerade',
       },
       merge_strategy: 'replace',
     };
   }
 
   // Format days with meals
-  const formattedDays = mealPlan.days.map((day) => {
+  const formattedDays = upcomingDays.map((day) => {
     const date = parseISO(day.date);
     return {
       date: day.date,
-      dayName: format(date, 'EEE'),
-      formattedDate: format(date, 'MMM d'),
+      dayName: capitalize(format(date, 'EEE', { locale: sv })),
+      formattedDate: format(date, 'd MMM', { locale: sv }),
       meals: day.meals.map((meal) => meal.name),
       mealCount: day.meals.length,
+      isToday: day.date === today,
     };
   });
 
   // Calculate totals
-  const totalMeals = mealPlan.days.reduce(
+  const totalMeals = upcomingDays.reduce(
     (sum, day) => sum + day.meals.length,
     0
   );
 
   // Generate display text
-  const startDateFormatted = format(parseISO(mealPlan.startDate), 'MMM d');
-  let displayText = `MEAL PLAN - Week of ${startDateFormatted}\n\n`;
+  const startDateFormatted = format(parseISO(formattedDays[0].date), 'd MMM', { locale: sv });
+  let displayText = `MATSEDEL - Från ${startDateFormatted}\n\n`;
 
   for (const day of formattedDays) {
     displayText += `${day.dayName} ${day.formattedDate}:\n`;
@@ -145,7 +160,7 @@ async function formatMealPlanForTRMNL() {
     merge_variables: {
       startDate: mealPlan.startDate,
       lastUpdated: new Date().toISOString(),
-      totalDays: mealPlan.days.length,
+      totalDays: upcomingDays.length,
       totalMeals,
       days: formattedDays,
       displayText: displayText.trim(),
