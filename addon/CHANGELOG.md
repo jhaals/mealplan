@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.87] - 2026-07-22
+
+## What's Changed
+* Bump typescript-eslint from 8.64.0 to 8.65.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/222
+* Bump react-dom from 19.2.7 to 19.2.8 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/223
+* Bump @vitejs/plugin-react from 6.0.3 to 6.0.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/225
+* Bump react from 19.2.7 to 19.2.8 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/224
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.86...v1.0.87
+
 ## [1.0.86] - 2026-07-19
 
 ## What's Changed
