@@ -12,15 +12,36 @@ The chip needs an explicit min-width too — Swedish weekday abbreviations
 aren't all the same length ("Fre" vs "Tors"), so without one each row's chip
 renders at its own natural width and the meal text after it starts at a
 different x per row. Fixing the width keeps every row's text flush.
+
+Three levels need the framework's .stretch utility (flex: 1 1 0%; align-self:
+stretch; min-width: 0), not just two:
+  .item > .content        — .item only has this one flex child now that
+                             .meta is gone, and .content has no flex-grow by
+                             default, so without .stretch it's sized to its
+                             own content instead of filling the row.
+  .content > .flex (row)  — .item .content sets align-items:flex-start,
+                             which shrink-wraps ITS children instead of
+                             stretching them, so the label+title row also
+                             needs .stretch to actually fill .content's now-
+                             correct width.
+  .flex > .title           — only once the row above has a real width does
+                             flex-grow on the title mean anything; it's what
+                             claims the space left over after the fixed-width
+                             chip.
+Skip any one of the three and the chain breaks the same way: TRMNL's own
+data-clamp script measures whatever width the title ends up with, and on an
+under-constrained chain that width is arbitrary — which is why a plain
+"Lasagne" clamped down to "L…" while a much longer meal list on another row
+rendered nearly in full.
 {% endcomment %}
 <div class="layout">
   <div class="grid grid--cols-1 gap--xsmall">
     {% for day in days limit:4 %}
       <div class="item">
-        <div class="content">
-          <div class="flex flex--center-y gap--small">
+        <div class="content stretch">
+          <div class="flex flex--center-y gap--small stretch">
             <span class="label label--large label--outline" style="display: inline-block; min-width: 3.2em; text-align: center;">{{ day.dayName }}</span>
-            <span class="title title--large" data-clamp="1">
+            <span class="title title--large stretch" data-clamp="1">
               {% if day.meals.size > 0 %}{{ day.meals | join: ", " }}{% else %}Inga måltider planerade{% endif %}
             </span>
           </div>
