@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.89] - 2026-08-07
+
+## What's Changed
+* Bump globals from 17.7.0 to 17.8.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/226
+* Bump @playwright/test from 1.61.1 to 1.62.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/227
+* Bump eslint from 10.7.0 to 10.8.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/230
+* Bump react-router-dom from 7.18.1 to 7.18.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/228
+* Bump concurrently from 10.0.3 to 10.0.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/229
+* Bump react-i18next from 17.0.10 to 17.0.11 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/231
+* Bump @playwright/test from 1.62.0 to 1.62.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/232
+* Bump vite from 8.1.5 to 8.2.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/234
+* Bump @types/react-dom from 19.2.3 to 19.2.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/236
+* Bump @types/react from 19.2.17 to 19.2.18 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/233
+* Bump @vitejs/plugin-react from 6.0.4 to 6.0.5 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/235
+* Add optional descriptions to todo list tasks by @jhaals in https://github.com/jhaals/mealplan/pull/237
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.88...v1.0.89
+
 ## [1.0.88] - 2026-07-22
 
 **Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.87...v1.0.88
