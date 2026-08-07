@@ -30,6 +30,7 @@ export function TodoList() {
     error,
     addItem,
     toggleItem,
+    updateItem,
     deleteItem,
     reorderItems,
     clearCompleted,
@@ -39,6 +40,8 @@ export function TodoList() {
   } = useTodoList();
 
   const [newItemName, setNewItemName] = useState('');
+  const [newItemDescription, setNewItemDescription] = useState('');
+  const [showDescription, setShowDescription] = useState(false);
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurrenceInterval, setRecurrenceInterval] = useState<string>('weekly');
   const [activeTab, setActiveTab] = useState<'list' | 'recurring'>('list');
@@ -74,9 +77,12 @@ export function TodoList() {
         trimmed,
         isRecurring,
         isRecurring ? recurrenceInterval : null,
-        isRecurring && recurrenceInterval === 'custom' ? 7 : null
+        isRecurring && recurrenceInterval === 'custom' ? 7 : null,
+        newItemDescription.trim() || null
       );
       setNewItemName('');
+      setNewItemDescription('');
+      setShowDescription(false);
       setIsRecurring(false);
     } catch {
       // Error handled by hook
@@ -99,6 +105,14 @@ export function TodoList() {
       setLastUnchecked(null);
     }
     await toggleItem(itemId);
+  };
+
+  const handleUpdateDescription = async (itemId: string, description: string | null) => {
+    try {
+      await updateItem(itemId, { description });
+    } catch {
+      // Error handled by hook
+    }
   };
 
   const handleUndo = async () => {
@@ -273,6 +287,29 @@ export function TodoList() {
                 {t('todo.recurring')}
               </button>
 
+              {/* Optional from the start — quick-add stays name + Enter. */}
+              <button
+                type="button"
+                aria-pressed={showDescription}
+                onClick={() => setShowDescription(!showDescription)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color]"
+                style={{
+                  minHeight: 'auto',
+                  minWidth: 'auto',
+                  border: `1.5px solid ${showDescription ? 'var(--color-mint)' : 'var(--color-rule)'}`,
+                  background: showDescription
+                    ? 'color-mix(in oklab, var(--color-mint) 22%, var(--color-paper))'
+                    : 'transparent',
+                  color: showDescription ? 'var(--color-ink)' : 'var(--color-ink-2)',
+                  transitionDuration: 'var(--dur-hover)',
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" aria-hidden="true">
+                  <path d="M4 7h16M4 12h16M4 17h10" />
+                </svg>
+                {t('todo.description')}
+              </button>
+
               {isRecurring && (
                 <select
                   value={recurrenceInterval}
@@ -287,6 +324,22 @@ export function TodoList() {
                 </select>
               )}
             </div>
+
+            {showDescription && (
+              <textarea
+                value={newItemDescription}
+                onChange={(e) => setNewItemDescription(e.target.value)}
+                rows={3}
+                autoFocus
+                placeholder={t('todo.descriptionPlaceholder')}
+                aria-label={t('todo.aria.newDescription')}
+                className="field text-sm mt-2"
+                style={{
+                  resize: 'vertical',
+                  background: 'color-mix(in oklab, var(--color-mint) 5%, var(--color-paper))',
+                }}
+              />
+            )}
           </form>
 
           {uncheckedItems.length > 0 && (
@@ -308,6 +361,7 @@ export function TodoList() {
                       item={item}
                       onToggle={handleToggle}
                       onDelete={deleteItem}
+                      onUpdateDescription={handleUpdateDescription}
                     />
                   ))}
                 </ul>
@@ -328,6 +382,7 @@ export function TodoList() {
                     item={item}
                     onToggle={handleToggle}
                     onDelete={deleteItem}
+                    onUpdateDescription={handleUpdateDescription}
                   />
                 ))}
               </ul>

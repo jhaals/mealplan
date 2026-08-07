@@ -9,6 +9,7 @@ export interface TodoListState {
 export interface TodoItemResponse {
   id: string;
   name: string;
+  description: string | null;
   checked: boolean;
   sortOrder: number;
   isRecurring: boolean;
@@ -39,6 +40,7 @@ async function ensureTodoList() {
 function mapItem(item: {
   id: string;
   name: string;
+  description: string | null;
   checked: boolean;
   sortOrder: number;
   isRecurring: boolean;
@@ -51,6 +53,7 @@ function mapItem(item: {
   return {
     id: item.id,
     name: item.name,
+    description: item.description,
     checked: item.checked,
     sortOrder: item.sortOrder,
     isRecurring: item.isRecurring,
@@ -150,7 +153,8 @@ export async function addItem(
   name: string,
   isRecurring: boolean = false,
   recurrenceInterval: string | null = null,
-  recurrenceDays: number | null = null
+  recurrenceDays: number | null = null,
+  description: string | null = null
 ): Promise<TodoItemResponse> {
   await ensureTodoList();
 
@@ -171,6 +175,8 @@ export async function addItem(
     data: {
       todoListId: 'singleton',
       name,
+      // Same normalization as updateItem: whitespace-only means no description
+      description: description?.trim() ? description.trim() : null,
       sortOrder: nextOrder,
       isRecurring,
       recurrenceInterval,
@@ -262,12 +268,13 @@ export async function reorderItems(itemIds: string[]): Promise<void> {
 }
 
 /**
- * Update a todo item (name, recurrence settings)
+ * Update a todo item (name, description, recurrence settings)
  */
 export async function updateItem(
   itemId: string,
   data: {
     name?: string;
+    description?: string | null;
     isRecurring?: boolean;
     recurrenceInterval?: string | null;
     recurrenceDays?: number | null;
@@ -285,6 +292,12 @@ export async function updateItem(
 
   if (data.name !== undefined) {
     updateData.name = data.name;
+  }
+
+  // An emptied-out description clears the field rather than storing ''
+  if (data.description !== undefined) {
+    const trimmed = data.description?.trim();
+    updateData.description = trimmed ? trimmed : null;
   }
 
   if (data.isRecurring !== undefined) {

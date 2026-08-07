@@ -103,6 +103,7 @@ model TodoItem {
   todoListId         String
   todoList           TodoList  @relation(fields: [todoListId], references: [id], onDelete: Cascade)
   name               String
+  description        String?   // Optional longer note, shown when the item is expanded
   checked            Boolean   @default(false)
   sortOrder          Int       @default(0)
   isRecurring        Boolean   @default(false)

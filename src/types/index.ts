@@ -53,6 +53,7 @@ export interface ArchivedShoppingList {
 export interface TodoItem {
   id: string;
   name: string;
+  description: string | null;
   checked: boolean;
   sortOrder: number;
   isRecurring: boolean;

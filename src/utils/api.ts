@@ -270,11 +270,12 @@ export async function addTodoItem(
   name: string,
   isRecurring: boolean = false,
   recurrenceInterval: string | null = null,
-  recurrenceDays: number | null = null
+  recurrenceDays: number | null = null,
+  description: string | null = null
 ): Promise<TodoItem> {
   return fetchJSON<TodoItem>('/api/todo-list/items', {
     method: 'POST',
-    body: JSON.stringify({ name, isRecurring, recurrenceInterval, recurrenceDays }),
+    body: JSON.stringify({ name, description, isRecurring, recurrenceInterval, recurrenceDays }),
   });
 }
 
@@ -294,6 +295,7 @@ export async function updateTodoItem(
   itemId: string,
   data: {
     name?: string;
+    description?: string | null;
     isRecurring?: boolean;
     recurrenceInterval?: string | null;
     recurrenceDays?: number | null;
