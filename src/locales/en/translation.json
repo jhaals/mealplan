@@ -132,6 +132,8 @@
     "loading": "Loading todo list...",
     "emptyList": "Your todo list is empty",
     "addItemPlaceholder": "Add task...",
+    "descriptionPlaceholder": "Add a description...",
+    "description": "Description",
     "recurring": "Recurring",
     "recurringLabel": "Recurring task",
     "clearCompleted": "Clear Completed",
@@ -155,7 +157,11 @@
     "aria": {
       "checkItem": "Check item",
       "uncheckItem": "Uncheck item",
-      "deleteItem": "Delete task"
+      "deleteItem": "Delete task",
+      "description": "Task description",
+      "hasDescription": "Has a description",
+      "editDescription": "Edit description",
+      "newDescription": "New task description"
     }
   },
   "theme": {

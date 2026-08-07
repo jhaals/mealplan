@@ -51,7 +51,7 @@ todoList.get('/recurring', async (c) => {
  */
 todoList.post('/items', async (c) => {
   const body = await c.req.json();
-  const { name, isRecurring, recurrenceInterval, recurrenceDays } = body;
+  const { name, description, isRecurring, recurrenceInterval, recurrenceDays } = body;
 
   if (!name || typeof name !== 'string') {
     throw new AppError(400, 'Item name is required');
@@ -61,7 +61,8 @@ todoList.post('/items', async (c) => {
     name.trim(),
     isRecurring ?? false,
     recurrenceInterval ?? null,
-    recurrenceDays ?? null
+    recurrenceDays ?? null,
+    typeof description === 'string' ? description : null
   );
   sseManager.broadcastTodoListChange();
   return c.json(item, 201);

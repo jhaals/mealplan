@@ -103,12 +103,13 @@ export function useTodoList() {
     name: string,
     isRecurring: boolean = false,
     recurrenceInterval: string | null = null,
-    recurrenceDays: number | null = null
+    recurrenceDays: number | null = null,
+    description: string | null = null
   ) => {
     try {
       setIsSaving(true);
       setError(null);
-      await api.addTodoItem(name, isRecurring, recurrenceInterval, recurrenceDays);
+      await api.addTodoItem(name, isRecurring, recurrenceInterval, recurrenceDays, description);
       await refreshState();
     } catch (err) {
       console.error('Failed to add item:', err);
@@ -128,6 +129,30 @@ export function useTodoList() {
     } catch (err) {
       console.error('Failed to toggle item:', err);
       setError(err instanceof Error ? err.message : 'Failed to toggle item');
+      throw err;
+    } finally {
+      setIsSaving(false);
+    }
+  }, [refreshState]);
+
+  const updateItem = useCallback(async (
+    itemId: string,
+    data: {
+      name?: string;
+      description?: string | null;
+      isRecurring?: boolean;
+      recurrenceInterval?: string | null;
+      recurrenceDays?: number | null;
+    }
+  ) => {
+    try {
+      setIsSaving(true);
+      setError(null);
+      await api.updateTodoItem(itemId, data);
+      await refreshState();
+    } catch (err) {
+      console.error('Failed to update item:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update item');
       throw err;
     } finally {
       setIsSaving(false);
@@ -199,6 +224,7 @@ export function useTodoList() {
     error,
     addItem,
     toggleItem,
+    updateItem,
     deleteItem,
     reorderItems,
     clearCompleted,

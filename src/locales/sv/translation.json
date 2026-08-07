@@ -132,6 +132,8 @@
     "loading": "Laddar att göra-lista...",
     "emptyList": "Din att göra-lista är tom",
     "addItemPlaceholder": "Lägg till uppgift...",
+    "descriptionPlaceholder": "Lägg till en beskrivning...",
+    "description": "Beskrivning",
     "recurring": "Återkommande",
     "recurringLabel": "Återkommande uppgift",
     "clearCompleted": "Rensa klara",
@@ -155,7 +157,11 @@
     "aria": {
       "checkItem": "Bocka av uppgift",
       "uncheckItem": "Avbocka uppgift",
-      "deleteItem": "Ta bort uppgift"
+      "deleteItem": "Ta bort uppgift",
+      "description": "Uppgiftsbeskrivning",
+      "hasDescription": "Har en beskrivning",
+      "editDescription": "Redigera beskrivning",
+      "newDescription": "Beskrivning för ny uppgift"
     }
   },
   "theme": {
