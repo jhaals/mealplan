@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.90] - 2026-08-13
+
+## What's Changed
+* Bump typescript-eslint from 8.65.0 to 8.66.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/238
+* Bump globals from 17.8.0 to 17.9.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/240
+* Bump eslint from 10.8.0 to 10.8.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/241
+* Bump vite from 8.2.0 to 8.2.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/239
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.89...v1.0.90
+
 ## [1.0.89] - 2026-08-07
 
 ## What's Changed
