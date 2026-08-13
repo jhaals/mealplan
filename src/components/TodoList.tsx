@@ -320,7 +320,10 @@ export function TodoList() {
                 >
                   <option value="daily">{t('todo.intervals.daily')}</option>
                   <option value="weekly">{t('todo.intervals.weekly')}</option>
+                  <option value="biweekly">{t('todo.intervals.biweekly')}</option>
                   <option value="monthly">{t('todo.intervals.monthly')}</option>
+                  <option value="bimonthly">{t('todo.intervals.bimonthly')}</option>
+                  <option value="quarterly">{t('todo.intervals.quarterly')}</option>
                 </select>
               )}
             </div>

@@ -151,7 +151,10 @@
     "intervals": {
       "daily": "Daily",
       "weekly": "Weekly",
+      "biweekly": "Every 2 weeks",
       "monthly": "Monthly",
+      "bimonthly": "Every 2 months",
+      "quarterly": "Quarterly",
       "custom": "Every {{days}} days"
     },
     "aria": {

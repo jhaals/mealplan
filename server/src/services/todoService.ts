@@ -133,8 +133,17 @@ function calculateNextDueDate(
     case 'weekly':
       nextDate = addDays(base, 7);
       break;
+    case 'biweekly':
+      nextDate = addDays(base, 14);
+      break;
     case 'monthly':
       nextDate = addDays(base, 30);
+      break;
+    case 'bimonthly':
+      nextDate = addDays(base, 60);
+      break;
+    case 'quarterly':
+      nextDate = addDays(base, 90);
       break;
     case 'custom':
       nextDate = addDays(base, recurrenceDays ?? 7);

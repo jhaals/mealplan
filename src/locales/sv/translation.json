@@ -151,7 +151,10 @@
     "intervals": {
       "daily": "Dagligen",
       "weekly": "Veckovis",
+      "biweekly": "Varannan vecka",
       "monthly": "Månadsvis",
+      "bimonthly": "Varannan månad",
+      "quarterly": "Kvartalsvis",
       "custom": "Var {{days}}:e dag"
     },
     "aria": {

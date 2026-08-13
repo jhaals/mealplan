@@ -51,8 +51,14 @@ export function RecurringTodoItems() {
         return t('todo.intervals.daily');
       case 'weekly':
         return t('todo.intervals.weekly');
+      case 'biweekly':
+        return t('todo.intervals.biweekly');
       case 'monthly':
         return t('todo.intervals.monthly');
+      case 'bimonthly':
+        return t('todo.intervals.bimonthly');
+      case 'quarterly':
+        return t('todo.intervals.quarterly');
       case 'custom':
         return t('todo.intervals.custom', { days: item.recurrenceDays ?? 0 });
       default:
