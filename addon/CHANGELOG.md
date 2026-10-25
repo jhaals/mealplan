@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.91] - 2026-10-25
+
+## What's Changed
+* Bump typescript-eslint from 8.66.0 to 8.67.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/242
+* Bump eslint-plugin-react-refresh from 0.5.3 to 0.5.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/245
+* Bump globals from 17.9.0 to 17.11.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/244
+* Bump concurrently from 10.0.4 to 10.0.5 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/243
+* Bump eslint from 10.8.1 to 10.9.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/246
+* Bump react-i18next from 17.0.11 to 17.0.12 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/248
+* Bump vite from 8.2.1 to 8.2.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/249
+* Bump i18next from 26.3.6 to 26.4.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/247
+* Bump eslint from 10.9.0 to 10.9.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/251
+* Bump typescript-eslint from 8.67.0 to 8.68.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/252
+* Bump @vitejs/plugin-react from 6.0.5 to 6.1.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/254
+* Bump react-router-dom from 7.18.2 to 7.18.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/256
+* Bump @types/react-dom from 19.2.4 to 19.2.5 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/253
+* Bump typescript-eslint from 8.68.0 to 8.69.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/257
+* Bump i18next from 26.4.0 to 26.4.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/258
+* Bump @playwright/test from 1.62.1 to 1.63.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/259
+* Bump eslint from 10.9.1 to 10.10.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/261
+* Bump globals from 17.11.0 to 17.12.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/264
+* Bump eslint-plugin-react-refresh from 0.5.4 to 0.5.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/262
+* Bump react-dom and @types/react-dom by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/265
+* Bump typescript-eslint from 8.69.0 to 8.70.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/267
+* Bump react and @types/react by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/266
+* Bump react-i18next from 17.0.12 to 17.0.13 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/260
+* Bump vite from 8.2.2 to 8.3.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/268
+* Bump eslint from 10.10.0 to 10.11.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/269
+* Bump react-router-dom from 7.18.3 to 7.18.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/271
+* Bump react-i18next from 17.0.13 to 17.0.14 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/270
+* Bump typescript-eslint from 8.70.0 to 8.70.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/273
+* Bump react-i18next from 17.0.14 to 17.0.15 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/275
+* Bump vite from 8.3.0 to 8.3.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/274
+* Bump vite from 8.3.1 to 8.3.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/276
+* Bump globals from 17.12.0 to 17.13.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/277
+* Bump eslint from 10.11.0 to 10.12.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/278
+* Bump eslint-plugin-react-refresh from 0.5.6 to 0.5.7 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/272
+* Bump vite from 8.3.2 to 8.3.4 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/280
+* Bump @vitejs/plugin-react from 6.1.1 to 6.1.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/281
+* Bump react-i18next from 17.0.15 to 17.0.16 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/282
+* Bump concurrently from 10.0.5 to 10.0.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/283
+* Bump typescript-eslint from 8.70.1 to 8.71.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/284
+* Bump @playwright/test from 1.63.0 to 1.64.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/285
+* Bump i18next from 26.4.2 to 26.4.3 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/286
+* Bump react-dom from 19.3.0 to 19.3.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/287
+* Bump @playwright/test from 1.64.0 to 1.64.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/288
+* Bump typescript-eslint from 8.71.1 to 8.71.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/290
+* Bump i18next from 26.4.3 to 26.5.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/293
+* Bump eslint from 10.12.0 to 10.13.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/289
+* Bump react from 19.3.0 to 19.3.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/292
+* Bump react-i18next from 17.0.16 to 17.1.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/291
+* Upgrade Node and dependencies and compact the shopping list header by @jhaals in https://github.com/jhaals/mealplan/pull/294
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.90...v1.0.91
+
 ## [1.0.90] - 2026-08-13
 
 ## What's Changed
