@@ -16,12 +16,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version-file: '.node-version'
 
       - name: Install dependencies
         run: |
-          npm install
-          cd server && npm install
+          npm ci
+          cd server && npm ci
 
       - name: Setup database
         run: |

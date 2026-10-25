@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Routes, Route, Navigate, NavLink } from 'react-router-dom';
+import { Routes, Route, Navigate, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import {
   DndContext,
   DragOverlay,
@@ -303,6 +303,14 @@ function Wordmark() {
 }
 
 function TopBar() {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const settingsRef = useRef<HTMLDivElement>(null);
+  const isShopping = pathname === '/shopping';
+  const requestedView = searchParams.get('view');
+  const view = requestedView === 'history' || requestedView === 'prompt' ? requestedView : 'list';
+
   return (
     <header
       className="sticky top-0 z-40"
@@ -312,9 +320,55 @@ function TopBar() {
         borderBottom: 'var(--rule-hair)',
       }}
     >
-      <div className="shell flex items-center justify-between" style={{ height: '3.25rem' }}>
-        <Wordmark />
-        <ThemeToggle />
+      <div className="shell flex items-center justify-between gap-x-1 sm:gap-x-3 min-h-13 py-1">
+        {isShopping ? (
+          <h1 className="min-w-0 truncate" style={{ fontSize: 'var(--text-md)' }}>{t('headings.shoppingList')}</h1>
+        ) : <Wordmark />}
+        {isShopping && <div id="shopping-actions" className="flex items-center shrink-0 ml-auto empty:hidden" />}
+        <button
+          type="button"
+          popoverTarget="header-settings"
+          className="grid place-items-center rounded-full text-muted hover:text-ink shrink-0 h-11 w-11"
+          aria-label={t('navigation.settings')}
+          title={t('navigation.settings')}
+        >
+          <svg {...glyphProps}>
+            <path d="m9 3-.5 2-2 1-2-.5-2 3L4 10v3l-1.5 1.5 2 3 2-.5 2 1 .5 3h4l.5-3 2-1 2 .5 2-3L20 13v-3l1.5-1.5-2-3-2 .5-2-1-.5-2Z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </button>
+        <div id="header-settings" popover="auto" ref={settingsRef} className="header-settings text-ink" aria-label={t('navigation.settings')}>
+          {isShopping && (
+            <div className="grid gap-1 pb-3 mb-2" style={{ borderBottom: 'var(--rule-hair)' }}>
+              {([
+                ['list', 'tabs.currentList'],
+                ['history', 'tabs.history'],
+                ['prompt', 'tabs.sortPrompt'],
+              ] as const).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={view === value}
+                  className="header-settings__view text-sm font-semibold text-left rounded-lg px-3 py-2"
+                  onClick={() => {
+                    setSearchParams((params) => {
+                      if (value === 'list') params.delete('view');
+                      else params.set('view', value);
+                      return params;
+                    });
+                    settingsRef.current?.hidePopover();
+                  }}
+                >
+                  {t(label)}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="flex items-center justify-between gap-3 pl-3">
+            <span className="text-sm font-semibold">{t('theme.label')}</span>
+            <ThemeToggle />
+          </div>
+        </div>
       </div>
     </header>
   );

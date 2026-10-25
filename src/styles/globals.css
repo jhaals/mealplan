@@ -109,6 +109,29 @@
  * ====================================================================== */
 @layer components {
 
+  .header-settings {
+    position: fixed;
+    inset: 3.5rem auto auto;
+    right: max(var(--page-gutter), calc((100vw - var(--shell)) / 2 + var(--page-gutter)));
+    margin: 0;
+    padding: var(--space-sm);
+    width: 17rem;
+    max-width: calc(100vw - 2 * var(--page-gutter));
+    border: 0;
+    border-radius: var(--radius-card);
+    background: var(--color-paper);
+    box-shadow: var(--shadow-card);
+  }
+
+  .header-settings__view {
+    min-height: 44px;
+  }
+
+  .header-settings__view:hover,
+  .header-settings__view[aria-pressed="true"] {
+    background: var(--color-paper-2);
+  }
+
   /* ---- Shell · one width model, identical edges everywhere -------------
    * The band provides only background + block padding; the inner content
    * carries the gutter. Plain and banded sections align to the pixel. */

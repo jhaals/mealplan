@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import {
   DndContext,
   closestCenter,
@@ -18,7 +20,6 @@ import { useShoppingList } from '../hooks/useShoppingList';
 import { ShoppingListItem } from './ShoppingListItem';
 import { ShoppingListHistory } from './ShoppingListHistory';
 import { SortPromptEditor } from './SortPromptEditor';
-import { Segmented } from './ui/Segmented';
 import { Button } from './ui/Button';
 import { UndoToast } from './ui/UndoToast';
 import * as api from '../utils/api';
@@ -39,11 +40,12 @@ export function ShoppingList() {
     updateConfig,
     retry,
     setIsDragging,
-    isConnected,
   } = useShoppingList();
 
   const [newItemName, setNewItemName] = useState('');
-  const [activeTab, setActiveTab] = useState<'list' | 'history' | 'prompt'>('list');
+  const [searchParams] = useSearchParams();
+  const view = searchParams.get('view');
+  const activeTab = view === 'history' || view === 'prompt' ? view : 'list';
   const [lastUnchecked, setLastUnchecked] = useState<{ id: string; name: string } | null>(null);
   const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [sortingPrompt, setSortingPrompt] = useState<string>('');
@@ -183,21 +185,8 @@ export function ShoppingList() {
 
   return (
     <div className="shell">
-      <div className="pt-4">
-        <Segmented
-          aria-label={t('headings.shoppingList')}
-          value={activeTab}
-          onChange={setActiveTab}
-          options={[
-            { value: 'list', label: t('tabs.currentList') },
-            { value: 'history', label: t('tabs.history') },
-            { value: 'prompt', label: t('tabs.sortPrompt') },
-          ]}
-        />
-      </div>
-
       {activeTab === 'list' ? (
-        <div className="py-5">
+        <div className="py-3">
           {error && (
             <div
               className="card card--tint tint-coral p-3 mb-4 flex items-start justify-between gap-3"
@@ -211,29 +200,8 @@ export function ShoppingList() {
             </div>
           )}
 
-          {/* Header — the list's identity, its live status, and its actions.
-            * Density lever: this screen is deliberately denser than /meals. */}
-          <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <h2 style={{ fontSize: 'var(--text-xl)' }}>{t('headings.shoppingList')}</h2>
-              <span
-                className="chip tint-cyan"
-                title={isConnected ? t('status.live') : t('status.offline')}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: 999,
-                    background: isConnected ? 'var(--color-mint)' : 'var(--color-accent-3)',
-                  }}
-                />
-                {isConnected ? t('status.live') : t('status.offline')}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
+          {createPortal(<>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               {isSaving && (
                 <span
                   className="inline-block h-4 w-4 rounded-full border-2 border-t-transparent"
@@ -241,18 +209,14 @@ export function ShoppingList() {
                   aria-label={t('buttons.saving')}
                 />
               )}
-              {uncheckedItems.length > 1 && (
-                <Button variant="secondary" size="sm" onClick={sortItems} disabled={isSaving}>
-                  {t('buttons.sort')}
-                </Button>
-              )}
-              {state.items.length > 0 && (
-                <Button variant="outline" size="sm" onClick={archiveAndCreateNew} disabled={isSaving}>
-                  {t('buttons.newList')}
-                </Button>
-              )}
+              <Button variant="secondary" size="sm" className="max-sm:px-2 max-sm:text-xs" onClick={sortItems} disabled={isSaving || uncheckedItems.length < 2}>
+                {t('buttons.sort')}
+              </Button>
+              <Button variant="outline" size="sm" className="max-sm:px-2 max-sm:text-xs" onClick={archiveAndCreateNew} disabled={isSaving || state.items.length === 0}>
+                {t('buttons.newList')}
+              </Button>
             </div>
-          </div>
+          </>, document.getElementById('shopping-actions')!)}
 
           {/* Add item — sits on a cyan band, the route's accent. */}
           <form onSubmit={handleAddItem} className="flex items-center gap-2">

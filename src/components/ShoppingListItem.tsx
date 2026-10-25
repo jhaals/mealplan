@@ -30,7 +30,7 @@ export function ShoppingListItem({ item, onToggle, onDelete }: ShoppingListItemP
     <li
       ref={setNodeRef}
       style={style}
-      className="group flex items-center gap-1 px-2 py-1 rounded-xl transition-colors"
+      className="group flex items-center gap-1 px-2 py-0.5 rounded-xl transition-colors"
     >
       <span
         className="shrink-0 grid place-items-center cursor-grab active:cursor-grabbing touch-none text-muted transition-colors group-hover:text-ink"
