@@ -2,6 +2,10 @@
 
 Home Assistant add-on for meal planning with a drag-and-drop interface.
 
+For local development, use Node.js 26.12.1 (see `.node-version`). TypeScript 7
+builds the app; the TypeScript 6 API compatibility package supports ESLint
+until typescript-eslint supports the new compiler API.
+
 ## Installation
 
 1. Go to **Settings** → **Add-ons** → **Add-on Store**
