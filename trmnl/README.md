@@ -8,7 +8,7 @@ alongside official plugins.
 
 This folder is a standard [`trmnlp`](https://github.com/usetrmnl/trmnlp)
 project — it doesn't run as part of the app's build. The app's existing
-webhook integration (`server/src/services/trmnlService.ts`) pushes the data
+webhook integration (`server/src/integrations.rs`) pushes the data
 this markup renders.
 
 ```
@@ -28,7 +28,7 @@ trmnl/
 ## Data shape
 
 The templates consume the `merge_variables` this app already sends to its
-TRMNL webhook (see `formatMealPlanForTRMNL` in `trmnlService.ts`):
+TRMNL webhook (see `trmnl_data` in `server/src/integrations.rs`):
 
 ```
 days: [{ date, dayName, formattedDate, meals: string[], mealCount, isToday }]
@@ -77,7 +77,7 @@ Then open http://localhost:4567/full (or `/half_horizontal`, `/half_vertical`,
 `mock-data/webhook-payload-empty.json` to check the "no meals planned" state.
 
 `mock-data/webhook-payload.json` is hand-written to match the exact shape
-`formatMealPlanForTRMNL()` in `server/src/services/trmnlService.ts` sends as
+`trmnl_data()` in `server/src/integrations.rs` sends as
 `merge_variables` — `days[]` with `date`/`dayName`/`formattedDate`/`meals`/
 `mealCount`/`isToday`, plus `totalDays`/`totalMeals`/`startDate`/`lastUpdated`/
 `displayText`. If you change the payload shape in `trmnlService.ts`, update

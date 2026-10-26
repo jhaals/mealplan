@@ -7,15 +7,16 @@
     "dev": "npm run build && npm run dev:backend",
     "dev:watch": "concurrently -k \"npm run build -- --watch\" \"npm run dev:backend\"",
     "dev:frontend": "vite",
-    "dev:backend": "cd server && npx tsx watch src/index.ts",
+    "dev:backend": "cd server && cargo run --locked",
     "build": "tsc -b && vite build",
-    "start": "cd server && npm run start",
+    "start": "cd server && cargo run --locked --release",
     "lint": "eslint .",
     "test:e2e": "npx playwright test",
     "preview": "vite preview",
-    "db:migrate": "cd server && npx prisma migrate dev",
-    "db:studio": "cd server && npx prisma studio",
-    "db:seed": "cd server && npm run db:seed"
+    "db:migrate": "cd server && cargo run --locked -- --migrate",
+    "db:seed": "cd server && cargo run --locked -- --migrate",
+    "build:backend": "cd server && cargo build --locked --release",
+    "test:backend": "cd server && cargo test --locked"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

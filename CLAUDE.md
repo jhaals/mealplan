@@ -1,185 +1,67 @@
-# CLAUDE.md
+# Project guidance
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+MealPlan is a single-user meal planner with a React frontend and Rust/Axum backend.
+The server serves the frontend from `dist/` and the API from `/api/*` on port 3001.
+Vite's development server proxies API requests to that port.
 
-## Project Overview
+## Backend
 
-MealPlan is a mobile-first meal planning application with a React frontend and Hono backend. It uses a **singleton architecture** - there's only one MealPlan record in the database (id: "singleton"), making this a single-user application.
+- `server/src/main.rs`: environment loading, startup, HTTP, shutdown.
+- `server/src/lib.rs`: shared application state, typed JSON extraction, route composition, errors, SSE.
+- `server/src/models.rs`: typed API responses and archived snapshot records.
+- `server/src/db.rs`: SQLite access, timestamp compatibility, original Prisma migrations.
+- `server/src/meals.rs`: meals, day shifting, moves, swaps, plan archives.
+- `server/src/lists.rs`: shopping lists, todos, recurrence, descriptions, history.
+- `server/src/integrations.rs`: OpenRouter sorting and TRMNL pushes.
+- `server/tests/compatibility.rs`: legacy database and API regression tests.
 
-## Key Architecture Concepts
+`MealPlan`, `ShoppingList`, and `TodoList` use ID `singleton`. Startup creates
+missing singletons and applies pending migrations. Global settings live on MealPlan
+and persist through list archives and plan resets. Multi-step API mutations use
+transactions; database work runs on blocking threads. SSE broadcasts list changes.
 
-### Singleton Pattern
-The database has exactly ONE MealPlan record with id "singleton". All operations assume this singleton exists:
-- **On fresh setup**: Run `npm run db:seed` to create the singleton record
-- **All queries**: Use `{ id: 'singleton' }` when querying MealPlan
-- **Service layer**: All functions in `server/src/services/mealPlanService.ts` operate on the singleton
-- **Global settings**: The MealPlan singleton also stores app-wide settings (TRMNL config, shopping list sorting prompt) that persist across shopping list archives and meal plan resets
+## Database compatibility
 
-### State Management Pattern
-The frontend uses a **server-as-source-of-truth** pattern:
-- `useMealPlanner.ts` hook manages all state via `useReducer`
-- Every mutation (add, delete, move, swap) calls the API then refreshes the entire state with `refreshState()`
-- No optimistic updates - always fetch fresh data after mutations
-- The reducer only handles `LOAD_STATE` action - all logic is server-side
+Keep the original SQLite table/column names, foreign keys, and archived JSON formats.
+Preserve `server/prisma/migrations` and the `_prisma_migrations` ledger. Never edit
+historical SQL: startup verifies its SHA-256 checksum against Prisma's ledger.
+New migrations must be added to the ordered `MIGRATIONS` list in `db.rs`.
+`server/prisma/schema.prisma` documents the legacy schema.
+Old databases can contain integer milliseconds, ISO timestamps, or SQLite datetime
+strings. Normalize them for API responses without rewriting existing rows.
+The runtime does not need Node, Prisma, or generated TypeScript.
 
-### Day Auto-Increment Behavior
-When adding a meal WITHOUT specifying a day:
-1. Meal is added to `currentDay`
-2. `currentDay` automatically increments to next day (see `mealPlanService.ts:118-124`)
-3. This enables the "quick add" workflow: user keeps typing meal names, app auto-advances days
+## Frontend behavior
 
-### Day Shifting on Deletion
-When a day becomes empty after deleting its last meal:
-1. The empty day is deleted from database
-2. All subsequent days shift back by one day (see `shiftDaysAfterDeletion()`)
-3. This keeps days contiguous without gaps
+`src/hooks/useMealPlanner.ts` and `src/utils/api.ts` treat the server as the source
+of truth: mutations call the API and refresh state. Preserve the API contract, camelCase JSON fields, validation, and null-versus-omitted update semantics.
+Adding a meal without an explicit day advances `currentDay` by one day. Deleting
+or moving the last meal off a day removes that day and shifts subsequent dates
+back one day. Dragging onto another meal swaps their days.
+Use ISO calendar dates (`YYYY-MM-DD`), and preserve touch-friendly controls.
 
-### Single-Server Architecture
-The app runs on ONE server (port 3001) that serves both static files and API:
-- `server/src/index.ts` uses Hono's `serveStatic` to serve built frontend from `dist/`
-- API routes are at `/api/*`
-- No CORS needed since frontend and backend share same origin
-- Frontend MUST be built before running server in production mode
+## Commands
 
-## Essential Commands
-
-### Development Workflow
-```bash
-# Standard development (manual rebuild on frontend changes)
-npm run dev              # Builds frontend once, then runs server on :3001
-
-# Auto-rebuild development (recommended for active development)
-npm run dev:watch        # Watches frontend, auto-rebuilds + runs server
-
-# Run frontend and backend separately (advanced)
-npm run dev:frontend     # Vite dev server on :5173 (proxies /api to :3001)
-npm run dev:backend      # Backend only on :3001
+```sh
+npm run dev             # Build frontend and run Rust backend
+npm run dev:watch       # Watch frontend and run Rust backend
+npm run dev:backend     # Cargo debug server; restart after Rust changes
+npm run build           # Frontend build
+npm run build:backend   # Cargo release build
+npm start               # Release server
+npm run db:migrate      # Apply migrations and seed singletons, then exit
+npm run db:seed          # Alias for migration/initialization
+npm run test:backend    # Rust tests
+npm run test:e2e        # Playwright on dedicated port 3002, isolated test database
+npm run lint
+cd server && cargo fmt --check
+cd server && cargo clippy --locked --all-targets -- -D warnings
 ```
 
-### Database Operations
-```bash
-npm run db:migrate       # Run migrations (creates/updates schema)
-npm run db:seed          # Create singleton MealPlan record (REQUIRED on fresh setup)
-npm run db:studio        # Open Prisma Studio to view/edit database
-cd server && npx prisma generate  # Regenerate Prisma Client after schema changes
-```
-
-### Build and Deploy
-```bash
-npm run build            # Build frontend for production (output: dist/)
-npm run start            # Production mode - serves built files from dist/
-npm run lint             # Run ESLint
-```
-
-## Critical Files
-
-### Frontend State Management
-- `src/hooks/useMealPlanner.ts` - Core hook with all state + API calls
-- `src/utils/api.ts` - API client functions
-- `src/types/index.ts` - Shared TypeScript interfaces
-
-### Backend Business Logic
-- `server/src/services/mealPlanService.ts` - All business logic (add, delete, move, swap, shift days)
-- `server/src/routes/mealPlan.ts` - API route handlers
-- `server/src/index.ts` - Hono app entry + static file serving
-
-### Database
-- `server/prisma/schema.prisma` - 3 models: MealPlan (singleton), DayPlan, Meal
-- `server/prisma.config.ts` - Prisma config with datasource URL (required for Prisma 7)
-- `server/src/db.ts` - Prisma Client singleton (uses @prisma/adapter-better-sqlite3)
-- `server/src/generated/prisma/` - Generated Prisma Client (run `npx prisma generate` to regenerate)
-- `server/src/utils/seed.ts` - Creates the singleton MealPlan record
-
-## Common Gotchas
-
-### "Meal plan not found" Error
-The singleton MealPlan record doesn't exist. Run: `npm run db:seed`
-
-### Frontend Changes Not Showing
-- If using `npm run dev`: Manually rebuild with `npm run build`
-- Switch to `npm run dev:watch` for auto-rebuild
-
-### Server Won't Start / 404 Errors
-Frontend not built. Run: `npm run build` before `npm run dev` or `npm run start`
-
-### Port 3001 Already in Use
-Check for running processes: `lsof -i :3001`
-
-### After Schema Changes
-1. Run `cd server && npx prisma generate` to update Prisma Client
-2. Run `npm run db:migrate` to create migration
-3. Restart the server
-
-## Date Handling
-
-All dates are stored as ISO strings (YYYY-MM-DD format):
-- Database stores dates as strings, not DateTime
-- Frontend uses `date-fns` for date manipulation (parseISO, format, addDays)
-- Backend uses `date-fns` for day shifting logic
-- API accepts/returns dates as ISO strings
-
-## Drag-and-Drop Implementation
-
-Uses `@dnd-kit` library with two operations:
-- **Move**: Drag meal onto empty day (changes day, may trigger day shift)
-- **Swap**: Drag meal onto another meal (swaps their days)
-
-Sensors configured for both mouse and touch:
-- Mouse: 10px drag distance to activate
-- Touch: 250ms hold + 5px tolerance (mobile-friendly)
-
-## Testing the App
-
-After starting the server (`npm run dev`), navigate to http://localhost:3001:
-1. Pick a start date
-2. Add meals (each meal auto-advances to next day)
-3. Drag meals between days to reorganize
-4. Delete meals (days auto-shift if empty)
-5. Click "Start New Week" to reset
-
-## Mobile-First Considerations
-
-- Minimum 44x44px tap targets for all interactive elements
-- Touch sensors with activation delay to prevent accidental drags
-- Viewport meta tag prevents zoom on input focus
-- Tailwind responsive utilities (mobile-first, then sm:/md:/lg:)
-
-## TRMNL Integration
-
-Push your weekly meal plan to a TRMNL e-ink display device for at-a-glance viewing in your kitchen or office.
-
-### Setup
-1. Create a custom TRMNL plugin at https://usetrmnl.com
-2. Copy your plugin's webhook URL from the TRMNL plugin settings
-3. Add to `server/.env`:
-   ```bash
-   TRMNL_WEBHOOK_URL=https://usetrmnl.com/api/custom_plugins/YOUR_PLUGIN_UUID
-   ```
-4. Restart server: `npm run dev`
-
-### Behavior
-- **Automatic Push**: Every hour (only if meal plan data has changed)
-- **Manual Push**: Click "Push to TRMNL" button in the app header
-- **Change Detection**: Uses SHA-256 hash to detect changes - only pushes when data is modified
-- **Rate Limits**: TRMNL allows 12 pushes/hour (30/hour for TRMNL+ subscribers)
-- **Initial Sync**: Server pushes current meal plan on startup if TRMNL is configured
-
-### Architecture
-- **Backend Service**: `server/src/services/trmnlService.ts` - Core push logic with change detection
-- **API Routes**: `server/src/routes/trmnl.ts` - Manual push, status, and config endpoints
-- **Database Fields**: `lastPushHash`, `lastPushAt`, `lastPushError` in MealPlan model
-- **Periodic Sync**: Implemented in `server/src/index.ts` using `setInterval` (1-hour interval)
-- **Frontend**: TRMNL button in `App.tsx` AppHeader component
-
-### Payload Format
-The webhook sends formatted meal plan data including:
-- Start date and last updated timestamp
-- Total days and meals count
-- Array of days with formatted dates and meals
-- Plain text display format for e-ink rendering
-
-### Troubleshooting
-- **Button not showing**: Check that `TRMNL_WEBHOOK_URL` is set in `server/.env`
-- **Push failures**: Check server logs for error messages (stored in database as `lastPushError`)
-- **No updates on device**: Verify webhook URL is correct and TRMNL plugin is active
-- **Too many requests**: TRMNL has rate limits - automatic sync respects change detection to minimize pushes
+Backend commands run from `server/`. Database defaults to `file:./dev.db` and
+can be overridden with `DATABASE_URL`. Local environment is loaded from
+`server/.env`. Browser tests disable external integrations and use English.
+The add-on stores data in `/data/mealplan.db`; `addon/run.sh` exports its settings
+and starts the binary. `addon/Dockerfile` builds the frontend and Rust separately.
+TRMNL pushes on startup and hourly when stable upcoming content changes; manual
+push bypasses hashing. Payload formatting uses Swedish weekday/month names.

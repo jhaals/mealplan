@@ -48,3 +48,6 @@ playwright-report/
 server/prisma/test.db
 server/prisma/test.db-journal
 server/prisma/test.db-wal
+
+# Rust build artifacts
+server/target/
