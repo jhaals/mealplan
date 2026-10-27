@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.97] - 2026-10-27
+
+## What's Changed
+* Remove the completed legacy database importer by @jhaals in https://github.com/jhaals/mealplan/pull/298
+* Keep TRMNL webhook failures concise in logs and status by @jhaals in https://github.com/jhaals/mealplan/pull/299
+* Build and publish only amd64 add-on images by @jhaals in https://github.com/jhaals/mealplan/pull/300
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.94...v1.0.97
+
 ## [1.0.94] - 2026-10-27
 
 ## What's Changed
