@@ -14,13 +14,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    strategy:
-      matrix:
-        include:
-          - arch: amd64
-            platform: linux/amd64
-          - arch: aarch64
-            platform: linux/arm64
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -33,9 +26,6 @@ jobs:
           VERSION="${MAJOR_MINOR}.${{ github.run_number }}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           sed -i "s/^version: .*/version: \"$VERSION\"/" addon/config.yaml
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -52,12 +42,12 @@ jobs:
         with:
           context: .
           file: addon/Dockerfile
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64
           push: true
           provenance: false
           tags: |
-            ghcr.io/${{ github.repository_owner }}/mealplan-${{ matrix.arch }}:${{ steps.version.outputs.version }}
-            ghcr.io/${{ github.repository_owner }}/mealplan-${{ matrix.arch }}:latest
+            ghcr.io/${{ github.repository_owner }}/mealplan-amd64:${{ steps.version.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/mealplan-amd64:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
