@@ -2,7 +2,6 @@
 name = "mealplan-server"
 version = "1.0.0"
 edition = "2021"
-default-run = "mealplan-server"
 rust-version = "1.89"
 
 [dependencies]

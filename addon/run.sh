@@ -33,7 +33,6 @@ else
   echo "Shopping list AI sorting: Disabled"
 fi
 
-# Import once before starting HTTP; keep the original database for rollback.
+# Start the server; SQLx applies pending schema migrations.
 cd /app/server
-./migrate-legacy /data/mealplan.db /data/mealplan-v2.db
 exec ./mealplan-server

@@ -37,7 +37,6 @@ RUN apk add --no-cache bash jq ca-certificates tzdata
 WORKDIR /app/server
 COPY --from=frontend-builder /build/dist/ /app/dist/
 COPY --from=backend-builder /build/server/target/release/mealplan-server /app/server/mealplan-server
-COPY --from=backend-builder /build/server/target/release/migrate-legacy /app/server/migrate-legacy
 COPY addon/run.sh /app/run.sh
 RUN chmod +x /app/run.sh
 EXPOSE 3001
