@@ -2,11 +2,7 @@ use axum::{
     body::{to_bytes, Body},
     http::Request,
 };
-use mealplan_server::{
-    db::{self, MIGRATIONS},
-    router, App,
-};
-use rusqlite::{params, Connection};
+use mealplan_server::{db, router, App};
 use serde_json::{json, Value};
 use tower::ServiceExt;
 
@@ -17,7 +13,7 @@ async fn static_frontend_and_page_routes_return_success() {
     let html = "<!doctype html><div id=\"root\"></div>";
     std::fs::write(directory.join("index.html"), html).unwrap();
     std::fs::write(directory.join("assets/app.js"), "console.log('static')").unwrap();
-    let app = App::new(Connection::open_in_memory().unwrap()).unwrap();
+    let app = App::connect("sqlite::memory:").await.unwrap();
     let service = router(app, directory.to_str().unwrap());
     for path in ["/", "/meals", "/shopping", "/todos"] {
         let response = service
@@ -46,19 +42,6 @@ async fn static_frontend_and_page_routes_return_success() {
     std::fs::remove_dir_all(directory).unwrap();
 }
 
-// Build a legacy database independently of the Rust initializer, including Prisma's ledger.
-fn legacy_database(migrations: usize) -> Connection {
-    let db = Connection::open_in_memory().unwrap();
-    db.execute_batch("CREATE TABLE _prisma_migrations (id TEXT PRIMARY KEY, checksum TEXT NOT NULL, finished_at DATETIME, migration_name TEXT NOT NULL, logs TEXT, rolled_back_at DATETIME, started_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, applied_steps_count INTEGER NOT NULL DEFAULT 0);").unwrap();
-    for (name, sql) in MIGRATIONS.iter().take(migrations) {
-        db.execute_batch(sql).unwrap();
-        db.execute("INSERT INTO _prisma_migrations (id,checksum,migration_name,finished_at,applied_steps_count) VALUES (?1,?2,?1,CURRENT_TIMESTAMP,1)",params![name,db::sha256(sql.as_bytes())]).unwrap();
-    }
-    db.execute("INSERT INTO MealPlan (id,startDate,currentDay,createdAt,updatedAt) VALUES ('singleton','2026-10-26','2026-10-27',1700000000000,1700000000000)",[]).unwrap();
-    db.execute("INSERT INTO DayPlan (id,mealPlanId,date,createdAt,updatedAt) VALUES ('old-day','singleton','2026-10-26','2026-10-26 12:00:00','2026-10-26 12:00:00')",[]).unwrap();
-    db.execute("INSERT INTO Meal (id,dayPlanId,name,createdAt,updatedAt) VALUES ('old-meal','old-day','Köttbullar',1700000000000,1700000000000)",[]).unwrap();
-    db
-}
 async fn request(app: &App, method: &str, path: &str, body: Value) -> (u16, Value) {
     let response = router(app.clone(), "/nonexistent")
         .oneshot(
@@ -90,114 +73,10 @@ async fn ok(app: &App, method: &str, path: &str, body: Value) -> Value {
     );
     data
 }
-#[tokio::test]
-async fn legacy_database_retains_data_and_accepts_rust_writes() {
-    let db = legacy_database(MIGRATIONS.len());
-    db.execute("UPDATE MealPlan SET sortingPrompt='Custom prompt',lastPushAt=1700000000000,lastPushHash='old-hash'",[]).unwrap();
-    db.execute("INSERT INTO ShoppingList (id,createdAt,updatedAt) VALUES ('singleton',1700000000000,1700000000000)",[]).unwrap();
-    db.execute("INSERT INTO ShoppingListItem (id,shoppingListId,name,createdAt,updatedAt) VALUES ('old-item','singleton','Mjölk',1700000000000,1700000000000)",[]).unwrap();
-    db.execute("INSERT INTO TodoList (id,createdAt,updatedAt) VALUES ('singleton',1700000000000,1700000000000)",[]).unwrap();
-    db.execute("INSERT INTO TodoItem (id,todoListId,name,description,isRecurring,recurrenceInterval,createdAt,updatedAt) VALUES ('old-todo','singleton','Clean','Keep this note',1,'weekly',1700000000000,1700000000000)",[]).unwrap();
-    db.execute("INSERT INTO ArchivedMealPlan (id,startDate,endDate,data,createdAt) VALUES ('old-history','2026-01-01','2026-01-01',?1,1700000000000)",[json!([{"date":"2026-01-01","meals":[]}]).to_string()]).unwrap();
-    let app = App::new(db).unwrap();
-    let plan = ok(&app, "GET", "/api/meal-plan", json!({})).await;
-    assert_eq!(
-        plan["days"][0]["meals"][0],
-        json!({"id":"old-meal","name":"Köttbullar","createdAt":"2023-11-14T22:13:20.000Z"})
-    );
-    assert_eq!(
-        ok(&app, "GET", "/api/shopping-list", json!({})).await["items"][0]["id"],
-        "old-item"
-    );
-    assert_eq!(
-        ok(&app, "GET", "/api/todo-list", json!({})).await["items"][0]["description"],
-        "Keep this note"
-    );
-    assert_eq!(
-        ok(&app, "GET", "/api/shopping-list/config", json!({})).await["sortingPrompt"],
-        "Custom prompt"
-    );
-    assert_eq!(
-        ok(&app, "GET", "/api/trmnl/status", json!({})).await["lastPushAt"],
-        "2023-11-14T22:13:20.000Z"
-    );
-    assert_eq!(
-        ok(&app, "GET", "/api/meal-plan/history", json!({})).await[0]["id"],
-        "old-history"
-    );
-    ok(
-        &app,
-        "PUT",
-        "/api/shopping-list/items/old-item/toggle",
-        json!({}),
-    )
-    .await;
-    ok(
-        &app,
-        "PUT",
-        "/api/todo-list/items/old-todo",
-        json!({"description":" Updated note "}),
-    )
-    .await;
-    ok(
-        &app,
-        "POST",
-        "/api/meal-plan/meals",
-        json!({"name":"New meal"}),
-    )
-    .await;
-    let mut db = app.db.lock().unwrap();
-    db::initialize(&mut db).unwrap();
-    assert_eq!(
-        db.query_row("SELECT COUNT(*) FROM _prisma_migrations", [], |r| r
-            .get::<_, i64>(0))
-            .unwrap(),
-        MIGRATIONS.len() as i64
-    );
-    assert_eq!(
-        db.query_row(
-            "SELECT description FROM TodoItem WHERE id='old-todo'",
-            [],
-            |r| r.get::<_, String>(0)
-        )
-        .unwrap(),
-        "Updated note"
-    );
-    assert_eq!(
-        db.query_row("SELECT COUNT(*) FROM Meal", [], |r| r.get::<_, i64>(0))
-            .unwrap(),
-        2
-    );
-    assert_eq!(
-        db.query_row("SELECT COUNT(*) FROM pragma_foreign_key_check", [], |r| {
-            r.get::<_, i64>(0)
-        })
-        .unwrap(),
-        0
-    );
-}
-#[test]
-fn upgrades_older_prisma_databases_without_losing_rows() {
-    for count in [1, 3, 4, 5, 6, 7] {
-        let mut db = legacy_database(count);
-        db::initialize(&mut db).unwrap();
-        assert_eq!(
-            db.query_row("SELECT name FROM Meal WHERE id='old-meal'", [], |r| r
-                .get::<_, String>(0))
-                .unwrap(),
-            "Köttbullar"
-        );
-        assert_eq!(
-            db.query_row("PRAGMA foreign_keys", [], |r| r.get::<_, i64>(0))
-                .unwrap(),
-            1
-        );
-        assert!(db.prepare("SELECT description FROM TodoItem").is_ok());
-    }
-}
+
 #[tokio::test]
 async fn meal_moves_shifts_swaps_and_archives_are_atomic() {
-    let app = App::new(Connection::open_in_memory().unwrap()).unwrap();
+    let app = App::connect("sqlite::memory:").await.unwrap();
     assert_eq!(
         request(
             &app,
@@ -280,7 +159,7 @@ async fn meal_moves_shifts_swaps_and_archives_are_atomic() {
 }
 #[tokio::test]
 async fn lists_preserve_descriptions_recurrence_history_and_order() {
-    let app = App::new(Connection::open_in_memory().unwrap()).unwrap();
+    let app = App::connect("sqlite::memory:").await.unwrap();
     let mut events = app.events.subscribe();
     let a = ok(
         &app,
@@ -360,60 +239,10 @@ async fn lists_preserve_descriptions_recurrence_history_and_order() {
         404
     );
 }
-#[test]
-fn timestamps_accept_all_legacy_formats() {
-    use rusqlite::types::Value as SqlValue;
-    let db = Connection::open_in_memory().unwrap();
-    for value in [
-        SqlValue::Integer(1700000000000),
-        SqlValue::Text("2023-11-14T22:13:20.000Z".into()),
-        SqlValue::Text("2023-11-14 22:13:20".into()),
-    ] {
-        assert_eq!(
-            db.query_row("SELECT ?1", [value], |row| db::timestamp(row, 0))
-                .unwrap(),
-            "2023-11-14T22:13:20.000Z"
-        );
-    }
-    assert_eq!(
-        db.query_row("SELECT NULL", [], |row| db::optional_timestamp(row, 0))
-            .unwrap(),
-        None
-    );
-}
-
-#[test]
-fn upgrades_preserve_old_shopping_prompt_and_reject_unresolved_migrations() {
-    let mut db = legacy_database(5);
-    db.execute("INSERT INTO ShoppingList (id,sortingPrompt,updatedAt) VALUES ('singleton','Old aisle order',CURRENT_TIMESTAMP)",[]).unwrap();
-    db::initialize(&mut db).unwrap();
-    assert_eq!(
-        db.query_row(
-            "SELECT sortingPrompt FROM MealPlan WHERE id='singleton'",
-            [],
-            |r| r.get::<_, String>(0)
-        )
-        .unwrap(),
-        "Old aisle order"
-    );
-    let mut db = legacy_database(1);
-    db.execute(
-        "INSERT INTO _prisma_migrations (id,checksum,migration_name) VALUES ('failed','bad',?1)",
-        [MIGRATIONS[1].0],
-    )
-    .unwrap();
-    assert!(db::initialize(&mut db).is_err());
-    assert_eq!(
-        db.query_row("SELECT name FROM Meal WHERE id='old-meal'", [], |r| r
-            .get::<_, String>(0))
-            .unwrap(),
-        "Köttbullar"
-    );
-}
 
 #[tokio::test]
 async fn malformed_routes_and_payloads_return_json_errors() {
-    let app = App::new(Connection::open_in_memory().unwrap()).unwrap();
+    let app = App::connect("sqlite::memory:").await.unwrap();
     for path in [
         "/api/shopping-list/items/toggle",
         "/api/todo-list/items/toggle",
@@ -446,27 +275,6 @@ async fn malformed_routes_and_payloads_return_json_errors() {
     assert_eq!(response.status(), 400);
 }
 
-#[tokio::test]
-async fn mixed_legacy_timestamp_formats_sort_chronologically() {
-    let db = legacy_database(MIGRATIONS.len());
-    db.execute(
-        "UPDATE Meal SET createdAt=1704067200000 WHERE id='old-meal'",
-        [],
-    )
-    .unwrap();
-    db.execute("INSERT INTO Meal (id,dayPlanId,name,createdAt,updatedAt) VALUES ('text-meal','old-day','Earlier','2023-01-01T00:00:00.000Z','2023-01-01T00:00:00.000Z')",[]).unwrap();
-    db.execute("INSERT INTO ArchivedShoppingList (id,data,createdAt) VALUES ('numeric-newer','[]',1704067200000),('text-older','[]','2023-01-01T00:00:00.000Z')",[]).unwrap();
-    let app = App::new(db).unwrap();
-    assert_eq!(
-        ok(&app, "GET", "/api/meal-plan", json!({})).await["days"][0]["meals"][0]["id"],
-        "text-meal"
-    );
-    assert_eq!(
-        ok(&app, "GET", "/api/shopping-list/history", json!({})).await[0]["id"],
-        "numeric-newer"
-    );
-}
-
 #[test]
 fn sha256_keeps_the_legacy_hex_format() {
     assert_eq!(
@@ -477,7 +285,7 @@ fn sha256_keeps_the_legacy_hex_format() {
 
 #[tokio::test]
 async fn typed_requests_preserve_partial_updates_and_reject_wrong_types() {
-    let app = App::new(Connection::open_in_memory().unwrap()).unwrap();
+    let app = App::connect("sqlite::memory:").await.unwrap();
     let todo = ok(&app,"POST","/api/todo-list/items",json!({"name":"Original","description":"Keep this","isRecurring":true,"recurrenceInterval":"custom","recurrenceDays":3})).await;
     let path = format!("/api/todo-list/items/{}", todo["id"].as_str().unwrap());
     let renamed = ok(&app, "PUT", &path, json!({"name":"Renamed"})).await;

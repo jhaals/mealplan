@@ -13,13 +13,8 @@ dist-ssr
 *.local
 
 # Database
-server/prisma/*.db
-server/prisma/*.db-journal
-server/prisma/*.db-wal
 *.db
 
-# Generated Prisma Client
-server/src/generated
 
 # Docker testing
 test-data
@@ -45,9 +40,11 @@ bun.lock
 # Playwright
 test-results/
 playwright-report/
-server/prisma/test.db
-server/prisma/test.db-journal
-server/prisma/test.db-wal
 
 # Rust build artifacts
 server/target/
+*.db-journal
+*.db-wal
+*.db-shm
+*.db.importing
+server/src/generated/

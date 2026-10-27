@@ -26,9 +26,9 @@ RUN npm run build
 FROM rust:1.99-alpine AS backend-builder
 RUN apk add --no-cache musl-dev
 WORKDIR /build/server
-COPY server/Cargo.toml server/Cargo.lock ./
+COPY server/Cargo.toml server/Cargo.lock server/build.rs ./
 COPY server/src/ ./src/
-COPY server/prisma/migrations/ ./prisma/migrations/
+COPY server/migrations/ ./migrations/
 RUN cargo build --locked --release
 
 # Stage 3: The runtime needs only the binary, frontend, and add-on configuration tools.
@@ -37,6 +37,7 @@ RUN apk add --no-cache bash jq ca-certificates tzdata
 WORKDIR /app/server
 COPY --from=frontend-builder /build/dist/ /app/dist/
 COPY --from=backend-builder /build/server/target/release/mealplan-server /app/server/mealplan-server
+COPY --from=backend-builder /build/server/target/release/migrate-legacy /app/server/migrate-legacy
 COPY addon/run.sh /app/run.sh
 RUN chmod +x /app/run.sh
 EXPOSE 3001

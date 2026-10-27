@@ -7,8 +7,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 #[tokio::main]
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let url = std::env::var("DATABASE_URL").unwrap_or_else(|_| "file:./dev.db".into());
-    let db = rusqlite::Connection::open(&url)?;
-    let app = App::new(db).map_err(|e| format!("Database initialization failed: {e:?}"))?;
+    let app = App::connect(&url)
+        .await
+        .map_err(|e| format!("Database initialization failed: {e:?}"))?;
     if std::env::args().any(|a| a == "--migrate") {
         return Ok(());
     }

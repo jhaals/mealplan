@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, sqlx::FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct Meal {
     pub id: String,
@@ -14,25 +14,27 @@ pub struct DayPlan {
     pub meals: Vec<Meal>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct MealPlan {
     pub start_date: Option<String>,
     pub current_day: Option<String>,
+    #[sqlx(skip)]
     pub days: Vec<DayPlan>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, sqlx::FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct ArchivedMealPlan {
     pub id: String,
     pub start_date: String,
     pub end_date: String,
+    #[sqlx(json)]
     pub days: Vec<DayPlan>,
     pub created_at: String,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, sqlx::FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct ShoppingItem {
     pub id: String,
@@ -42,7 +44,7 @@ pub struct ShoppingItem {
     pub created_at: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct TodoItem {
     pub id: String,
@@ -65,10 +67,11 @@ pub struct ListState<T> {
     pub created_at: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, sqlx::FromRow)]
 #[serde(rename_all = "camelCase")]
 pub struct ArchivedShoppingList {
     pub id: String,
+    #[sqlx(json)]
     pub items: Vec<ShoppingItem>,
     pub created_at: String,
 }

@@ -1,5 +1,5 @@
 use crate::{
-    db::{self, changed, one, query, CREATED_AT_ORDER},
+    db::{self, changed},
     integrations,
     models::{success, ArchivedShoppingList, ListState, ShoppingItem, Success, TodoItem},
     nullable, present, required, today, ApiError, ApiJson, App, Result,
@@ -10,11 +10,8 @@ use axum::{
     routing::{delete, get, post, put},
     Json, Router,
 };
-use rusqlite::{params, Connection, Row};
 use serde::{Deserialize, Serialize};
-
-const SHOP_FIELDS: &str = "id,name,checked,sortOrder,createdAt";
-const TODO_FIELDS: &str = "id,name,description,checked,sortOrder,isRecurring,recurrenceInterval,recurrenceDays,nextDueDate,lastCompletedAt,createdAt";
+use sqlx::SqliteConnection;
 
 pub fn routes() -> Router<App> {
     Router::new()
@@ -40,86 +37,391 @@ pub fn routes() -> Router<App> {
         .route("/todo-list/reorder", put(reorder_todos))
         .route("/todo-list/clear-completed", post(clear_completed))
 }
-fn shopping_row(row: &Row<'_>) -> rusqlite::Result<ShoppingItem> {
-    Ok(ShoppingItem {
-        id: row.get(0)?,
-        name: row.get(1)?,
-        checked: row.get(2)?,
-        sort_order: row.get(3)?,
-        created_at: db::timestamp(row, 4)?,
-    })
+pub async fn shopping_list(db: &mut SqliteConnection) -> Result<ListState<ShoppingItem>> {
+    let created_at =
+        sqlx::query_scalar("SELECT created_at FROM shopping_list WHERE id='singleton'")
+            .fetch_one(&mut *db)
+            .await?;
+    let items = sqlx::query_as(
+        "SELECT * FROM shopping_list_item WHERE shopping_list_id='singleton' ORDER BY sort_order",
+    )
+    .fetch_all(db)
+    .await?;
+    Ok(ListState { created_at, items })
 }
-fn todo_row(row: &Row<'_>) -> rusqlite::Result<TodoItem> {
-    Ok(TodoItem {
-        id: row.get(0)?,
-        name: row.get(1)?,
-        description: row.get(2)?,
-        checked: row.get(3)?,
-        sort_order: row.get(4)?,
-        is_recurring: row.get(5)?,
-        recurrence_interval: row.get(6)?,
-        recurrence_days: row.get(7)?,
-        next_due_date: row.get(8)?,
-        last_completed_at: db::optional_timestamp(row, 9)?,
-        created_at: db::timestamp(row, 10)?,
-    })
-}
-fn created_at(db: &Connection, table: &str) -> Result<String> {
-    one(
-        db,
-        &format!("SELECT createdAt FROM {table} WHERE id='singleton'"),
-        [],
-        |row| db::timestamp(row, 0),
-        "List not found",
+async fn shopping_item(db: &mut SqliteConnection, id: &str) -> Result<ShoppingItem> {
+    Ok(
+        sqlx::query_as("SELECT * FROM shopping_list_item WHERE id=?")
+            .bind(id)
+            .fetch_one(db)
+            .await?,
     )
 }
-pub fn shopping_list(db: &Connection) -> Result<ListState<ShoppingItem>> {
-    Ok(ListState { created_at: created_at(db,"ShoppingList")?, items: query(db,&format!("SELECT {SHOP_FIELDS} FROM ShoppingListItem WHERE shoppingListId='singleton' ORDER BY sortOrder"),[],shopping_row)? })
+async fn todo_item(db: &mut SqliteConnection, id: &str) -> Result<TodoItem> {
+    Ok(sqlx::query_as("SELECT * FROM todo_item WHERE id=?")
+        .bind(id)
+        .fetch_one(db)
+        .await?)
 }
-fn shopping_item(db: &Connection, id: &str) -> Result<ShoppingItem> {
-    one(
-        db,
-        &format!("SELECT {SHOP_FIELDS} FROM ShoppingListItem WHERE id=?1"),
-        [id],
-        shopping_row,
-        "Item not found",
-    )
-}
-fn todo_item(db: &Connection, id: &str) -> Result<TodoItem> {
-    one(
-        db,
-        &format!("SELECT {TODO_FIELDS} FROM TodoItem WHERE id=?1"),
-        [id],
-        todo_row,
-        "Item not found",
-    )
-}
-fn next_order(db: &Connection, table: &str, foreign_key: &str) -> Result<i64> {
-    Ok(db.query_row(
-        &format!(
-            "SELECT COALESCE(MAX(sortOrder),-1)+1 FROM {table} WHERE {foreign_key}='singleton'"
-        ),
-        [],
-        |row| row.get(0),
-    )?)
-}
-fn reorder(db: &Connection, table: &str, ids: &[String]) -> Result<()> {
+async fn reorder(db: &mut SqliteConnection, sql: &'static str, ids: &[String]) -> Result<()> {
     for (order, id) in ids.iter().enumerate() {
         changed(
-            db.execute(
-                &format!("UPDATE {table} SET sortOrder=?1,updatedAt=?2 WHERE id=?3"),
-                params![order as i64, db::now(), id],
-            )?,
+            sqlx::query(sql)
+                .bind(order as i64)
+                .bind(db::now())
+                .bind(id)
+                .execute(&mut *db)
+                .await?
+                .rows_affected(),
             "Item not found",
         )?;
     }
     Ok(())
 }
-fn remove(db: &Connection, table: &str, id: &str) -> Result<()> {
+async fn get_shopping(State(app): State<App>) -> Result<Json<ListState<ShoppingItem>>> {
+    Ok(Json(shopping_list(&mut *app.db.acquire().await?).await?))
+}
+async fn add_shopping(
+    State(app): State<App>,
+    ApiJson(body): ApiJson<AddShopping>,
+) -> Result<(StatusCode, Json<ShoppingItem>)> {
+    required(&body.name, "Item name is required")?;
+    let mut tx = app.db.begin().await?;
+    let id = db::id();
+    let order:i64=sqlx::query_scalar("SELECT COALESCE(MAX(sort_order),-1)+1 FROM shopping_list_item WHERE shopping_list_id='singleton'").fetch_one(&mut *tx).await?;
+    sqlx::query("INSERT INTO shopping_list_item (id,shopping_list_id,name,sort_order,created_at,updated_at) VALUES (?,'singleton',?,?,?,?)")
+        .bind(&id).bind(body.name.trim()).bind(order).bind(db::now()).bind(db::now()).execute(&mut *tx).await?;
+    let item = shopping_item(&mut tx, &id).await?;
+    tx.commit().await?;
+    let _ = app.events.send("shopping-list-changed");
+    Ok((StatusCode::CREATED, Json(item)))
+}
+async fn toggle_shopping(
+    State(app): State<App>,
+    Path(id): Path<String>,
+) -> Result<Json<ShoppingItem>> {
+    let mut tx = app.db.begin().await?;
     changed(
-        db.execute(&format!("DELETE FROM {table} WHERE id=?1"), [id])?,
+        sqlx::query("UPDATE shopping_list_item SET checked=NOT checked,updated_at=? WHERE id=?")
+            .bind(db::now())
+            .bind(&id)
+            .execute(&mut *tx)
+            .await?
+            .rows_affected(),
         "Item not found",
+    )?;
+    let item = shopping_item(&mut tx, &id).await?;
+    tx.commit().await?;
+    let _ = app.events.send("shopping-list-changed");
+    Ok(Json(item))
+}
+async fn delete_shopping(State(app): State<App>, Path(id): Path<String>) -> Result<StatusCode> {
+    changed(
+        sqlx::query("DELETE FROM shopping_list_item WHERE id=?")
+            .bind(id)
+            .execute(&app.db)
+            .await?
+            .rows_affected(),
+        "Item not found",
+    )?;
+    let _ = app.events.send("shopping-list-changed");
+    Ok(StatusCode::NO_CONTENT)
+}
+async fn reorder_shopping(
+    State(app): State<App>,
+    ApiJson(body): ApiJson<Reorder>,
+) -> Result<Json<Success>> {
+    let mut tx = app.db.begin().await?;
+    reorder(
+        &mut tx,
+        "UPDATE shopping_list_item SET sort_order=?,updated_at=? WHERE id=?",
+        &body.item_ids,
     )
+    .await?;
+    tx.commit().await?;
+    let _ = app.events.send("shopping-list-changed");
+    Ok(success())
+}
+async fn archive(State(app): State<App>) -> Result<Json<ListState<ShoppingItem>>> {
+    let mut tx = app.db.begin().await?;
+    let list = shopping_list(&mut tx).await?;
+    if !list.items.is_empty() {
+        sqlx::query("INSERT INTO archived_shopping_list (id,data,created_at) VALUES (?,?,?)")
+            .bind(db::id())
+            .bind(sqlx::types::Json(&list.items))
+            .bind(list.created_at)
+            .execute(&mut *tx)
+            .await?;
+    }
+    sqlx::query("DELETE FROM shopping_list_item WHERE shopping_list_id='singleton'")
+        .execute(&mut *tx)
+        .await?;
+    sqlx::query("UPDATE shopping_list SET created_at=?,updated_at=? WHERE id='singleton'")
+        .bind(db::now())
+        .bind(db::now())
+        .execute(&mut *tx)
+        .await?;
+    let list = shopping_list(&mut tx).await?;
+    tx.commit().await?;
+    let _ = app.events.send("shopping-list-changed");
+    Ok(Json(list))
+}
+async fn history(State(app): State<App>) -> Result<Json<Vec<ArchivedShoppingList>>> {
+    Ok(Json(sqlx::query_as("SELECT id,data AS items,created_at FROM archived_shopping_list ORDER BY created_at DESC").fetch_all(&app.db).await?))
+}
+async fn delete_history(State(app): State<App>, Path(id): Path<String>) -> Result<StatusCode> {
+    changed(
+        sqlx::query("DELETE FROM archived_shopping_list WHERE id=?")
+            .bind(id)
+            .execute(&app.db)
+            .await?
+            .rows_affected(),
+        "Archived shopping list not found",
+    )?;
+    Ok(StatusCode::NO_CONTENT)
+}
+async fn sort(State(app): State<App>) -> Result<Json<Success>> {
+    integrations::sort(&app).await?;
+    let _ = app.events.send("shopping-list-changed");
+    Ok(success())
+}
+#[derive(Serialize, sqlx::FromRow)]
+#[serde(rename_all = "camelCase")]
+pub struct SortingConfig {
+    pub sorting_prompt: Option<String>,
+}
+pub async fn config(db: &mut SqliteConnection) -> Result<SortingConfig> {
+    Ok(
+        sqlx::query_as("SELECT sorting_prompt FROM app_settings WHERE id='singleton'")
+            .fetch_one(db)
+            .await?,
+    )
+}
+async fn get_config(State(app): State<App>) -> Result<Json<SortingConfig>> {
+    Ok(Json(config(&mut *app.db.acquire().await?).await?))
+}
+async fn update_config(
+    State(app): State<App>,
+    ApiJson(body): ApiJson<UpdateConfig>,
+) -> Result<Json<Success>> {
+    let prompt = body
+        .sorting_prompt
+        .ok_or_else(|| ApiError::new(400, "sortingPrompt must be null or a non-empty string"))?;
+    if prompt
+        .as_deref()
+        .is_some_and(|prompt| prompt.trim().is_empty())
+    {
+        return Err(ApiError::new(
+            400,
+            "sortingPrompt must be null or a non-empty string",
+        ));
+    }
+    sqlx::query("UPDATE app_settings SET sorting_prompt=? WHERE id='singleton'")
+        .bind(prompt)
+        .execute(&app.db)
+        .await?;
+    Ok(success())
+}
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct DefaultPrompt {
+    default_prompt: &'static str,
+}
+async fn default_prompt() -> Json<DefaultPrompt> {
+    Json(DefaultPrompt {
+        default_prompt: integrations::default_prompt(),
+    })
+}
+async fn get_todos(State(app): State<App>) -> Result<Json<ListState<TodoItem>>> {
+    let mut db = app.db.acquire().await?;
+    let created_at = sqlx::query_scalar("SELECT created_at FROM todo_list WHERE id='singleton'")
+        .fetch_one(&mut *db)
+        .await?;
+    let items=sqlx::query_as("SELECT * FROM todo_item WHERE todo_list_id='singleton' AND (is_recurring=0 OR next_due_date IS NULL OR next_due_date<=?) ORDER BY sort_order").bind(today()).fetch_all(&mut *db).await?;
+    Ok(Json(ListState { created_at, items }))
+}
+async fn recurring(State(app): State<App>) -> Result<Json<Vec<TodoItem>>> {
+    Ok(Json(sqlx::query_as("SELECT * FROM todo_item WHERE todo_list_id='singleton' AND is_recurring=1 ORDER BY sort_order").fetch_all(&app.db).await?))
+}
+async fn add_todo(
+    State(app): State<App>,
+    ApiJson(body): ApiJson<AddTodo>,
+) -> Result<(StatusCode, Json<TodoItem>)> {
+    required(&body.name, "Item name is required")?;
+    validate_recurrence(body.recurrence_interval.as_deref(), body.recurrence_days)?;
+    let mut tx = app.db.begin().await?;
+    let id = db::id();
+    let order: i64 = sqlx::query_scalar(
+        "SELECT COALESCE(MAX(sort_order),-1)+1 FROM todo_item WHERE todo_list_id='singleton'",
+    )
+    .fetch_one(&mut *tx)
+    .await?;
+    let due = if body.is_recurring && body.recurrence_interval.is_some() {
+        Some(today())
+    } else {
+        None
+    };
+    sqlx::query("INSERT INTO todo_item (id,todo_list_id,name,description,sort_order,is_recurring,recurrence_interval,recurrence_days,next_due_date,created_at,updated_at) VALUES (?,'singleton',?,?,?,?,?,?,?,?,?)")
+        .bind(&id).bind(body.name.trim()).bind(description(body.description)).bind(order).bind(body.is_recurring).bind(body.recurrence_interval).bind(body.recurrence_days).bind(due).bind(db::now()).bind(db::now()).execute(&mut *tx).await?;
+    let item = todo_item(&mut tx, &id).await?;
+    tx.commit().await?;
+    let _ = app.events.send("todo-list-changed");
+    Ok((StatusCode::CREATED, Json(item)))
+}
+async fn toggle_todo(State(app): State<App>, Path(id): Path<String>) -> Result<Json<TodoItem>> {
+    let mut tx = app.db.begin().await?;
+    let item = todo_item(&mut tx, &id).await?;
+    if let Some(interval) = item
+        .recurrence_interval
+        .as_deref()
+        .filter(|_| item.is_recurring && !item.checked)
+    {
+        let due = next_due(
+            interval,
+            item.recurrence_days,
+            chrono::Local::now().date_naive(),
+        )?;
+        sqlx::query("UPDATE todo_item SET checked=0,next_due_date=?,last_completed_at=?,updated_at=? WHERE id=?")
+            .bind(due).bind(db::now()).bind(db::now()).bind(&id).execute(&mut *tx).await?;
+    } else {
+        sqlx::query("UPDATE todo_item SET checked=NOT checked,updated_at=? WHERE id=?")
+            .bind(db::now())
+            .bind(&id)
+            .execute(&mut *tx)
+            .await?;
+    }
+    let item = todo_item(&mut tx, &id).await?;
+    tx.commit().await?;
+    let _ = app.events.send("todo-list-changed");
+    Ok(Json(item))
+}
+async fn update_todo(
+    State(app): State<App>,
+    Path(id): Path<String>,
+    ApiJson(body): ApiJson<UpdateTodo>,
+) -> Result<Json<TodoItem>> {
+    if let Some(name) = &body.name {
+        required(name, "Item name is required")?;
+    }
+    validate_recurrence(
+        body.recurrence_interval
+            .as_ref()
+            .and_then(|value| value.as_deref()),
+        body.recurrence_days.flatten(),
+    )?;
+    let mut tx = app.db.begin().await?;
+    let mut item = todo_item(&mut tx, &id).await?;
+    if let Some(recurring) = body.is_recurring {
+        item.is_recurring = recurring;
+        if recurring {
+            item.recurrence_interval = body
+                .recurrence_interval
+                .clone()
+                .flatten()
+                .or(item.recurrence_interval)
+                .or(Some("weekly".into()));
+            if item.next_due_date.is_none() {
+                item.next_due_date = Some(today());
+            }
+        } else {
+            item.recurrence_interval = None;
+            item.recurrence_days = None;
+            item.next_due_date = None;
+            item.last_completed_at = None;
+        }
+    }
+    if let Some(value) = body.name {
+        item.name = value;
+    }
+    if let Some(value) = body.description {
+        item.description = description(value);
+    }
+    if let Some(value) = body.recurrence_interval {
+        item.recurrence_interval = value;
+    }
+    if let Some(value) = body.recurrence_days {
+        item.recurrence_days = value;
+    }
+    sqlx::query("UPDATE todo_item SET name=?,description=?,is_recurring=?,recurrence_interval=?,recurrence_days=?,next_due_date=?,last_completed_at=?,updated_at=? WHERE id=?")
+        .bind(&item.name).bind(&item.description).bind(item.is_recurring).bind(&item.recurrence_interval).bind(item.recurrence_days).bind(&item.next_due_date).bind(&item.last_completed_at).bind(db::now()).bind(&id).execute(&mut *tx).await?;
+    tx.commit().await?;
+    let _ = app.events.send("todo-list-changed");
+    Ok(Json(item))
+}
+async fn delete_todo(State(app): State<App>, Path(id): Path<String>) -> Result<StatusCode> {
+    changed(
+        sqlx::query("DELETE FROM todo_item WHERE id=?")
+            .bind(id)
+            .execute(&app.db)
+            .await?
+            .rows_affected(),
+        "Item not found",
+    )?;
+    let _ = app.events.send("todo-list-changed");
+    Ok(StatusCode::NO_CONTENT)
+}
+async fn reorder_todos(
+    State(app): State<App>,
+    ApiJson(body): ApiJson<Reorder>,
+) -> Result<Json<Success>> {
+    let mut tx = app.db.begin().await?;
+    reorder(
+        &mut tx,
+        "UPDATE todo_item SET sort_order=?,updated_at=? WHERE id=?",
+        &body.item_ids,
+    )
+    .await?;
+    tx.commit().await?;
+    let _ = app.events.send("todo-list-changed");
+    Ok(success())
+}
+async fn clear_completed(State(app): State<App>) -> Result<Json<Success>> {
+    sqlx::query(
+        "DELETE FROM todo_item WHERE todo_list_id='singleton' AND checked=1 AND is_recurring=0",
+    )
+    .execute(&app.db)
+    .await?;
+    let _ = app.events.send("todo-list-changed");
+    Ok(success())
+}
+#[derive(Deserialize)]
+struct AddShopping {
+    name: String,
+}
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Reorder {
+    item_ids: Vec<String>,
+}
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct UpdateConfig {
+    #[serde(default, deserialize_with = "nullable")]
+    sorting_prompt: Option<Option<String>>,
+}
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct AddTodo {
+    name: String,
+    description: Option<String>,
+    #[serde(default)]
+    is_recurring: bool,
+    recurrence_interval: Option<String>,
+    recurrence_days: Option<i64>,
+}
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct UpdateTodo {
+    #[serde(default, deserialize_with = "present")]
+    name: Option<String>,
+    #[serde(default, deserialize_with = "nullable")]
+    description: Option<Option<String>>,
+    #[serde(default, deserialize_with = "present")]
+    is_recurring: Option<bool>,
+    #[serde(default, deserialize_with = "nullable")]
+    recurrence_interval: Option<Option<String>>,
+    #[serde(default, deserialize_with = "nullable")]
+    recurrence_days: Option<Option<i64>>,
 }
 fn description(value: Option<String>) -> Option<String> {
     value
@@ -143,307 +445,7 @@ fn validate_recurrence(interval: Option<&str>, days: Option<i64>) -> Result<()> 
     }
     Ok(())
 }
-async fn get_shopping(State(app): State<App>) -> Result<Json<ListState<ShoppingItem>>> {
-    app.database(|db| shopping_list(db)).await.map(Json)
-}
-#[derive(Deserialize)]
-struct AddShopping {
-    name: String,
-}
-async fn add_shopping(
-    State(app): State<App>,
-    ApiJson(body): ApiJson<AddShopping>,
-) -> Result<(StatusCode, Json<ShoppingItem>)> {
-    required(&body.name, "Item name is required")?;
-    let item = app.transaction(move |db| {
-        let id = db::id();
-        let order = next_order(db,"ShoppingListItem","shoppingListId")?;
-        db.execute("INSERT INTO ShoppingListItem (id,shoppingListId,name,sortOrder,createdAt,updatedAt) VALUES (?1,'singleton',?2,?3,?4,?4)",params![id,body.name.trim(),order,db::now()])?;
-        shopping_item(db,&id)
-    }).await?;
-    let _ = app.events.send("shopping-list-changed");
-    Ok((StatusCode::CREATED, Json(item)))
-}
-async fn toggle_shopping(
-    State(app): State<App>,
-    Path(id): Path<String>,
-) -> Result<Json<ShoppingItem>> {
-    let item = app
-        .transaction(move |db| {
-            changed(
-                db.execute(
-                    "UPDATE ShoppingListItem SET checked=NOT checked,updatedAt=?1 WHERE id=?2",
-                    params![db::now(), id],
-                )?,
-                "Item not found",
-            )?;
-            shopping_item(db, &id)
-        })
-        .await?;
-    let _ = app.events.send("shopping-list-changed");
-    Ok(Json(item))
-}
-async fn delete_shopping(State(app): State<App>, Path(id): Path<String>) -> Result<StatusCode> {
-    app.transaction(move |db| remove(db, "ShoppingListItem", &id))
-        .await?;
-    let _ = app.events.send("shopping-list-changed");
-    Ok(StatusCode::NO_CONTENT)
-}
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Reorder {
-    item_ids: Vec<String>,
-}
-async fn reorder_shopping(
-    State(app): State<App>,
-    ApiJson(body): ApiJson<Reorder>,
-) -> Result<Json<Success>> {
-    app.transaction(move |db| reorder(db, "ShoppingListItem", &body.item_ids))
-        .await?;
-    let _ = app.events.send("shopping-list-changed");
-    Ok(success())
-}
-async fn archive(State(app): State<App>) -> Result<Json<ListState<ShoppingItem>>> {
-    let list = app
-        .transaction(|db| {
-            let list = shopping_list(db)?;
-            if !list.items.is_empty() {
-                db.execute(
-                    "INSERT INTO ArchivedShoppingList (id,data,createdAt) VALUES (?1,?2,?3)",
-                    params![
-                        db::id(),
-                        serde_json::to_string(&list.items)?,
-                        list.created_at
-                    ],
-                )?;
-            }
-            db.execute(
-                "DELETE FROM ShoppingListItem WHERE shoppingListId='singleton'",
-                [],
-            )?;
-            db.execute(
-                "UPDATE ShoppingList SET createdAt=?1,updatedAt=?1 WHERE id='singleton'",
-                [db::now()],
-            )?;
-            shopping_list(db)
-        })
-        .await?;
-    let _ = app.events.send("shopping-list-changed");
-    Ok(Json(list))
-}
-async fn history(State(app): State<App>) -> Result<Json<Vec<ArchivedShoppingList>>> {
-    app.database(|db| query(db,&format!("SELECT id,data,createdAt FROM ArchivedShoppingList ORDER BY {CREATED_AT_ORDER} DESC"),[],|row| {
-        Ok(ArchivedShoppingList { id: row.get(0)?, items: serde_json::from_str(&row.get::<_,String>(1)?).unwrap_or_default(), created_at: db::timestamp(row,2)? })
-    })).await.map(Json)
-}
-async fn delete_history(State(app): State<App>, Path(id): Path<String>) -> Result<StatusCode> {
-    app.transaction(move |db| {
-        changed(
-            db.execute("DELETE FROM ArchivedShoppingList WHERE id=?1", [id])?,
-            "Archived shopping list not found",
-        )
-    })
-    .await?;
-    Ok(StatusCode::NO_CONTENT)
-}
-async fn sort(State(app): State<App>) -> Result<Json<Success>> {
-    integrations::sort(&app).await?;
-    let _ = app.events.send("shopping-list-changed");
-    Ok(success())
-}
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SortingConfig {
-    pub sorting_prompt: Option<String>,
-}
-pub fn config(db: &Connection) -> Result<SortingConfig> {
-    one(
-        db,
-        "SELECT sortingPrompt FROM MealPlan WHERE id='singleton'",
-        [],
-        |row| {
-            Ok(SortingConfig {
-                sorting_prompt: row.get(0)?,
-            })
-        },
-        "Meal plan not found",
-    )
-}
-async fn get_config(State(app): State<App>) -> Result<Json<SortingConfig>> {
-    app.database(|db| config(db)).await.map(Json)
-}
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct UpdateConfig {
-    #[serde(default, deserialize_with = "nullable")]
-    sorting_prompt: Option<Option<String>>,
-}
-async fn update_config(
-    State(app): State<App>,
-    ApiJson(body): ApiJson<UpdateConfig>,
-) -> Result<Json<Success>> {
-    let prompt = body
-        .sorting_prompt
-        .ok_or_else(|| ApiError::new(400, "sortingPrompt must be null or a non-empty string"))?;
-    if prompt
-        .as_deref()
-        .is_some_and(|prompt| prompt.trim().is_empty())
-    {
-        return Err(ApiError::new(
-            400,
-            "sortingPrompt must be null or a non-empty string",
-        ));
-    }
-    app.transaction(move |db| {
-        db.execute(
-            "UPDATE MealPlan SET sortingPrompt=?1,updatedAt=?2 WHERE id='singleton'",
-            params![prompt, db::now()],
-        )?;
-        Ok(())
-    })
-    .await?;
-    Ok(success())
-}
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-struct DefaultPrompt {
-    default_prompt: &'static str,
-}
-async fn default_prompt() -> Json<DefaultPrompt> {
-    Json(DefaultPrompt {
-        default_prompt: integrations::default_prompt(),
-    })
-}
 
-async fn get_todos(State(app): State<App>) -> Result<Json<ListState<TodoItem>>> {
-    app.database(|db| Ok(ListState { created_at: created_at(db,"TodoList")?,
-        items: query(db,&format!("SELECT {TODO_FIELDS} FROM TodoItem WHERE todoListId='singleton' AND (isRecurring=0 OR nextDueDate IS NULL OR nextDueDate<=?1) ORDER BY sortOrder"),[today()],todo_row)?
-    })).await.map(Json)
-}
-async fn recurring(State(app): State<App>) -> Result<Json<Vec<TodoItem>>> {
-    app.database(|db| query(db,&format!("SELECT {TODO_FIELDS} FROM TodoItem WHERE todoListId='singleton' AND isRecurring=1 ORDER BY sortOrder"),[],todo_row)).await.map(Json)
-}
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct AddTodo {
-    name: String,
-    description: Option<String>,
-    #[serde(default)]
-    is_recurring: bool,
-    recurrence_interval: Option<String>,
-    recurrence_days: Option<i64>,
-}
-async fn add_todo(
-    State(app): State<App>,
-    ApiJson(body): ApiJson<AddTodo>,
-) -> Result<(StatusCode, Json<TodoItem>)> {
-    required(&body.name, "Item name is required")?;
-    validate_recurrence(body.recurrence_interval.as_deref(), body.recurrence_days)?;
-    let item = app.transaction(move |db| {
-        let id = db::id();
-        let order = next_order(db,"TodoItem","todoListId")?;
-        let due = if body.is_recurring && body.recurrence_interval.is_some() { Some(today()) } else { None };
-        db.execute("INSERT INTO TodoItem (id,todoListId,name,description,sortOrder,isRecurring,recurrenceInterval,recurrenceDays,nextDueDate,createdAt,updatedAt) VALUES (?1,'singleton',?2,?3,?4,?5,?6,?7,?8,?9,?9)",
-            params![id,body.name.trim(),description(body.description),order,body.is_recurring,body.recurrence_interval,body.recurrence_days,due,db::now()])?;
-        todo_item(db,&id)
-    }).await?;
-    let _ = app.events.send("todo-list-changed");
-    Ok((StatusCode::CREATED, Json(item)))
-}
-async fn toggle_todo(State(app): State<App>, Path(id): Path<String>) -> Result<Json<TodoItem>> {
-    let item = app.transaction(move |db| {
-        let item = todo_item(db,&id)?;
-        if let Some(interval) = item.recurrence_interval.as_deref().filter(|_| item.is_recurring && !item.checked) {
-            let due = next_due(interval,item.recurrence_days,chrono::Local::now().date_naive())?;
-            db.execute("UPDATE TodoItem SET checked=0,nextDueDate=?1,lastCompletedAt=?2,updatedAt=?2 WHERE id=?3",params![due,db::now(),id])?;
-        } else {
-            db.execute("UPDATE TodoItem SET checked=NOT checked,updatedAt=?1 WHERE id=?2",params![db::now(),id])?;
-        }
-        todo_item(db,&id)
-    }).await?;
-    let _ = app.events.send("todo-list-changed");
-    Ok(Json(item))
-}
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct UpdateTodo {
-    #[serde(default, deserialize_with = "present")]
-    name: Option<String>,
-    #[serde(default, deserialize_with = "nullable")]
-    description: Option<Option<String>>,
-    #[serde(default, deserialize_with = "present")]
-    is_recurring: Option<bool>,
-    #[serde(default, deserialize_with = "nullable")]
-    recurrence_interval: Option<Option<String>>,
-    #[serde(default, deserialize_with = "nullable")]
-    recurrence_days: Option<Option<i64>>,
-}
-async fn update_todo(
-    State(app): State<App>,
-    Path(id): Path<String>,
-    ApiJson(body): ApiJson<UpdateTodo>,
-) -> Result<Json<TodoItem>> {
-    if let Some(name) = &body.name {
-        required(name, "Item name is required")?;
-    }
-    validate_recurrence(
-        body.recurrence_interval
-            .as_ref()
-            .and_then(|value| value.as_deref()),
-        body.recurrence_days.flatten(),
-    )?;
-    let item = app.transaction(move |db| {
-        let mut item = todo_item(db,&id)?;
-        if let Some(recurring) = body.is_recurring {
-            item.is_recurring = recurring;
-            if recurring {
-                item.recurrence_interval = body.recurrence_interval.clone().flatten().or(item.recurrence_interval).or(Some("weekly".into()));
-                if item.next_due_date.is_none() { item.next_due_date = Some(today()); }
-            } else {
-                item.recurrence_interval = None;
-                item.recurrence_days = None;
-                item.next_due_date = None;
-                item.last_completed_at = None;
-            }
-        }
-        if let Some(name) = body.name { item.name = name; }
-        if let Some(value) = body.description { item.description = description(value); }
-        if let Some(value) = body.recurrence_interval { item.recurrence_interval = value; }
-        if let Some(value) = body.recurrence_days { item.recurrence_days = value; }
-        db.execute("UPDATE TodoItem SET name=?1,description=?2,isRecurring=?3,recurrenceInterval=?4,recurrenceDays=?5,nextDueDate=?6,lastCompletedAt=?7,updatedAt=?8 WHERE id=?9",
-            params![item.name,item.description,item.is_recurring,item.recurrence_interval,item.recurrence_days,item.next_due_date,item.last_completed_at,db::now(),id])?;
-        todo_item(db,&id)
-    }).await?;
-    let _ = app.events.send("todo-list-changed");
-    Ok(Json(item))
-}
-async fn delete_todo(State(app): State<App>, Path(id): Path<String>) -> Result<StatusCode> {
-    app.transaction(move |db| remove(db, "TodoItem", &id))
-        .await?;
-    let _ = app.events.send("todo-list-changed");
-    Ok(StatusCode::NO_CONTENT)
-}
-async fn reorder_todos(
-    State(app): State<App>,
-    ApiJson(body): ApiJson<Reorder>,
-) -> Result<Json<Success>> {
-    app.transaction(move |db| reorder(db, "TodoItem", &body.item_ids))
-        .await?;
-    let _ = app.events.send("todo-list-changed");
-    Ok(success())
-}
-async fn clear_completed(State(app): State<App>) -> Result<Json<Success>> {
-    app.transaction(|db| {
-        db.execute(
-            "DELETE FROM TodoItem WHERE todoListId='singleton' AND checked=1 AND isRecurring=0",
-            [],
-        )?;
-        Ok(())
-    })
-    .await?;
-    let _ = app.events.send("todo-list-changed");
-    Ok(success())
-}
 pub fn next_due(interval: &str, days: Option<i64>, base: chrono::NaiveDate) -> Result<String> {
     let days = match interval {
         "daily" => 1,

@@ -12,7 +12,7 @@ OPENROUTER_MODEL=$(jq --raw-output '.openrouter_model // ""' $CONFIG_PATH)
 LANGUAGE=$(jq --raw-output '.language // "en"' $CONFIG_PATH)
 
 # Set environment variables
-export DATABASE_URL="file:/data/mealplan.db"
+export DATABASE_URL="file:/data/mealplan-v2.db"
 export PORT=$PORT
 export TRMNL_WEBHOOK_URL=$TRMNL_WEBHOOK_URL
 export OPENROUTER_API_KEY=$OPENROUTER_API_KEY
@@ -33,6 +33,7 @@ else
   echo "Shopping list AI sorting: Disabled"
 fi
 
-# The Rust server applies pending migrations and seeds missing singletons at startup.
+# Import once before starting HTTP; keep the original database for rollback.
 cd /app/server
+./migrate-legacy /data/mealplan.db /data/mealplan-v2.db
 exec ./mealplan-server
