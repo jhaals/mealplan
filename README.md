@@ -70,7 +70,3 @@ SQLite tools can inspect the database; Prisma is no longer required at runtime.
 - **Add-on won't start** - Check logs; if port 3001 is in use, change it in configuration
 - **"Meal plan not found"** - Restart the add-on to reinitialize the database
 - **Reset database** - Stop add-on, delete `/data/mealplan.db`, restart
-
-## License
-
-MIT
