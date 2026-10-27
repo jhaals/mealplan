@@ -5,9 +5,7 @@ description: Mobile-first meal planning application with drag-and-drop organizat
 url: "https://github.com/jhaals/mealplan"
 image: "ghcr.io/jhaals/mealplan-{arch}"
 arch:
-  - aarch64
   - amd64
-  - armv7
 init: false
 startup: services
 boot: auto

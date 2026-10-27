@@ -1,7 +1,7 @@
 # Stage 1: Build Frontend
 FROM node:26.12.1-alpine AS frontend-builder
 
-# Configure Node.js for better QEMU compatibility
+# Limit frontend build memory usage.
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 WORKDIR /build
@@ -18,7 +18,6 @@ COPY public/ ./public/
 COPY src/ ./src/
 
 # Install and build (legacy-peer-deps due to ESLint 10 compatibility issues)
-# Additional flags for QEMU compatibility
 RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 RUN npm run build
 
