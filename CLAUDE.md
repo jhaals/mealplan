@@ -9,27 +9,32 @@ Vite's development server proxies API requests to that port.
 - `server/src/main.rs`: environment loading, startup, HTTP, shutdown.
 - `server/src/lib.rs`: shared application state, typed JSON extraction, route composition, errors, SSE.
 - `server/src/models.rs`: typed API responses and archived snapshot records.
-- `server/src/db.rs`: SQLite access, timestamp compatibility, original Prisma migrations.
+- `server/src/db.rs`: SQLx pool setup and embedded schema migrations.
 - `server/src/meals.rs`: meals, day shifting, moves, swaps, plan archives.
 - `server/src/lists.rs`: shopping lists, todos, recurrence, descriptions, history.
 - `server/src/integrations.rs`: OpenRouter sorting and TRMNL pushes.
-- `server/tests/compatibility.rs`: legacy database and API regression tests.
+- `server/src/bin/migrate-legacy.rs`: one-off pre-start importer for the current legacy schema.
+- `server/tests/compatibility.rs`: API regression tests; `server/tests/migration.rs`: cutover safety tests.
 
-`MealPlan`, `ShoppingList`, and `TodoList` use ID `singleton`. Startup creates
-missing singletons and applies pending migrations. Global settings live on MealPlan
+`meal_plan`, `shopping_list`, and `todo_list` use ID `singleton`. Startup creates
+missing singletons and applies pending migrations. Global settings live in `app_settings`
 and persist through list archives and plan resets. Multi-step API mutations use
-transactions; database work runs on blocking threads. SSE broadcasts list changes.
+SQLx transactions; a pool with one connection serializes database operations. SSE broadcasts list changes.
 
-## Database compatibility
+## Database and upgrades
 
-Keep the original SQLite table/column names, foreign keys, and archived JSON formats.
-Preserve `server/prisma/migrations` and the `_prisma_migrations` ledger. Never edit
-historical SQL: startup verifies its SHA-256 checksum against Prisma's ledger.
-New migrations must be added to the ordered `MIGRATIONS` list in `db.rs`.
-`server/prisma/schema.prisma` documents the legacy schema.
-Old databases can contain integer milliseconds, ISO timestamps, or SQLite datetime
-strings. Normalize them for API responses without rewriting existing rows.
-The runtime does not need Node, Prisma, or generated TypeScript.
+The runtime uses SQLx and embedded migrations in `server/migrations`.
+Keep applied SQLx migrations immutable. Use typed `FromRow` records and parameterized
+queries; do not reintroduce manual row mapping or a connection mutex.
+Database names are snake_case. Timestamps are UTC RFC3339 text with milliseconds;
+calendar dates stay YYYY-MM-DD. Preserve opaque IDs and archived JSON snapshots.
+
+Before startup, the add-on importer copies `/data/mealplan.db` into
+`/data/mealplan-v2.db` through a temporary file and verifies every imported value.
+The original is untouched for rollback. Import failures stop startup. Existing
+new databases are validated and never overwritten or reimported.
+Legacy format knowledge belongs only in the importer and its fixtures; the web
+server rejects unmanaged databases. No historical Prisma migrations are shipped.
 
 ## Frontend behavior
 
@@ -61,7 +66,7 @@ cd server && cargo clippy --locked --all-targets -- -D warnings
 Backend commands run from `server/`. Database defaults to `file:./dev.db` and
 can be overridden with `DATABASE_URL`. Local environment is loaded from
 `server/.env`. Browser tests disable external integrations and use English.
-The add-on stores data in `/data/mealplan.db`; `addon/run.sh` exports its settings
+The add-on stores data in `/data/mealplan-v2.db`; `addon/run.sh` exports its settings
 and starts the binary. `addon/Dockerfile` builds the frontend and Rust separately.
 TRMNL pushes on startup and hourly when stable upcoming content changes; manual
 push bypasses hashing. Payload formatting uses Swedish weekday/month names.

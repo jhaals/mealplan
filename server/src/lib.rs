@@ -14,14 +14,10 @@ use axum::{
     routing::get,
     Json, Router,
 };
-use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use std::{
-    convert::Infallible,
-    sync::{Arc, Mutex},
-    time::Duration,
-};
+use sqlx::SqlitePool;
+use std::{convert::Infallible, time::Duration};
 use tokio::sync::broadcast;
 use tower_http::services::{ServeDir, ServeFile};
 
@@ -43,8 +39,22 @@ impl ApiError {
         Self::new(500, "Internal server error")
     }
 }
-impl From<rusqlite::Error> for ApiError {
-    fn from(error: rusqlite::Error) -> Self {
+impl std::fmt::Display for ApiError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.message.fmt(f)
+    }
+}
+impl std::error::Error for ApiError {}
+impl From<sqlx::Error> for ApiError {
+    fn from(error: sqlx::Error) -> Self {
+        match error {
+            sqlx::Error::RowNotFound => Self::new(404, "Item not found"),
+            error => Self::internal(error.to_string()),
+        }
+    }
+}
+impl From<sqlx::migrate::MigrateError> for ApiError {
+    fn from(error: sqlx::migrate::MigrateError) -> Self {
         Self::internal(error.to_string())
     }
 }
@@ -81,15 +91,14 @@ where
 
 #[derive(Clone)]
 pub struct App {
-    pub db: Arc<Mutex<Connection>>,
+    pub db: SqlitePool,
     pub events: broadcast::Sender<&'static str>,
     pub client: reqwest::Client,
 }
 impl App {
-    pub fn new(mut db: Connection) -> Result<Self> {
-        db::initialize(&mut db)?;
+    pub async fn connect(url: &str) -> Result<Self> {
         Ok(Self {
-            db: Arc::new(Mutex::new(db)),
+            db: db::connect(url).await?,
             events: broadcast::channel(128).0,
             client: reqwest::Client::builder()
                 .timeout(Duration::from_secs(30))
@@ -97,33 +106,8 @@ impl App {
                 .map_err(|error| ApiError::internal(error.to_string()))?,
         })
     }
-    pub async fn database<T: Send + 'static>(
-        &self,
-        f: impl FnOnce(&mut Connection) -> Result<T> + Send + 'static,
-    ) -> Result<T> {
-        let db = self.db.clone();
-        tokio::task::spawn_blocking(move || {
-            let mut connection = db
-                .lock()
-                .map_err(|_| ApiError::internal("Database lock poisoned"))?;
-            f(&mut connection)
-        })
-        .await
-        .map_err(|error| ApiError::internal(error.to_string()))?
-    }
-    pub async fn transaction<T: Send + 'static>(
-        &self,
-        f: impl FnOnce(&Connection) -> Result<T> + Send + 'static,
-    ) -> Result<T> {
-        self.database(move |db| {
-            let tx = db.transaction()?;
-            let result = f(&tx)?;
-            tx.commit()?;
-            Ok(result)
-        })
-        .await
-    }
 }
+
 pub fn required<'a>(value: &'a str, message: &str) -> Result<&'a str> {
     if value.is_empty() {
         Err(ApiError::new(400, message))

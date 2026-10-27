@@ -1,6 +1,5 @@
 use crate::{
-    db::{self, one},
-    lists, meals,
+    db, lists, meals,
     models::{MealPlan, ShoppingItem},
     today, App, Result,
 };
@@ -11,7 +10,6 @@ use axum::{
     Json, Router,
 };
 use chrono::Datelike;
-use rusqlite::params;
 use serde::Serialize;
 use serde_json::{json, Value};
 
@@ -46,18 +44,17 @@ fn sorted_ids(items: &[ShoppingItem], names: &[Value]) -> Option<Vec<String>> {
     }
 }
 pub async fn sort(app: &App) -> Result<()> {
-    let (items, prompt) = app
-        .database(|db| {
-            let list = lists::shopping_list(db)?;
-            let config = lists::config(db)?;
-            Ok((
-                list.items,
-                config
-                    .sorting_prompt
-                    .unwrap_or_else(|| default_prompt().into()),
-            ))
-        })
-        .await?;
+    let (items, prompt) = {
+        let mut db = app.db.acquire().await?;
+        let list = lists::shopping_list(&mut db).await?;
+        let config = lists::config(&mut db).await?;
+        (
+            list.items,
+            config
+                .sorting_prompt
+                .unwrap_or_else(|| default_prompt().into()),
+        )
+    };
     let unchecked: Vec<ShoppingItem> = items.iter().filter(|item| !item.checked).cloned().collect();
     if unchecked.len() < 2 {
         return Ok(());
@@ -91,20 +88,20 @@ pub async fn sort(app: &App) -> Result<()> {
             .filter(|item| item.checked)
             .map(|item| item.id.clone()),
     );
-    app.database(move |db| {
-        let tx = db.transaction()?;
-        // Items can be removed while the network request is running; never recreate them.
-        for (order, id) in ids.iter().enumerate() {
-            tx.execute(
-                "UPDATE ShoppingListItem SET sortOrder=?1,updatedAt=?2 WHERE id=?3",
-                params![order as i64, db::now(), id],
-            )?;
-        }
-        tx.commit()?;
-        Ok(())
-    })
-    .await
+    let mut tx = app.db.begin().await?;
+    // Items can disappear while the network request is running; never recreate them.
+    for (order, id) in ids.iter().enumerate() {
+        sqlx::query("UPDATE shopping_list_item SET sort_order=?,updated_at=? WHERE id=?")
+            .bind(order as i64)
+            .bind(db::now())
+            .bind(id)
+            .execute(&mut *tx)
+            .await?;
+    }
+    tx.commit().await?;
+    Ok(())
 }
+
 fn trmnl_data(plan: &MealPlan, today: &str) -> Result<(Value, String)> {
     let days: Vec<_> = plan
         .days
@@ -164,20 +161,16 @@ async fn push(app: &App, force: bool) -> Result<PushResult> {
             pushed_at: None,
         });
     };
-    let (payload, hash, previous) = app
-        .database(|db| {
-            let plan = meals::plan(db)?;
-            let (payload, hash) = trmnl_data(&plan, &today())?;
-            let previous: Option<String> = one(
-                db,
-                "SELECT lastPushHash FROM MealPlan WHERE id='singleton'",
-                [],
-                |row| row.get(0),
-                "Meal plan not found",
-            )?;
-            Ok((payload, hash, previous))
-        })
-        .await?;
+    let (payload, hash, previous) = {
+        let mut db = app.db.acquire().await?;
+        let plan = meals::plan(&mut db).await?;
+        let (payload, hash) = trmnl_data(&plan, &today())?;
+        let previous: Option<String> =
+            sqlx::query_scalar("SELECT last_push_hash FROM app_settings WHERE id='singleton'")
+                .fetch_one(&mut *db)
+                .await?;
+        (payload, hash, previous)
+    };
     if !force && previous.as_deref() == Some(&hash) {
         return Ok(PushResult {
             success: true,
@@ -197,15 +190,15 @@ async fn push(app: &App, force: bool) -> Result<PushResult> {
     };
     let now = db::now();
     let pushed_at = now.clone();
-    let saved_error = error.clone();
-    app.transaction(move |db| {
-        if let Some(error) = saved_error {
-            db.execute("UPDATE MealPlan SET lastPushError=?1,updatedAt=?2 WHERE id='singleton'",params![error,now])?;
-        } else {
-            db.execute("UPDATE MealPlan SET lastPushHash=?1,lastPushAt=?2,lastPushError=NULL,updatedAt=?2 WHERE id='singleton'",params![hash,now])?;
-        }
-        Ok(())
-    }).await?;
+    if let Some(error) = &error {
+        sqlx::query("UPDATE app_settings SET last_push_error=? WHERE id='singleton'")
+            .bind(error)
+            .execute(&app.db)
+            .await?;
+    } else {
+        sqlx::query("UPDATE app_settings SET last_push_hash=?,last_push_at=?,last_push_error=NULL WHERE id='singleton'")
+            .bind(hash).bind(now).execute(&app.db).await?;
+    }
     Ok(PushResult {
         success: error.is_none(),
         pushed_at: error.is_none().then_some(pushed_at),
@@ -232,7 +225,7 @@ async fn config() -> Json<TrmnlConfig> {
         has_webhook_url: enabled,
     })
 }
-#[derive(Serialize)]
+#[derive(Serialize, sqlx::FromRow)]
 #[serde(rename_all = "camelCase")]
 struct PushStatus {
     last_push_at: Option<String>,
@@ -240,24 +233,7 @@ struct PushStatus {
     has_pushed: bool,
 }
 async fn status(State(app): State<App>) -> Result<Json<PushStatus>> {
-    app.database(|db| {
-        one(
-            db,
-            "SELECT lastPushAt,lastPushError FROM MealPlan WHERE id='singleton'",
-            [],
-            |row| {
-                let last_push_at = db::optional_timestamp(row, 0)?;
-                Ok(PushStatus {
-                    has_pushed: last_push_at.is_some(),
-                    last_push_at,
-                    last_push_error: row.get(1)?,
-                })
-            },
-            "Meal plan not found",
-        )
-    })
-    .await
-    .map(Json)
+    Ok(Json(sqlx::query_as("SELECT last_push_at,last_push_error,last_push_at IS NOT NULL AS has_pushed FROM app_settings WHERE id='singleton'").fetch_one(&app.db).await?))
 }
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]

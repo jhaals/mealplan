@@ -47,26 +47,41 @@ Configure an OpenRouter API key with `openrouter_api_key`. When configured, enab
 
 ## Data & Backups
 
-Data is stored in `/data/mealplan.db` and included automatically in Home Assistant backups.
-The Rust backend opens the same SQLite file as the old backend. Existing IDs,
-meals, lists, recurring tasks, descriptions, archives, and settings are retained;
-no export or conversion is required. Stop the old server before starting Rust.
+The active database is `/data/mealplan-v2.db`, included in Home Assistant backups.
+The add-on automatically upgrades the old `/data/mealplan.db` before starting HTTP.
+It writes a separate temporary database, copies and verifies every row, normalizes
+timestamps, and only then publishes the new file. The original database remains
+untouched. No manual command is required.
 
-Startup applies pending migrations from `server/prisma/migrations` and creates
-missing singleton records. The existing `_prisma_migrations` ledger and migration
-checksums are preserved, so an up-to-date database remains readable by Prisma.
-Do not edit historical migration SQL files. Take a database backup before upgrading.
+Subsequent starts use the new database and skip importing. Fresh installs initialize
+it directly. If import or validation fails, the add-on stops and logs the error;
+it never replaces existing data with an empty database. Incomplete temporary imports
+are discarded and retried on restart. An existing invalid destination is never
+silently overwritten.
 
-Locally, commands run from `server/` and default to `file:./dev.db`, matching the old
-server. `server/.env` can set `DATABASE_URL`, `PORT`, `LANGUAGE`,
-`TRMNL_WEBHOOK_URL`, `OPENROUTER_API_KEY`, and `OPENROUTER_MODEL`.
-Absolute paths such as `DATABASE_URL=file:/data/mealplan.db` are supported.
-`STATIC_DIR` defaults to `../dist`. `npm run db:migrate` applies migrations and
-initializes missing singletons without starting HTTP; `npm run db:seed` is an alias.
-SQLite tools can inspect the database; Prisma is no longer required at runtime.
+SQLx manages future schema changes from `server/migrations`. Database columns use
+snake_case and UTC RFC3339 timestamps; API JSON remains camelCase. Sorting settings
+and TRMNL sync state live in `app_settings` independently of meal-plan resets.
+
+To roll back the upgrade, stop the add-on and restore the previous add-on version,
+which uses the preserved `/data/mealplan.db`. That file contains the data from before
+cutover; it does not include edits made in the new version. Keep the entire `/data`
+directory in backups and retain the original until satisfied with the upgrade.
+
+Locally, commands run from `server/` and default to `file:./dev.db`.
+`DATABASE_URL` accepts existing `file:` paths and SQLx `sqlite:` URLs. A local
+legacy database is rejected rather than treated as an empty SQLx database; the
+standalone importer is `cargo run --bin migrate-legacy -- OLD.db NEW.db`.
+The add-on invokes this importer automatically. Normal startup contains no legacy
+queries, and neither Prisma nor Node.js is needed for database access.
+
+`server/.env` can set `DATABASE_URL`, `PORT`, `LANGUAGE`, `TRMNL_WEBHOOK_URL`,
+`OPENROUTER_API_KEY`, and `OPENROUTER_MODEL`. `STATIC_DIR` defaults to `../dist`.
+`npm run db:migrate` applies SQLx migrations and initializes singletons without
+starting HTTP; `npm run db:seed` is an alias.
 
 ## Troubleshooting
 
 - **Add-on won't start** - Check logs; if port 3001 is in use, change it in configuration
 - **"Meal plan not found"** - Restart the add-on to reinitialize the database
-- **Reset database** - Stop add-on, delete `/data/mealplan.db`, restart
+- **Reset database** - Stop add-on, delete `/data/mealplan-v2.db` and the retained `/data/mealplan.db`, restart
