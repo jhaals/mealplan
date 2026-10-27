@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.94] - 2026-10-27
+
+## What's Changed
+* Use SQLx with automatic migration of existing SQLite data by @jhaals in https://github.com/jhaals/mealplan/pull/297
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.93...v1.0.94
+
 ## [1.0.93] - 2026-10-27
 
 **Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.92...v1.0.93
