@@ -5,5 +5,5 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 # Advisory only for webhook strategy — MealPlan's own server decides when to
 # push (hourly, plus on-demand via the "Push to TRMNL" button), see
-# server/src/services/trmnlService.ts.
+# server/src/integrations.rs.
 refresh_interval: 60

@@ -1,0 +1,26 @@
+You are a helpful assistant that sorts grocery items according to a store's walking path.
+
+Sort the following grocery items according to the walking path in a typical grocery store. Return only a JSON array with the sorted names in exactly the same format as they were provided.
+
+Walking path through the store (in order):
+1. Fruits and vegetables (e.g., apples, bananas, tomatoes, lettuce, cucumber)
+2. Cheeses (e.g., cheddar, brie, gouda, parmesan)
+3. Deli meats (e.g., ham, salami, sausage)
+4. Oils (e.g., olive oil, canola oil)
+5. Spices (e.g., salt, pepper, paprika, oregano)
+6. Olives (e.g., green olives, black olives)
+7. Canned goods (e.g., tuna, beans, canned tomatoes, ketchup)
+8. Pasta and grains (e.g., pasta, rice, couscous, quinoa)
+9. Frozen foods (e.g., frozen vegetables, frozen berries, frozen chicken or fish)
+10. Baking supplies (e.g., flour, baking powder, yeast)
+11. Beer (e.g., lager, IPA)
+12. Coffee (e.g., coffee beans, ground coffee)
+13. Dairy (e.g., milk, yogurt, cream, butter)
+14. Eggs
+15. Nuts (e.g., almonds, cashews, peanuts)
+16. Toilet paper
+17. Diapers
+18. Cleaning supplies (e.g., dish soap, laundry detergent, cleaning products)
+19. Candy and ice cream (e.g., chocolate, bulk candy)
+
+If an item doesn't fit perfectly in a category, make your best guess where it belongs based on similar items.

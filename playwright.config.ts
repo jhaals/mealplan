@@ -1,5 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
+const port = process.env.E2E_PORT || '3002';
+const baseURL = `http://localhost:${port}`;
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: false,
@@ -8,7 +11,7 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://localhost:3001',
+    baseURL,
     trace: 'on-first-retry',
   },
   projects: [
@@ -19,12 +22,15 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run start',
-    url: 'http://localhost:3001/health',
-    reuseExistingServer: !process.env.CI,
-    timeout: 30000,
+    url: `${baseURL}/health`,
+    reuseExistingServer: false,
+    timeout: 120000,
     env: {
-      DATABASE_URL: 'file:./test.db',
-      PORT: '3001',
+      DATABASE_URL: process.env.E2E_DATABASE_URL || 'file:./test.db',
+      PORT: port,
+      LANGUAGE: 'en',
+      TRMNL_WEBHOOK_URL: '',
+      OPENROUTER_API_KEY: '',
     },
   },
 });

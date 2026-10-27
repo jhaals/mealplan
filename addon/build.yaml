@@ -1,8 +1,8 @@
 context: ".."
 build_from:
-  aarch64: oven/bun:1-alpine
-  amd64: oven/bun:1-alpine
-  armv7: oven/bun:1-alpine
+  aarch64: alpine:3.23
+  amd64: alpine:3.23
+  armv7: alpine:3.23
 args:
   BUILD_ARCH: "{arch}"
 labels:

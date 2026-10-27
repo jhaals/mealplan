@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "npm"
+  - package-ecosystem: "cargo"
     directory: "/server"
     schedule:
       interval: "weekly"
