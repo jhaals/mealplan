@@ -32,7 +32,7 @@ COPY server/prisma/migrations/ ./prisma/migrations/
 RUN cargo build --locked --release
 
 # Stage 3: The runtime needs only the binary, frontend, and add-on configuration tools.
-FROM alpine:3.23
+FROM alpine:3.24
 RUN apk add --no-cache bash jq ca-certificates tzdata
 WORKDIR /app/server
 COPY --from=frontend-builder /build/dist/ /app/dist/
