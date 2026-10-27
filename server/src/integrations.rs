@@ -153,6 +153,17 @@ struct PushResult {
     error: Option<String>,
     pushed_at: Option<String>,
 }
+fn webhook_error(response: &reqwest::Response) -> String {
+    let mut message = format!("TRMNL webhook returned HTTP {}", response.status().as_u16());
+    if let Some(ray) = response
+        .headers()
+        .get("cf-ray")
+        .and_then(|v| v.to_str().ok())
+    {
+        message.push_str(&format!(" (Cloudflare Ray ID: {ray})"));
+    }
+    message
+}
 async fn push(app: &App, force: bool) -> Result<PushResult> {
     let Some(url) = env("TRMNL_WEBHOOK_URL") else {
         return Ok(PushResult {
@@ -181,12 +192,11 @@ async fn push(app: &App, force: bool) -> Result<PushResult> {
     let response = app.client.post(url).json(&payload).send().await;
     let error = match response {
         Ok(response) if response.status().is_success() => None,
-        Ok(response) => Some(format!(
-            "TRMNL API error: {} - {}",
-            response.status(),
-            response.text().await.unwrap_or_default()
+        Ok(response) => Some(webhook_error(&response)),
+        Err(error) => Some(format!(
+            "TRMNL webhook request failed: {}",
+            error.without_url()
         )),
-        Err(error) => Some(error.to_string()),
     };
     let now = db::now();
     let pushed_at = now.clone();
@@ -273,7 +283,11 @@ pub fn start_sync(app: App) {
             interval.tick().await;
             match push(&app, false).await {
                 Ok(result) if result.success => {}
-                other => eprintln!("TRMNL sync: {other:?}"),
+                Ok(result) => eprintln!(
+                    "TRMNL sync: {}",
+                    result.error.as_deref().unwrap_or("Push failed")
+                ),
+                Err(error) => eprintln!("TRMNL sync: {error}"),
             }
         }
     });
@@ -282,6 +296,25 @@ pub fn start_sync(app: App) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn webhook_errors_exclude_response_bodies_and_keep_diagnostic_headers() {
+        let response = axum::http::Response::builder()
+            .status(524)
+            .header("cf-ray", "a512561fd9628bde-ARN")
+            .body("<!DOCTYPE html><html>A timeout occurred</html>".repeat(1000))
+            .unwrap()
+            .into();
+        assert_eq!(
+            webhook_error(&response),
+            "TRMNL webhook returned HTTP 524 (Cloudflare Ray ID: a512561fd9628bde-ARN)"
+        );
+        let response = axum::http::Response::builder()
+            .status(503)
+            .body("upstream failure")
+            .unwrap()
+            .into();
+        assert_eq!(webhook_error(&response), "TRMNL webhook returned HTTP 503");
+    }
     #[test]
     fn sort_preserves_duplicate_ids_and_rejects_missing_items() {
         let items: Vec<_> = [("a", "Milk"), ("b", "Milk"), ("c", "Eggs")]
