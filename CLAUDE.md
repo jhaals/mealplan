@@ -13,8 +13,7 @@ Vite's development server proxies API requests to that port.
 - `server/src/meals.rs`: meals, day shifting, moves, swaps, plan archives.
 - `server/src/lists.rs`: shopping lists, todos, recurrence, descriptions, history.
 - `server/src/integrations.rs`: OpenRouter sorting and TRMNL pushes.
-- `server/src/bin/migrate-legacy.rs`: one-off pre-start importer for the current legacy schema.
-- `server/tests/compatibility.rs`: API regression tests; `server/tests/migration.rs`: cutover safety tests.
+- `server/tests/compatibility.rs`: API regression tests; `server/tests/database.rs`: database initialization and restart tests.
 
 `meal_plan`, `shopping_list`, and `todo_list` use ID `singleton`. Startup creates
 missing singletons and applies pending migrations. Global settings live in `app_settings`
@@ -29,12 +28,10 @@ queries; do not reintroduce manual row mapping or a connection mutex.
 Database names are snake_case. Timestamps are UTC RFC3339 text with milliseconds;
 calendar dates stay YYYY-MM-DD. Preserve opaque IDs and archived JSON snapshots.
 
-Before startup, the add-on importer copies `/data/mealplan.db` into
-`/data/mealplan-v2.db` through a temporary file and verifies every imported value.
-The original is untouched for rollback. Import failures stop startup. Existing
-new databases are validated and never overwritten or reimported.
-Legacy format knowledge belongs only in the importer and its fixtures; the web
-server rejects unmanaged databases. No historical Prisma migrations are shipped.
+The add-on uses `/data/mealplan-v2.db`. The one-off legacy importer has been
+removed after the successful cutover. Do not rename the active file or reimport
+`/data/mealplan.db`; that old snapshot excludes new writes. The web server rejects
+unmanaged databases. No historical Prisma migrations are shipped.
 
 ## Frontend behavior
 
