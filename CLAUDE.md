@@ -28,10 +28,8 @@ queries; do not reintroduce manual row mapping or a connection mutex.
 Database names are snake_case. Timestamps are UTC RFC3339 text with milliseconds;
 calendar dates stay YYYY-MM-DD. Preserve opaque IDs and archived JSON snapshots.
 
-The add-on uses `/data/mealplan-v2.db`. The one-off legacy importer has been
-removed after the successful cutover. Do not rename the active file or reimport
-`/data/mealplan.db`; that old snapshot excludes new writes. The web server rejects
-unmanaged databases. No historical Prisma migrations are shipped.
+The add-on uses `/data/mealplan-v2.db`; do not rename the active file. The web
+server rejects unmanaged databases.
 
 ## Frontend behavior
 
@@ -51,8 +49,6 @@ npm run dev:backend     # Cargo debug server; restart after Rust changes
 npm run build           # Frontend build
 npm run build:backend   # Cargo release build
 npm start               # Release server
-npm run db:migrate      # Apply migrations and seed singletons, then exit
-npm run db:seed          # Alias for migration/initialization
 npm run test:backend    # Rust tests
 npm run test:e2e        # Playwright on dedicated port 3002, isolated test database
 npm run lint

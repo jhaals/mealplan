@@ -21,7 +21,6 @@ import { MealPlanHistory } from './components/MealPlanHistory';
 import { ShoppingList } from './components/ShoppingList';
 import { TodoList } from './components/TodoList';
 import { TRMNLPage } from './components/TRMNLPage';
-import { ThemeToggle } from './components/ThemeToggle';
 import { Button } from './components/ui/Button';
 import { Segmented } from './components/ui/Segmented';
 import type { Meal } from './types';
@@ -325,6 +324,7 @@ function TopBar() {
           <h1 className="min-w-0 truncate" style={{ fontSize: 'var(--text-md)' }}>{t('headings.shoppingList')}</h1>
         ) : <Wordmark />}
         {isShopping && <div id="shopping-actions" className="flex items-center shrink-0 ml-auto empty:hidden" />}
+        {isShopping && (<>
         <button
           type="button"
           popoverTarget="header-settings"
@@ -339,7 +339,8 @@ function TopBar() {
         </button>
         <div id="header-settings" popover="auto" ref={settingsRef} className="header-settings text-ink" aria-label={t('navigation.settings')}>
           {isShopping && (
-            <div className="grid gap-1 pb-3 mb-2" style={{ borderBottom: 'var(--rule-hair)' }}>
+            <div className="grid gap-1">
+              {/* Theme lives on the Settings page; this menu only switches shopping views. */}
               {([
                 ['list', 'tabs.currentList'],
                 ['history', 'tabs.history'],
@@ -364,11 +365,8 @@ function TopBar() {
               ))}
             </div>
           )}
-          <div className="flex items-center justify-between gap-3 pl-3">
-            <span className="text-sm font-semibold">{t('theme.label')}</span>
-            <ThemeToggle />
-          </div>
         </div>
+        </>)}
       </div>
     </header>
   );
