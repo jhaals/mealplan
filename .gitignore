@@ -46,4 +46,3 @@ server/target/
 *.db-journal
 *.db-wal
 *.db-shm
-server/src/generated/
