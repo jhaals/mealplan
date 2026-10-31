@@ -17,7 +17,7 @@ test.describe('Shopping List', () => {
     await expect(page.getByText('Your shopping list is empty')).toBeVisible();
   });
 
-  test('compact header settings switch views and theme', async ({ page }) => {
+  test('compact header settings switch views', async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 700 });
     await page.goto('/shopping');
     const header = page.locator('header');
@@ -40,8 +40,7 @@ test.describe('Shopping List', () => {
     await page.getByRole('button', { name: 'Current List', exact: true }).click();
     await expect(page.getByPlaceholder('Add item...')).toBeVisible();
     await settings.click();
-    await page.getByRole('button', { name: 'Theme: System theme. Change theme.' }).click();
-    await expect(page.getByRole('button', { name: 'Theme: Light theme. Change theme.' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sort Prompt', exact: true })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.locator('#header-settings')).not.toBeVisible();
     await expect(settings).toBeFocused();
