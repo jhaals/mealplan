@@ -1,7 +1,6 @@
 .git
 **/node_modules
 **/target
-**/generated
 dist
 .env
 **/.env
