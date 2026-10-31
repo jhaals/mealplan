@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.98] - 2026-10-31
+
+## What's Changed
+* Add add-on icon, logo, and web UI link by @jhaals in https://github.com/jhaals/mealplan/pull/301
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.95...v1.0.98
+
 ## [1.0.97] - 2026-10-27
 
 ## What's Changed
