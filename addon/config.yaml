@@ -3,6 +3,7 @@ version: "1.0.97"
 slug: mealplan
 description: Mobile-first meal planning application with drag-and-drop organization
 url: "https://github.com/jhaals/mealplan"
+webui: "http://[HOST]:[PORT:3001]"
 image: "ghcr.io/jhaals/mealplan-{arch}"
 arch:
   - amd64
