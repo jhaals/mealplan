@@ -49,26 +49,14 @@ Configure an OpenRouter API key with `openrouter_api_key`. When configured, enab
 ## Data & Backups
 
 The active database is `/data/mealplan-v2.db`, included in Home Assistant backups.
-Startup applies pending SQLx schema migrations and initializes missing singleton
-records. Existing data is preserved across restarts; fresh installs initialize
-automatically. The one-off legacy importer has been removed after the successful
-upgrade. The old `/data/mealplan.db` file is no longer used or modified.
-
-SQLx manages future schema changes from `server/migrations`. Database columns use
-snake_case and UTC RFC3339 timestamps; API JSON remains camelCase. Sorting settings
-and TRMNL sync state live in `app_settings` independently of meal-plan resets.
-
-Keep the entire `/data` directory in backups. The old `/data/mealplan.db`, if
-present, is only a snapshot from before the upgrade and excludes subsequent edits.
+Existing data is preserved across restarts; fresh installs initialize
+automatically. Keep the entire `/data` directory in backups.
 
 Locally, commands run from `server/` and default to `file:./dev.db`.
-`DATABASE_URL` accepts `file:` paths and SQLx `sqlite:` URLs. Unsupported database
-schemas are rejected. Neither Prisma nor Node.js is needed for database access.
+`DATABASE_URL` accepts `file:` paths and SQLx `sqlite:` URLs.
 
 `server/.env` can set `DATABASE_URL`, `PORT`, `LANGUAGE`, `TRMNL_WEBHOOK_URL`,
 `OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, and `OPENROUTER_BASE_URL`. `STATIC_DIR` defaults to `../dist`.
-`npm run db:migrate` applies SQLx migrations and initializes singletons without
-starting HTTP; `npm run db:seed` is an alias.
 
 ## Troubleshooting
 
