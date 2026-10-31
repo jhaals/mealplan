@@ -93,9 +93,14 @@ async fn shopping_items_toggle_delete_and_history_removal() {
     assert_eq!(toggled["checked"], false);
 
     assert_eq!(
-        request(&app, "POST", "/api/shopping-list/items", json!({"name":""}))
-            .await
-            .0,
+        request(
+            &app,
+            "POST",
+            "/api/shopping-list/items",
+            json!({"name":"   "})
+        )
+        .await
+        .0,
         400
     );
     ok(
@@ -215,6 +220,20 @@ async fn sorting_prompt_config_validates_and_persists() {
 #[tokio::test]
 async fn todo_reorder_and_delete() {
     let app = app().await;
+    for name in ["", "   "] {
+        assert_eq!(
+            request(&app, "POST", "/api/todo-list/items", json!({"name":name}))
+                .await
+                .0,
+            400
+        );
+        assert_eq!(
+            request(&app, "POST", "/api/meal-plan/meals", json!({"name":name}))
+                .await
+                .0,
+            400
+        );
+    }
     let a = ok(&app, "POST", "/api/todo-list/items", json!({"name":"A"})).await;
     let b = ok(&app, "POST", "/api/todo-list/items", json!({"name":"B"})).await;
     ok(

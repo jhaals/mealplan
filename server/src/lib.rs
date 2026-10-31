@@ -109,7 +109,7 @@ impl App {
 }
 
 pub fn required<'a>(value: &'a str, message: &str) -> Result<&'a str> {
-    if value.is_empty() {
+    if value.trim().is_empty() {
         Err(ApiError::new(400, message))
     } else {
         Ok(value)
