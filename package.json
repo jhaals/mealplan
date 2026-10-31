@@ -13,8 +13,6 @@
     "lint": "eslint .",
     "test:e2e": "npx playwright test",
     "preview": "vite preview",
-    "db:migrate": "cd server && cargo run --locked -- --migrate",
-    "db:seed": "cd server && cargo run --locked -- --migrate",
     "build:backend": "cd server && cargo build --locked --release",
     "test:backend": "cd server && cargo test --locked"
   },

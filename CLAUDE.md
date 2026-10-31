@@ -49,8 +49,6 @@ npm run dev:backend     # Cargo debug server; restart after Rust changes
 npm run build           # Frontend build
 npm run build:backend   # Cargo release build
 npm start               # Release server
-npm run db:migrate      # Apply migrations and seed singletons, then exit
-npm run db:seed          # Alias for migration/initialization
 npm run test:backend    # Rust tests
 npm run test:e2e        # Playwright on dedicated port 3002, isolated test database
 npm run lint

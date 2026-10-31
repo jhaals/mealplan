@@ -10,9 +10,6 @@ async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let app = App::connect(&url)
         .await
         .map_err(|e| format!("Database initialization failed: {e:?}"))?;
-    if std::env::args().any(|a| a == "--migrate") {
-        return Ok(());
-    }
     let port = std::env::var("PORT").unwrap_or_else(|_| "3001".into());
     let dist = std::env::var("STATIC_DIR").unwrap_or_else(|_| "../dist".into());
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{port}")).await?;
