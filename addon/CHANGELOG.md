@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.100] - 2026-10-31
+
+## What's Changed
+* Remove leftover Prisma files, add endpoint tests, reject blank names by @jhaals in https://github.com/jhaals/mealplan/pull/303
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.99...v1.0.100
+
 ## [1.0.99] - 2026-10-31
 
 ## What's Changed
