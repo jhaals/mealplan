@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.101] - 2026-10-31
+
+## What's Changed
+* Remove duplicate header settings cog and trim migration docs by @jhaals in https://github.com/jhaals/mealplan/pull/304
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.100...v1.0.101
+
 ## [1.0.100] - 2026-10-31
 
 ## What's Changed
