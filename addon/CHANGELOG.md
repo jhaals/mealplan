@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.99] - 2026-10-31
+
+## What's Changed
+* Add add-on icon/logo, web UI link, and custom OpenAI-compatible endpoint by @jhaals in https://github.com/jhaals/mealplan/pull/302
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.98...v1.0.99
+
 ## [1.0.98] - 2026-10-31
 
 ## What's Changed
