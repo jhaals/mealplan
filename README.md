@@ -34,6 +34,7 @@ port: 3001                 # Web interface port (optional, default: 3001)
 trmnl_webhook_url: ""      # TRMNL e-ink display webhook URL (optional)
 openrouter_api_key: ""    # OpenRouter key for shopping list sorting (optional)
 openrouter_model: ""      # Optional model override
+openrouter_base_url: ""   # Optional OpenAI-compatible base URL (e.g. http://host:11434/v1)
 language: "en"             # UI language: "en" or "sv" (optional)
 ```
 
@@ -43,7 +44,7 @@ Get your webhook URL from your TRMNL plugin settings (`https://usetrmnl.com/api/
 
 ### AI shopping list sorting
 
-Configure an OpenRouter API key with `openrouter_api_key`. When configured, enables AI-powered sorting of the shopping list grouped by store section.
+Configure an OpenRouter API key with `openrouter_api_key`. When configured, enables AI-powered sorting of the shopping list grouped by store section. To use another OpenAI-compatible API (OpenAI, Ollama, LM Studio, ...), set `openrouter_base_url` (the API key is then optional) and `openrouter_model`.
 
 ## Data & Backups
 
@@ -65,7 +66,7 @@ Locally, commands run from `server/` and default to `file:./dev.db`.
 schemas are rejected. Neither Prisma nor Node.js is needed for database access.
 
 `server/.env` can set `DATABASE_URL`, `PORT`, `LANGUAGE`, `TRMNL_WEBHOOK_URL`,
-`OPENROUTER_API_KEY`, and `OPENROUTER_MODEL`. `STATIC_DIR` defaults to `../dist`.
+`OPENROUTER_API_KEY`, `OPENROUTER_MODEL`, and `OPENROUTER_BASE_URL`. `STATIC_DIR` defaults to `../dist`.
 `npm run db:migrate` applies SQLx migrations and initializes singletons without
 starting HTTP; `npm run db:seed` is an alias.
 

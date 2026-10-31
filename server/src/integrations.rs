@@ -61,15 +61,24 @@ pub async fn sort(app: &App) -> Result<()> {
     }
     let fallback: Vec<String> = unchecked.iter().map(|item| item.id.clone()).collect();
     let sorted: std::result::Result<Vec<String>, String> = async {
-        let key = env("OPENROUTER_API_KEY").ok_or("OPENROUTER_API_KEY is not configured".to_owned())?;
+        let base_url = env("OPENROUTER_BASE_URL");
+        let key = env("OPENROUTER_API_KEY");
+        // The key is only optional for a custom endpoint (e.g. a local Ollama server).
+        if key.is_none() && base_url.is_none() {
+            return Err("OPENROUTER_API_KEY is not configured".to_owned());
+        }
+        let endpoint = format!("{}/chat/completions", base_url.as_deref().unwrap_or("https://openrouter.ai/api/v1").trim_end_matches('/'));
         let names: Vec<&str> = unchecked.iter().map(|item| item.name.as_str()).collect();
         let instruction = if env("LANGUAGE").as_deref() == Some("sv") { "Varor att sortera:" } else { "Items to sort:" };
         let prompt = format!("{prompt}\n\n{instruction}\n{}\n\nIMPORTANT: Return ALL {} items in the JSON object {{\"items\": [...]}}. Do not skip any items.",names.join("\n"),names.len());
-        let response = app.client.post("https://openrouter.ai/api/v1/chat/completions")
-            .bearer_auth(key).header("HTTP-Referer","https://github.com/jhaals/mealplan").header("X-Title","MealPlan Shopping List Sorter")
+        let mut request = app.client.post(endpoint);
+        if let Some(key) = key {
+            request = request.bearer_auth(key);
+        }
+        let response = request.header("HTTP-Referer","https://github.com/jhaals/mealplan").header("X-Title","MealPlan Shopping List Sorter")
             .json(&json!({"model":env("OPENROUTER_MODEL").unwrap_or_else(||"meta-llama/llama-3.2-3b-instruct:free".into()),"messages":[{"role":"user","content":prompt}],"temperature":0,"response_format":{"type":"json_object"}}))
             .send().await.map_err(|e| e.to_string())?.error_for_status().map_err(|e| e.to_string())?.json::<Value>().await.map_err(|e| e.to_string())?;
-        let content = response["choices"][0]["message"]["content"].as_str().ok_or("No response from OpenRouter")?.trim();
+        let content = response["choices"][0]["message"]["content"].as_str().ok_or("No response from AI provider")?.trim();
         let content = if let Some((_, fenced)) = content.split_once("```") { let fenced = fenced.strip_prefix("json").unwrap_or(fenced); fenced.split("```").next().unwrap().trim() } else { content };
         let parsed: Value = serde_json::from_str(content).map_err(|e| e.to_string())?;
         let names = parsed.as_array().or_else(|| parsed["items"].as_array()).or_else(|| parsed["sortedItems"].as_array()).ok_or("Unexpected response format")?;

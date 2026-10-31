@@ -19,10 +19,12 @@ options:
   trmnl_webhook_url: ""
   openrouter_api_key: ""
   openrouter_model: ""
+  openrouter_base_url: ""
   language: "en"
 schema:
   port: "port?"
   trmnl_webhook_url: "str?"
   openrouter_api_key: "str?"
   openrouter_model: "str?"
+  openrouter_base_url: "str?"
   language: "list(en|sv)?"
