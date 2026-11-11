@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.102] - 2026-11-11
+
+## What's Changed
+* Bump react-i18next from 17.1.8 to 17.1.10 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/305
+* Bump eslint from 10.13.0 to 10.14.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/308
+* Bump typescript-eslint from 8.72.0 to 8.72.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/310
+* Bump i18next from 26.5.10 to 26.6.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/307
+* Bump react-router-dom from 7.18.4 to 7.18.5 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/309
+* Bump globals from 17.13.0 to 17.14.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/312
+* Bump @tailwindcss/vite from 4.3.3 to 4.3.5 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/313
+* Bump vite from 8.3.5 to 8.3.6 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/314
+* Bump concurrently from 10.0.6 to 10.0.7 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/317
+* Bump uuid from 1.29.0 to 1.29.1 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/321
+* Bump @vitejs/plugin-react from 6.1.2 to 6.2.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/315
+* Bump @playwright/test from 1.64.1 to 1.65.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/320
+* Extend sticky header under iOS status bar and tighten shopping list rows by @jhaals in https://github.com/jhaals/mealplan/pull/311
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.101...v1.0.102
+
 ## [1.0.101] - 2026-10-31
 
 ## What's Changed
