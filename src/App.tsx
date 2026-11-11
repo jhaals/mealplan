@@ -314,8 +314,12 @@ function TopBar() {
     <header
       className="sticky top-0 z-40"
       style={{
-        background: 'color-mix(in oklab, var(--color-paper) 88%, transparent)',
+        // Extends under the iOS status bar (black-translucent) so nothing
+        // scrolls visibly behind the clock; near-opaque keeps it crisp.
+        paddingTop: 'env(safe-area-inset-top, 0px)',
+        background: 'color-mix(in oklab, var(--color-paper) 96%, transparent)',
         backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
         borderBottom: 'var(--rule-hair)',
       }}
     >

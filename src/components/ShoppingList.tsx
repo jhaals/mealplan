@@ -255,7 +255,7 @@ export function ShoppingList() {
               onDragCancel={() => setIsDragging(false)}
             >
               <SortableContext items={uncheckedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
-                <ul className="mt-4 grid gap-1.5 list-none p-0 m-0">
+                <ul className="mt-4 grid list-none p-0 m-0">
                   {uncheckedItems.map((item) => (
                     <ShoppingListItem
                       key={item.id}
@@ -275,7 +275,7 @@ export function ShoppingList() {
               <p className="mono-label mb-2">
                 {t('counts.checkedItems', { count: checkedItems.length })}
               </p>
-              <ul className="grid gap-1.5 list-none p-0 m-0">
+              <ul className="grid list-none p-0 m-0">
                 {checkedItems.map((item) => (
                   <ShoppingListItem
                     key={item.id}
