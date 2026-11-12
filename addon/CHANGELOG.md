@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.103] - 2026-11-12
+
+## What's Changed
+* Reload home-screen app on pull-down and stop caching index.html by @jhaals in https://github.com/jhaals/mealplan/pull/322
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.102...v1.0.103
+
 ## [1.0.102] - 2026-11-11
 
 ## What's Changed
