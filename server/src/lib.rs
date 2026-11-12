@@ -6,7 +6,8 @@ mod models;
 
 use axum::{
     extract::{rejection::JsonRejection, DefaultBodyLimit, FromRequest, Request, State},
-    http::StatusCode,
+    http::{header, HeaderValue, StatusCode},
+    middleware::{self, Next},
     response::{
         sse::{Event, KeepAlive, Sse},
         IntoResponse, Response,
@@ -156,10 +157,32 @@ pub fn router(app: App, dist: &str) -> Router {
         .route("/health", get(health))
         .nest("/api", api)
         .fallback_service(
-            ServeDir::new(dist).fallback(ServeFile::new(format!("{dist}/index.html"))),
+            Router::new()
+                .fallback_service(
+                    ServeDir::new(dist).fallback(ServeFile::new(format!("{dist}/index.html"))),
+                )
+                .layer(middleware::from_fn(cache_control)),
         )
         .layer(DefaultBodyLimit::max(1024 * 1024))
         .with_state(app)
+}
+/// Vite fingerprints everything under `/assets/`, so those never change. Every
+/// other file (index.html above all) must be revalidated, or a home-screen app
+/// keeps loading the previous deploy's stylesheet.
+async fn cache_control(request: Request, next: Next) -> Response {
+    let immutable = request.uri().path().starts_with("/assets/");
+    let mut response = next.run(request).await;
+    if response.status().is_success() {
+        let value = if immutable {
+            "public, max-age=31536000, immutable"
+        } else {
+            "no-cache"
+        };
+        response
+            .headers_mut()
+            .insert(header::CACHE_CONTROL, HeaderValue::from_static(value));
+    }
+    response
 }
 #[derive(Serialize)]
 struct Health {

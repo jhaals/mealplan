@@ -13,6 +13,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import { useMealPlanner } from './hooks/useMealPlanner';
+import { PULL_THRESHOLD, usePullToRefresh } from './hooks/usePullToRefresh';
 import { DatePicker } from './components/DatePicker';
 import { AddMealForm } from './components/AddMealForm';
 import { MealList } from './components/MealList';
@@ -460,9 +461,40 @@ function TabBar() {
   );
 }
 
+/* ---- Pull to refresh · home-screen apps have no reload button -------- */
+function PullToRefresh() {
+  const { t } = useTranslation();
+  const { pull, refreshing } = usePullToRefresh();
+  if (pull === 0 && !refreshing) return null;
+  const progress = Math.min(1, pull / PULL_THRESHOLD);
+  return (
+    <div
+      className="fixed inset-x-0 z-50 flex justify-center pointer-events-none"
+      style={{ top: `calc(env(safe-area-inset-top, 0px) + ${pull * 0.6}px)` }}
+      role="status"
+      aria-label={t('buttons.refreshing')}
+    >
+      <span
+        className="grid place-items-center h-9 w-9 rounded-full bg-paper"
+        style={{ boxShadow: 'var(--shadow-card)', opacity: progress }}
+      >
+        {refreshing ? (
+          <Spinner className="h-4 w-4" />
+        ) : (
+          <svg {...glyphProps} width={18} height={18} style={{ transform: `rotate(${progress * 180}deg)` }}>
+            <path d="M12 5v14" />
+            <path d="m6 13 6 6 6-6" />
+          </svg>
+        )}
+      </span>
+    </div>
+  );
+}
+
 function App() {
   return (
     <div className="min-h-screen bg-paper">
+      <PullToRefresh />
       <TopBar />
       <div style={{ paddingBottom: `calc(var(--tabbar-h) + var(--space-lg))` }}>
         <Routes>

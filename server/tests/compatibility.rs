@@ -23,6 +23,7 @@ async fn static_frontend_and_page_routes_return_success() {
             .unwrap();
         assert_eq!(response.status(), 200, "{path}");
         assert_eq!(response.headers()["content-type"], "text/html");
+        assert_eq!(response.headers()["cache-control"], "no-cache", "{path}");
         assert_eq!(to_bytes(response.into_body(), 1024).await.unwrap(), html);
     }
     let response = service
@@ -35,6 +36,10 @@ async fn static_frontend_and_page_routes_return_success() {
         .await
         .unwrap();
     assert_eq!(response.status(), 200);
+    assert_eq!(
+        response.headers()["cache-control"],
+        "public, max-age=31536000, immutable"
+    );
     assert_eq!(
         to_bytes(response.into_body(), 1024).await.unwrap(),
         "console.log('static')"

@@ -21,6 +21,7 @@
     "startPlanning": "Start Planning",
     "addMeal": "Add Meal",
     "retry": "Retry",
+    "refreshing": "Refreshing",
     "startNewWeek": "Start New Week",
     "showEarlierDays": "Show earlier days ({{count}})",
     "hideEarlierDays": "Hide earlier days",
