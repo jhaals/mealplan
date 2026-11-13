@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.105] - 2026-11-13
+
+## What's Changed
+* Bump i18next from 26.6.0 to 27.0.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/319
+* Bump react-i18next from 17.1.10 to 18.0.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/318
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.103...v1.0.105
+
 ## [1.0.103] - 2026-11-12
 
 ## What's Changed
