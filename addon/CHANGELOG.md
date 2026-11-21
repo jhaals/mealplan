@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.106] - 2026-11-21
+
+## What's Changed
+* Bump node from 26.12.1-alpine to 26.13.1-alpine in /addon by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/323
+* Bump @vitejs/plugin-react from 6.2.1 to 6.3.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/324
+* Bump eslint from 10.14.0 to 10.15.0 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/325
+* Bump vite from 8.3.6 to 8.3.8 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/326
+* Bump react-i18next from 18.0.0 to 18.0.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/328
+* Bump @playwright/test from 1.65.0 to 1.65.1 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/329
+* Bump uuid from 1.29.1 to 1.29.2 in /server by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/331
+* Bump i18next from 27.0.1 to 27.1.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/327
+* Bump typescript-eslint from 8.72.1 to 8.72.2 by @dependabot[bot] in https://github.com/jhaals/mealplan/pull/330
+* Replace cross-shaped add burst with ripple and item enter animation by @jhaals in https://github.com/jhaals/mealplan/pull/332
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.104...v1.0.106
+
 ## [1.0.105] - 2026-11-13
 
 ## What's Changed
