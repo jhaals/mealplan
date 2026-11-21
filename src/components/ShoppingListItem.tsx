@@ -7,9 +7,11 @@ interface ShoppingListItemProps {
   item: ShoppingListItemType;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  /** Just added — plays the enter animation. */
+  isNew?: boolean;
 }
 
-export function ShoppingListItem({ item, onToggle, onDelete }: ShoppingListItemProps) {
+export function ShoppingListItem({ item, onToggle, onDelete, isNew = false }: ShoppingListItemProps) {
   const { t } = useTranslation();
   const {
     attributes,
@@ -30,7 +32,7 @@ export function ShoppingListItem({ item, onToggle, onDelete }: ShoppingListItemP
     <li
       ref={setNodeRef}
       style={style}
-      className="group flex items-center gap-1 px-2 rounded-xl transition-colors"
+      className={`group flex items-center gap-1 px-2 rounded-xl transition-colors ${isNew ? 'item-enter' : ''}`}
     >
       <span
         className="shrink-0 grid place-items-center cursor-grab active:cursor-grabbing touch-none text-muted transition-colors group-hover:text-ink"

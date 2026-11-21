@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useTranslation } from 'react-i18next';
 import { MealCard } from './MealCard';
+import { useNewIds } from '../hooks/useNewIds';
 import { formatDayDisplay, toISODate } from '../utils/dateHelpers';
 import type { DayPlan } from '../types';
 
@@ -20,12 +21,14 @@ function DayRow({
   isToday,
   isPast = false,
   onDeleteMeal,
+  newMealIds,
 }: {
   day: DayPlan;
   index: number;
   isToday: boolean;
   isPast?: boolean;
   onDeleteMeal: (mealId: string, day: string) => void;
+  newMealIds: ReadonlySet<string>;
 }) {
   const { t } = useTranslation();
   const { dayName, dateStr } = formatDayDisplay(day.date);
@@ -57,7 +60,7 @@ function DayRow({
           <p className="day__empty">{t('messages.dropMealHere')}</p>
         ) : (
           day.meals.map((meal) => (
-            <MealCard key={meal.id} meal={meal} day={day.date} onDelete={onDeleteMeal} />
+            <MealCard key={meal.id} meal={meal} day={day.date} onDelete={onDeleteMeal} isNew={newMealIds.has(meal.id)} />
           ))
         )}
       </div>
@@ -68,6 +71,7 @@ function DayRow({
 export function MealList({ days, onDeleteMeal }: MealListProps) {
   const { t } = useTranslation();
   const [showPast, setShowPast] = useState(false);
+  const newMealIds = useNewIds(days.flatMap((day) => day.meals.map((meal) => meal.id)));
 
   if (days.length === 0) {
     return (
@@ -115,6 +119,7 @@ export function MealList({ days, onDeleteMeal }: MealListProps) {
                   isToday={false}
                   isPast
                   onDeleteMeal={onDeleteMeal}
+                  newMealIds={newMealIds}
                 />
               ))}
             </ol>
@@ -131,6 +136,7 @@ export function MealList({ days, onDeleteMeal }: MealListProps) {
               index={index}
               isToday={day.date === today}
               onDeleteMeal={onDeleteMeal}
+              newMealIds={newMealIds}
             />
           ))}
         </ol>

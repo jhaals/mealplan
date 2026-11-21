@@ -594,17 +594,40 @@
     animation: hum-pulse 4s var(--ease-in-out) infinite;
   }
 
-  /* ---- Star-burst · one per completed primary action ------------------ */
-  .star-burst {
+  /* ---- Ripple · one per completed primary action ---------------------
+   * A soft ring expands from the click point in the button's own ink. */
+  .btn__ripples {
     position: absolute;
-    width: 24px;
-    height: 24px;
-    background:
-      linear-gradient(90deg, transparent 47%, var(--color-accent-3) 47% 53%, transparent 53%),
-      linear-gradient(0deg,  transparent 47%, var(--color-accent-3) 47% 53%, transparent 53%);
-    animation: star-burst 420ms var(--ease-out) forwards;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
     pointer-events: none;
-    z-index: 50;
+  }
+  .btn-ripple {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-pill);
+    border: 2px solid color-mix(in oklab, var(--btn-ink) 55%, transparent);
+    background: color-mix(in oklab, var(--btn-ink) 18%, transparent);
+    animation: btn-ripple 520ms var(--ease-out) forwards;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ---- Item enter · a freshly added list item ------------------------
+   * Pops in from slightly above, then a pear wash fades out so the eye
+   * finds where the item landed. */
+  .item-enter {
+    animation:
+      item-pop 420ms var(--ease-snap) both,
+      item-glow 1300ms var(--ease-out);
+  }
+  /* Cards keep their own surface, so they get a fading ring instead. */
+  .item-enter--card {
+    animation:
+      item-pop 420ms var(--ease-snap) both,
+      item-ring 1100ms var(--ease-out);
   }
 
   /* ---- Counter -------------------------------------------------------- */
@@ -655,10 +678,24 @@
   50%      { transform: scale(1.06); }
 }
 
-@keyframes star-burst {
-  0%   { transform: scale(0) rotate(0deg);    opacity: 1; }
-  60%  { transform: scale(1.2) rotate(35deg); opacity: 0.9; }
-  100% { transform: scale(1.4) rotate(45deg); opacity: 0; }
+@keyframes btn-ripple {
+  0%   { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(4);   opacity: 0; }
+}
+
+@keyframes item-pop {
+  0%   { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes item-glow {
+  0%, 25% { background-color: color-mix(in oklab, var(--color-accent) 35%, transparent); }
+  100%    { background-color: transparent; }
+}
+
+@keyframes item-ring {
+  0%, 20% { outline: 2px solid color-mix(in oklab, var(--color-accent-deep) 80%, transparent); outline-offset: 0; }
+  100%    { outline: 2px solid transparent; outline-offset: 6px; }
 }
 
 @keyframes hum-rise {
@@ -699,7 +736,7 @@
   }
 
   .mark { animation: none; }
-  .star-burst { display: none; }
+  .btn-ripple { display: none; }
 
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
