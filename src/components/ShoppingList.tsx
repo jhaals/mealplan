@@ -18,6 +18,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useShoppingList } from '../hooks/useShoppingList';
 import { ShoppingListItem } from './ShoppingListItem';
+import { useNewIds } from '../hooks/useNewIds';
 import { ShoppingListHistory } from './ShoppingListHistory';
 import { SortPromptEditor } from './SortPromptEditor';
 import { Button } from './ui/Button';
@@ -149,6 +150,7 @@ export function ShoppingList() {
 
   const uncheckedItems = state.items.filter(i => !i.checked);
   const checkedItems = state.items.filter(i => i.checked);
+  const newItemIds = useNewIds(state.items.map(i => i.id), !isLoading);
 
   if (isLoading) {
     return (
@@ -259,6 +261,7 @@ export function ShoppingList() {
                   {uncheckedItems.map((item) => (
                     <ShoppingListItem
                       key={item.id}
+                      isNew={newItemIds.has(item.id)}
                       item={item}
                       onToggle={handleToggle}
                       onDelete={deleteItem}
@@ -279,6 +282,7 @@ export function ShoppingList() {
                 {checkedItems.map((item) => (
                   <ShoppingListItem
                     key={item.id}
+                    isNew={newItemIds.has(item.id)}
                     item={item}
                     onToggle={handleToggle}
                     onDelete={deleteItem}

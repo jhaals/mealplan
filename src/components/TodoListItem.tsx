@@ -10,9 +10,11 @@ interface TodoListItemProps {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onUpdateDescription: (id: string, description: string | null) => void | Promise<void>;
+  /** Just added — plays the enter animation. */
+  isNew?: boolean;
 }
 
-export function TodoListItem({ item, onToggle, onDelete, onUpdateDescription }: TodoListItemProps) {
+export function TodoListItem({ item, onToggle, onDelete, onUpdateDescription, isNew = false }: TodoListItemProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   // Expanded splits into two modes: a rendered view where URLs are clickable,
@@ -84,7 +86,7 @@ export function TodoListItem({ item, onToggle, onDelete, onUpdateDescription }: 
     <li
       ref={setNodeRef}
       style={style}
-      className="group rounded-xl transition-colors"
+      className={`group rounded-xl transition-colors ${isNew ? 'item-enter' : ''}`}
     >
       <div className="flex items-center gap-1 px-2 py-1">
       <span

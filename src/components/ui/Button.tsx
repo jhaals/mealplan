@@ -6,7 +6,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
-  /** Suppress the coral star-burst on a completed primary action. */
+  /** Suppress the ripple on a completed primary action. */
   noBurst?: boolean;
 }
 
@@ -47,7 +47,7 @@ export function Button({
   const [bursts, setBursts] = useState<Burst[]>([]);
   const nextId = useRef(0);
 
-  // Signature move #7 — a single coral star-burst from the click point on a
+  // Signature move #7 — a single soft ripple from the click point on a
   // completed primary action. Never auto-loops; disabled under reduced motion
   // by the stylesheet.
   const handleClick = useCallback(
@@ -57,13 +57,14 @@ export function Button({
         const id = nextId.current++;
         const burst = {
           id,
-          x: event.clientX - rect.left,
-          y: event.clientY - rect.top,
+          // Keyboard activation reports no pointer position; ripple from centre.
+          x: event.detail === 0 ? rect.width / 2 : event.clientX - rect.left,
+          y: event.detail === 0 ? rect.height / 2 : event.clientY - rect.top,
         };
         setBursts((current) => [...current, burst]);
         window.setTimeout(() => {
           setBursts((current) => current.filter((b) => b.id !== id));
-        }, 420);
+        }, 520);
       }
       onClick?.(event);
     },
@@ -89,13 +90,17 @@ export function Button({
     >
       {loading && <span className="btn__spinner" aria-hidden="true" />}
       <span className="btn__label">{children}</span>
-      {bursts.map((burst) => (
-        <span
-          key={burst.id}
-          className="star-burst"
-          style={{ left: burst.x - 12, top: burst.y - 12 }}
-        />
-      ))}
+      {bursts.length > 0 && (
+        <span className="btn__ripples" aria-hidden="true">
+          {bursts.map((burst) => (
+            <span
+              key={burst.id}
+              className="btn-ripple"
+              style={{ left: burst.x - 14, top: burst.y - 14 }}
+            />
+          ))}
+        </span>
+      )}
     </button>
   );
 }

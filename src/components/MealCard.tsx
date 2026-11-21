@@ -7,9 +7,11 @@ interface MealCardProps {
   meal: Meal;
   day: string;
   onDelete: (mealId: string, day: string) => void;
+  /** Just added — plays the enter animation. */
+  isNew?: boolean;
 }
 
-export function MealCard({ meal, day, onDelete }: MealCardProps) {
+export function MealCard({ meal, day, onDelete, isNew = false }: MealCardProps) {
   const { t } = useTranslation();
   const { attributes, listeners, setNodeRef: setDragRef, transform, isDragging } = useDraggable({
     id: meal.id,
@@ -57,7 +59,7 @@ export function MealCard({ meal, day, onDelete }: MealCardProps) {
        * swipe starts on a card — the TouchSensor's press-and-hold delay is
        * what distinguishes a drag from a scroll, so the browser can keep
        * ownership of the pan gesture until the hold fires. */
-      className="group flex items-center gap-2 p-3 cursor-grab active:cursor-grabbing touch-pan-y"
+      className={`group flex items-center gap-2 p-3 cursor-grab active:cursor-grabbing touch-pan-y ${isNew ? 'item-enter--card' : ''}`}
       {...listeners}
       {...attributes}
     >

@@ -16,6 +16,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useTodoList } from '../hooks/useTodoList';
 import { TodoListItem } from './TodoListItem';
+import { useNewIds } from '../hooks/useNewIds';
 import { RecurringTodoItems } from './RecurringTodoItems';
 import { Segmented } from './ui/Segmented';
 import { Button } from './ui/Button';
@@ -137,6 +138,7 @@ export function TodoList() {
 
   const uncheckedItems = state.items.filter(i => !i.checked);
   const checkedItems = state.items.filter(i => i.checked);
+  const newItemIds = useNewIds(state.items.map(i => i.id), !isLoading);
 
   if (isLoading) {
     return (
@@ -361,6 +363,7 @@ export function TodoList() {
                   {uncheckedItems.map((item) => (
                     <TodoListItem
                       key={item.id}
+                      isNew={newItemIds.has(item.id)}
                       item={item}
                       onToggle={handleToggle}
                       onDelete={deleteItem}
@@ -382,6 +385,7 @@ export function TodoList() {
                 {checkedItems.map((item) => (
                   <TodoListItem
                     key={item.id}
+                    isNew={newItemIds.has(item.id)}
                     item={item}
                     onToggle={handleToggle}
                     onDelete={deleteItem}
