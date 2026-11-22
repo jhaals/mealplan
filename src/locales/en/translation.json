@@ -7,7 +7,9 @@
     "shoppingList": "Shopping",
     "todoList": "Todo",
     "trmnl": "TRMNL",
-    "settings": "Settings"
+    "settings": "Settings",
+    "openItems_one": "{{count}} open item",
+    "openItems_other": "{{count}} open items"
   },
   "tabs": {
     "currentPlan": "Current Plan",
