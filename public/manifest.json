@@ -4,8 +4,8 @@
   "description": "Simple meal planning app - plan your meals by day with drag and drop",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fefcf8",
-  "theme_color": "#16a34a",
+  "background_color": "#faf8ef",
+  "theme_color": "#faf8ef",
   "icons": [
     {
       "src": "/icon-192.png",

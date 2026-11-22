@@ -15,11 +15,6 @@ function isStandalone() {
   );
 }
 
-/** Scroll offset of the app's inner scroller (the document itself does not scroll). */
-function scrollTop() {
-  return document.getElementById('app-scroller')?.scrollTop ?? window.scrollY;
-}
-
 /** True when the touch began inside something that should keep the gesture: a field or an inner scroller. */
 function startsInsideScrollableOrField(target: EventTarget | null) {
   for (let node = target instanceof Element ? target : null; node && node !== document.body; node = node.parentElement) {
@@ -54,7 +49,7 @@ export function usePullToRefresh() {
     const onStart = (event: TouchEvent) => {
       tracking =
         event.touches.length === 1 &&
-        scrollTop() <= 0 &&
+        window.scrollY <= 0 &&
         !startsInsideScrollableOrField(event.target);
       startY = event.touches[0]?.clientY ?? 0;
       startTime = event.timeStamp;
@@ -68,7 +63,7 @@ export function usePullToRefresh() {
         reset();
         return;
       }
-      if (delta <= 0 || scrollTop() > 0) {
+      if (delta <= 0 || window.scrollY > 0) {
         if (distance > 0) reset();
         return;
       }
