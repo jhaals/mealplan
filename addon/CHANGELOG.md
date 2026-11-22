@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.109] - 2026-11-22
+
+## What's Changed
+* Use the default iOS status bar style and revert the inner scroller by @jhaals in https://github.com/jhaals/mealplan/pull/335
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.108...v1.0.109
+
 ## [1.0.108] - 2026-11-22
 
 ## What's Changed
