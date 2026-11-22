@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.108] - 2026-11-22
+
+## What's Changed
+* Fix blurred top bar in the iOS home-screen app by @jhaals in https://github.com/jhaals/mealplan/pull/334
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.107...v1.0.108
+
 ## [1.0.107] - 2026-11-22
 
 ## What's Changed
