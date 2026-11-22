@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.110] - 2026-11-22
+
+## What's Changed
+* Show open todo count badge on the Todo tab by @jhaals in https://github.com/jhaals/mealplan/pull/336
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.109...v1.0.110
+
 ## [1.0.109] - 2026-11-22
 
 ## What's Changed
