@@ -7,7 +7,9 @@
     "shoppingList": "Inköp",
     "todoList": "Todo",
     "trmnl": "TRMNL",
-    "settings": "Inställningar"
+    "settings": "Inställningar",
+    "openItems_one": "{{count}} öppen uppgift",
+    "openItems_other": "{{count}} öppna uppgifter"
   },
   "tabs": {
     "currentPlan": "Aktuell Plan",

@@ -14,6 +14,7 @@ import {
 } from '@dnd-kit/core';
 import { useMealPlanner } from './hooks/useMealPlanner';
 import { PULL_THRESHOLD, usePullToRefresh } from './hooks/usePullToRefresh';
+import { useTodoCount } from './hooks/useTodoCount';
 import { DatePicker } from './components/DatePicker';
 import { AddMealForm } from './components/AddMealForm';
 import { MealList } from './components/MealList';
@@ -446,16 +447,32 @@ const TABS = [
 
 function TabBar() {
   const { t } = useTranslation();
+  const todoCount = useTodoCount();
 
   return (
     <nav className="tabbar" aria-label={t('navigation.mealPlan')}>
       <div className="tabbar__row">
-        {TABS.map((tab) => (
-          <NavLink key={tab.to} to={tab.to} className={`tab ${tab.tint}`}>
-            <span className="tab__glyph">{tab.glyph}</span>
-            {t(tab.key)}
-          </NavLink>
-        ))}
+        {TABS.map((tab) => {
+          const badge = tab.to === '/todos' ? todoCount : 0;
+          return (
+            <NavLink
+              key={tab.to}
+              to={tab.to}
+              className={`tab ${tab.tint}`}
+              aria-label={badge > 0 ? `${t(tab.key)}, ${t('navigation.openItems', { count: badge })}` : undefined}
+            >
+              <span className="tab__glyph">
+                {tab.glyph}
+                {badge > 0 && (
+                  <span className="tab__badge" aria-hidden="true">
+                    {badge > 99 ? '99+' : badge}
+                  </span>
+                )}
+              </span>
+              {t(tab.key)}
+            </NavLink>
+          );
+        })}
       </div>
     </nav>
   );

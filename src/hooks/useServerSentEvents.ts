@@ -29,15 +29,17 @@ export function useServerSentEvents({ url, onMessage, enabled = true }: UseServe
       setError(null);
     };
 
-    // Handle custom 'shopping-list-changed' events
-    eventSource.addEventListener('shopping-list-changed', (event) => {
+    // Handle list change events; consumers filter on `data.type`
+    const handleChange = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
         onMessage(data);
       } catch (err) {
         console.error('[SSE] Failed to parse message:', err);
       }
-    });
+    };
+    eventSource.addEventListener('shopping-list-changed', handleChange);
+    eventSource.addEventListener('todo-list-changed', handleChange);
 
     // Handle 'connected' event (initial handshake)
     eventSource.addEventListener('connected', (event) => {
