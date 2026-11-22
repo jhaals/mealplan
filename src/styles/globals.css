@@ -38,17 +38,16 @@
  * ====================================================================== */
 @layer base {
   html {
-    height: 100%;
-    overflow: hidden;             /* see .app-frame */
     font-size: 16px;              /* prevents zoom on input focus on iOS */
     -webkit-tap-highlight-color: transparent;
     background-color: var(--color-paper);
+    overflow-x: clip;             /* never `hidden` — gate 34 */
   }
 
   body {
     margin: 0;
-    height: 100%;
-    overflow: hidden;             /* `main.app-scroller` scrolls instead */
+    min-height: 100vh;
+    overflow-x: clip;
     background-color: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-body);
@@ -132,23 +131,6 @@
   .header-settings__view:hover,
   .header-settings__view[aria-pressed="true"] {
     background: var(--color-paper-2);
-  }
-
-  /* ---- App frame · the document never scrolls -------------------------
-   * iOS 26 home-screen apps blur the top of the root scroller under the
-   * status bar, smearing the header. The header stays outside the scroller. */
-  .app-frame {
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-  }
-
-  .app-scroller {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
   }
 
   /* ---- Shell · one width model, identical edges everywhere -------------

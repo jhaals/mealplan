@@ -313,10 +313,13 @@ function TopBar() {
 
   return (
     <header
-      className="relative shrink-0 z-40"
+      className="sticky top-0 z-40"
       style={{
-        // Extends under the iOS status bar (black-translucent). It sits above
-        // the inner scroller (see App), so content never passes beneath it.
+        // Extends under the iOS status bar (black-translucent) so nothing
+        // scrolls visibly behind the clock. Opaque and deliberately without
+        // backdrop-filter: on iOS WebKit a sticky element with a backdrop
+        // filter rasterizes its own contents blurred (title, buttons, even
+        // the status bar area), so the filter must not come back here.
         paddingTop: 'env(safe-area-inset-top, 0px)',
         background: 'var(--color-paper)',
         borderBottom: 'var(--rule-hair)',
@@ -491,18 +494,10 @@ function PullToRefresh() {
 
 function App() {
   return (
-    // The document itself never scrolls; `main` does. iOS 26 home-screen web
-    // apps draw a blurred "scroll edge effect" over the top of the root
-    // scroller (under the translucent status bar), which smeared the header.
-    // With an inner scroller the header sits outside any scrolled content.
-    <div className="app-frame bg-paper">
+    <div className="min-h-screen bg-paper">
       <PullToRefresh />
       <TopBar />
-      <main
-        id="app-scroller"
-        className="app-scroller"
-        style={{ paddingBottom: `calc(var(--tabbar-h) + var(--space-lg))` }}
-      >
+      <div style={{ paddingBottom: `calc(var(--tabbar-h) + var(--space-lg))` }}>
         <Routes>
           <Route path="/meals" element={<MealPlanPage />} />
           <Route path="/shopping" element={<ShoppingList />} />
@@ -510,7 +505,7 @@ function App() {
           <Route path="/settings" element={<TRMNLPage />} />
           <Route path="*" element={<Navigate to="/meals" replace />} />
         </Routes>
-      </main>
+      </div>
       <TabBar />
     </div>
   );
