@@ -315,11 +315,10 @@ function TopBar() {
     <header
       className="sticky top-0 z-40"
       style={{
-        // Extends under the iOS status bar (black-translucent) so nothing
-        // scrolls visibly behind the clock. Opaque and deliberately without
-        // backdrop-filter: on iOS WebKit a sticky element with a backdrop
-        // filter rasterizes its own contents blurred (title, buttons, even
-        // the status bar area), so the filter must not come back here.
+        // Opaque, no backdrop-filter. The status bar style is "default"
+        // (index.html): with "black-translucent", iOS 26 home-screen apps
+        // draw a blurred edge effect over the top of the page, smearing this
+        // header. The inset padding stays for browsers that still overlap.
         paddingTop: 'env(safe-area-inset-top, 0px)',
         background: 'var(--color-paper)',
         borderBottom: 'var(--rule-hair)',
