@@ -316,11 +316,12 @@ function TopBar() {
       className="sticky top-0 z-40"
       style={{
         // Extends under the iOS status bar (black-translucent) so nothing
-        // scrolls visibly behind the clock; near-opaque keeps it crisp.
+        // scrolls visibly behind the clock. Opaque and deliberately without
+        // backdrop-filter: on iOS WebKit a sticky element with a backdrop
+        // filter rasterizes its own contents blurred (title, buttons, even
+        // the status bar area), so the filter must not come back here.
         paddingTop: 'env(safe-area-inset-top, 0px)',
-        background: 'color-mix(in oklab, var(--color-paper) 96%, transparent)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        background: 'var(--color-paper)',
         borderBottom: 'var(--rule-hair)',
       }}
     >
