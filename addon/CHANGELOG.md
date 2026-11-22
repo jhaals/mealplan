@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.107] - 2026-11-22
+
+## What's Changed
+* Drop backdrop-filter from the sticky top bar by @jhaals in https://github.com/jhaals/mealplan/pull/333
+
+
+**Full Changelog**: https://github.com/jhaals/mealplan/compare/v1.0.106...v1.0.107
+
 ## [1.0.106] - 2026-11-21
 
 ## What's Changed
