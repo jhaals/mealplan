@@ -22,7 +22,7 @@ RUN npm ci --legacy-peer-deps --no-audit --prefer-offline --no-fund
 RUN npm run build
 
 # Stage 2: Compile the Rust backend for the target architecture.
-FROM rust:1.99-alpine AS backend-builder
+FROM rust:1.100-alpine AS backend-builder
 RUN apk add --no-cache musl-dev
 WORKDIR /build/server
 COPY server/Cargo.toml server/Cargo.lock server/build.rs ./
